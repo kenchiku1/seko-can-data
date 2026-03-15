@@ -2,37 +2,106 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>seko-can.com | 一級建築施工管理技士 過去問</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>seko-can.com | 戦略的過去問演習</title>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; line-height: 1.6; background: #f4f4f4; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h1 { color: #333; font-size: 1.2rem; border-bottom: 2px solid #0070f3; padding-bottom: 10px; }
-        .choice { display: block; width: 100%; margin: 10px 0; padding: 10px; text-align: left; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; background: #fff; }
-        .choice:hover { background: #e0f0ff; }
-        #explanation { display: none; margin-top: 20px; padding: 15px; background: #e7f3ff; border-left: 5px solid #0070f3; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; line-height: 1.8; background: #eef2f3; color: #333; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1 { color: #0070f3; font-size: 1.4rem; border-bottom: 3px solid #0070f3; padding-bottom: 10px; margin-top: 0; }
+        .meta-info { font-size: 0.85rem; color: #666; margin-bottom: 10px; }
+        .choice { display: block; width: 100%; margin: 12px 0; padding: 15px; text-align: left; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; background: #fff; font-size: 1rem; transition: 0.2s; }
+        .choice:hover { background: #f0f7ff; border-color: #0070f3; }
+        #explanation { display: none; margin-top: 20px; padding: 20px; background: #f0f9ff; border-left: 6px solid #0070f3; border-radius: 4px; }
+        .ans-block { margin-top: 15px; display: block; }
+        .message-box { background: #fff4e5; border-left: 6px solid #ffa500; padding: 15px; margin-top: 15px; font-size: 0.95rem; }
+        .nav-btn { background: #0070f3; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; width: 100%; margin-top: 20px; font-weight: bold; }
+        .result-rank { font-size: 1.5rem; font-weight: bold; color: #d32f2f; text-align: center; margin: 20px 0; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>seko-can.com (仮設)</h1>
-        <div id="question-area">読み込み中...</div>
-        <div id="choices-area"></div>
-        <div id="explanation"></div>
+    <div id="app" class="card">
+        <h1>seko-can.com</h1>
+        <div id="quiz-container">
+            <div class="meta-info" id="meta-area"></div>
+            <div id="question-area" style="font-weight: bold; font-size: 1.1rem;"></div>
+            <div id="choices-area"></div>
+            <div id="explanation"></div>
+            <button id="next-btn" class="nav-btn" style="display:none;" onclick="nextQuestion()">次の問題へ</button>
+        </div>
+        <div id="result-container" style="display:none;">
+            <div class="result-rank" id="rank-display"></div>
+            <div id="score-details" style="text-align: center;"></div>
+            <button class="nav-btn" onclick="location.reload()">もう一度挑戦する</button>
+        </div>
     </div>
+
     <script>
+        let allQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+
         fetch('H20-R7.json')
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
-                const q = data[0]; // 1問目だけ表示するテスト
-                document.getElementById('question-area').innerHTML = `<strong>【${q.id}】</strong><br>${q.question}`;
-                let choicesHtml = '';
-                for (let key in q.choices) {
-                    choicesHtml += `<button class="choice" onclick="showAns()">${key}. ${q.choices[key]}</button>`;
-                }
-                document.getElementById('choices-area').innerHTML = choicesHtml;
-                document.getElementById('explanation').innerHTML = `<strong>正解：${q.answer}</strong><br>${q.explanation}`;
+                allQuestions = data;
+                showQuestion();
             });
-        function showAns() { document.getElementById('explanation').style.display = 'block'; }
+
+        function showQuestion() {
+            const q = allQuestions[currentIndex];
+            document.getElementById('explanation').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('meta-area').innerHTML = `${q.year}年 ${q.category} ＞ ${q.subcategory}`;
+            document.getElementById('question-area').innerHTML = `【${q.id}】<br>${q.question}`;
+            let choicesHtml = '';
+            for (let key in q.choices) {
+                choicesHtml += `<button class="choice" onclick="checkAns('${key}')">${key}. ${q.choices[key]}</button>`;
+            }
+            document.getElementById('choices-area').innerHTML = choicesHtml;
+        }
+
+        function checkAns(selected) {
+            const q = allQuestions[currentIndex];
+            if (selected == q.answer) score++;
+
+            // 数字の前に改行を入れる処理
+            let formattedExp = q.explanation
+                .replace(/([2-4]\.)/g, '<br><span class="ans-block">$1</span>')
+                .replace(/(1\.)/, '<span class="ans-block">$1</span>');
+
+            let expHtml = `<strong>正解：${q.answer}</strong><hr>${formattedExp}`;
+            
+            if (q.examiner_trap || q.examiner_message) {
+                expHtml += `<div class="message-box">
+                    <strong>👷‍♂️ 現場所長の目線：</strong><br>${q.examiner_message}<br>
+                    <br><strong>⚠️ 出題者の罠：</strong><br>${q.examiner_trap}
+                </div>`;
+            }
+
+            document.getElementById('explanation').innerHTML = expHtml;
+            document.getElementById('explanation').style.display = 'block';
+            document.getElementById('next-btn').style.display = 'block';
+            const btns = document.getElementsByClassName('choice');
+            for(let btn of btns) btn.disabled = true;
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < allQuestions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+            const rate = (score / allQuestions.length) * 100;
+            let rank = (rate >= 100) ? "🏆 統括所長級" : (rate >= 80) ? "🏗️ 現場所長級" : (rate >= 60) ? "👷‍♂️ 主任級" : "🔧 見習い工級";
+            document.getElementById('rank-display').innerText = rank;
+            document.getElementById('score-details').innerHTML = `正解数: ${score} / ${allQuestions.length}<br>正解率: ${rate.toFixed(1)}%`;
+        }
     </script>
 </body>
 </html>
