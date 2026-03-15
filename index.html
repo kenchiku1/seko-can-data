@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>seko-can.com | 戦略的過去問演習</title>
+    <title>セコカン金太朗・AIアプリ</title>
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; line-height: 1.8; background: #eef2f3; color: #333; }
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
@@ -16,7 +16,6 @@
         .message-box { background: #fff4e5; border-left: 6px solid #ffa500; padding: 15px; margin-top: 15px; font-size: 0.95rem; }
         .nav-btn { background: #0070f3; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; width: 100%; margin-top: 20px; font-weight: bold; }
         .result-rank { font-size: 1.5rem; font-weight: bold; color: #d32f2f; text-align: center; margin: 20px 0; }
-        /* 判定用のスタイル */
         .judge-msg { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 15px; padding: 10px; border-radius: 8px; }
         .correct { color: #2e7d32; background: #e8f5e9; border: 2px solid #2e7d32; }
         .incorrect { color: #c62828; background: #ffebee; border: 2px solid #c62828; }
@@ -24,9 +23,10 @@
 </head>
 <body>
     <div id="app" class="card">
-        <h1>seko-can.com</h1>
+        <h1>セコカン金太朗・AIアプリ</h1>
         <div id="quiz-container">
-            <div id="judge-area"></div> <div class="meta-info" id="meta-area"></div>
+            <div id="judge-area"></div>
+            <div class="meta-info" id="meta-area"></div>
             <div id="question-area" style="font-weight: bold; font-size: 1.1rem;"></div>
             <div id="choices-area"></div>
             <div id="explanation"></div>
@@ -55,7 +55,7 @@
             const q = allQuestions[currentIndex];
             document.getElementById('explanation').style.display = 'none';
             document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('judge-area').innerHTML = ''; // 判定をリセット
+            document.getElementById('judge-area').innerHTML = '';
             document.getElementById('judge-area').className = ''; 
             document.getElementById('meta-area').innerHTML = `${q.year}年 ${q.category} ＞ ${q.subcategory}`;
             document.getElementById('question-area').innerHTML = `【${q.id}】<br>${q.question}`;
