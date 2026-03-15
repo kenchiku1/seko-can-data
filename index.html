@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>seko-can.com | 一級建築施工管理技士 過去問</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; line-height: 1.6; background: #f4f4f4; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { color: #333; font-size: 1.2rem; border-bottom: 2px solid #0070f3; padding-bottom: 10px; }
+        .choice { display: block; width: 100%; margin: 10px 0; padding: 10px; text-align: left; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; background: #fff; }
+        .choice:hover { background: #e0f0ff; }
+        #explanation { display: none; margin-top: 20px; padding: 15px; background: #e7f3ff; border-left: 5px solid #0070f3; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>seko-can.com (仮設)</h1>
+        <div id="question-area">読み込み中...</div>
+        <div id="choices-area"></div>
+        <div id="explanation"></div>
+    </div>
+    <script>
+        fetch('H20-R7.json')
+            .then(response => response.json())
+            .then(data => {
+                const q = data[0]; // 1問目だけ表示するテスト
+                document.getElementById('question-area').innerHTML = `<strong>【${q.id}】</strong><br>${q.question}`;
+                let choicesHtml = '';
+                for (let key in q.choices) {
+                    choicesHtml += `<button class="choice" onclick="showAns()">${key}. ${q.choices[key]}</button>`;
+                }
+                document.getElementById('choices-area').innerHTML = choicesHtml;
+                document.getElementById('explanation').innerHTML = `<strong>正解：${q.answer}</strong><br>${q.explanation}`;
+            });
+        function showAns() { document.getElementById('explanation').style.display = 'block'; }
+    </script>
+</body>
+</html>
