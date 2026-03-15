@@ -16,13 +16,17 @@
         .message-box { background: #fff4e5; border-left: 6px solid #ffa500; padding: 15px; margin-top: 15px; font-size: 0.95rem; }
         .nav-btn { background: #0070f3; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; width: 100%; margin-top: 20px; font-weight: bold; }
         .result-rank { font-size: 1.5rem; font-weight: bold; color: #d32f2f; text-align: center; margin: 20px 0; }
+        /* 判定用のスタイル */
+        .judge-msg { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 15px; padding: 10px; border-radius: 8px; }
+        .correct { color: #2e7d32; background: #e8f5e9; border: 2px solid #2e7d32; }
+        .incorrect { color: #c62828; background: #ffebee; border: 2px solid #c62828; }
     </style>
 </head>
 <body>
     <div id="app" class="card">
         <h1>seko-can.com</h1>
         <div id="quiz-container">
-            <div class="meta-info" id="meta-area"></div>
+            <div id="judge-area"></div> <div class="meta-info" id="meta-area"></div>
             <div id="question-area" style="font-weight: bold; font-size: 1.1rem;"></div>
             <div id="choices-area"></div>
             <div id="explanation"></div>
@@ -51,6 +55,8 @@
             const q = allQuestions[currentIndex];
             document.getElementById('explanation').style.display = 'none';
             document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('judge-area').innerHTML = ''; // 判定をリセット
+            document.getElementById('judge-area').className = ''; 
             document.getElementById('meta-area').innerHTML = `${q.year}年 ${q.category} ＞ ${q.subcategory}`;
             document.getElementById('question-area').innerHTML = `【${q.id}】<br>${q.question}`;
             let choicesHtml = '';
@@ -62,9 +68,17 @@
 
         function checkAns(selected) {
             const q = allQuestions[currentIndex];
-            if (selected == q.answer) score++;
+            const judgeArea = document.getElementById('judge-area');
+            
+            if (selected == q.answer) {
+                score++;
+                judgeArea.innerHTML = "◯ 正解！";
+                judgeArea.className = "judge-msg correct";
+            } else {
+                judgeArea.innerHTML = `× 不正解（あなたの選択：${selected}）`;
+                judgeArea.className = "judge-msg incorrect";
+            }
 
-            // 数字の前に改行を入れる処理
             let formattedExp = q.explanation
                 .replace(/([2-4]\.)/g, '<br><span class="ans-block">$1</span>')
                 .replace(/(1\.)/, '<span class="ans-block">$1</span>');
