@@ -1,269 +1,193 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>seko-can.com | 一級セコカンAI過去問アプリ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>セコカン金太郎AIアプリ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
-  <div id="root"></div>
+<body class="bg-gray-100 font-sans text-gray-800 min-h-screen">
+    <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-    const GEMINI_API_KEY = "AIzaSyB05vGQtUEQZj6cBC_kZQB3pbguLS7YGCY"; 
-    const JSON_FILE_PATH = "./all_questions.json";
-    const BAND_URL = "https://band.us/n/a3a7bd17c103Z";
-    const SHUTDOWN_DATE = new Date('2026-04-06T00:00:00+09:00');
-    
-    const SYSTEM_PROMPT = `
-あなたは20年現場経験のベテラン監督「セコカン金太郎」です。
-以下の1次試験問題について、受験生に以下の4点を解説してください。
-①正誤の明確な理由
-②現場でのリアルなイメージ
-③出題者の罠とメッセージ
-④この知識が、2次試験の「経験記述」や「施工用語」でどう問われるか、どう活かせるかを1〜2行で熱く指導すること。
-出力は読みやすく改行を入れてください。
-`;
+        const App = () => {
+            const [mode, setMode] = useState('start');
+            const [isPremium, setIsPremium] = useState(false);
+            const [showPasswordModal, setShowPasswordModal] = useState(false);
+            const [passwordInput, setPasswordInput] = useState('');
+            const [showUnlockMessage, setShowUnlockMessage] = useState(false);
 
-    function App() {
-      const [allQuestions, setAllQuestions] = useState([]);
-      const [sessionQuestions, setSessionQuestions] = useState([]);
-      const [currentIndex, setCurrentIndex] = useState(0);
-      const [weaknessQueue, setWeaknessQueue] = useState([]);
-      
-      const [mode, setMode] = useState('loading');
-      const [selectedChoice, setSelectedChoice] = useState(null);
-      const [isCorrect, setIsCorrect] = useState(null);
-      const [explanation, setExplanation] = useState('');
-      const [isAiLoading, setIsAiLoading] = useState(false);
-      
-      const [score, setScore] = useState(0);
-      const [totalAnswered, setTotalAnswered] = useState(0);
+            const BAND_URL = "https://band.us/"; 
+            const SECRET_PASSWORD = "KENRYU"; 
 
-      useEffect(() => {
-        if (new Date() >= SHUTDOWN_DATE) {
-          setMode('expired');
-        } else {
-          fetch(JSON_FILE_PATH)
-            .then(res => res.json())
-            .then(data => {
-              setAllQuestions(data);
-              setMode('start');
-            })
-            .catch(err => {
-              console.error("JSONの読み込みに失敗しました", err);
-              setMode('start');
-            });
-        }
-      }, []);
+            useEffect(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const isBandAccess = urlParams.get('source') === 'band';
+                const isTestMode = urlParams.get('test') === '406'; 
+                
+                const deadline = new Date('2026-04-07T00:00:00+09:00');
+                const now = new Date();
 
-      const getRank = (correct, total) => {
-        if (total === 0) return "称号なし";
-        const rate = (correct / total) * 100;
-        if (rate < 50) return "🔨 見習い職人";
-        if (rate < 65) return "⛏️ 現場作業員";
-        if (rate < 75) return "📋 職長クラス";
-        if (rate < 85) return "🏗️ 現場監督";
-        if (rate < 95) return "🏢 所長クラス";
-        return "⭐ 伝説の監督";
-      };
-
-      const startSession = (isSecondStageRoute) => {
-        let targets = allQuestions;
-        if (isSecondStageRoute) {
-          targets = allQuestions.filter(q => q.is_2nd_stage_relevant === true);
-          if(targets.length === 0) targets = allQuestions;
-        }
-        const shuffled = [...targets].sort(() => 0.5 - Math.random()).slice(0, 10);
-        setSessionQuestions(shuffled);
-        setCurrentIndex(0);
-        setScore(0);
-        setTotalAnswered(0);
-        setWeaknessQueue([]);
-        resetTurn();
-        setMode('quiz');
-      };
-
-      const resetTurn = () => {
-        setSelectedChoice(null);
-        setIsCorrect(null);
-        setExplanation('');
-      };
-
-      const handleAnswer = async (choiceKey) => {
-        if (selectedChoice) return;
-        setSelectedChoice(choiceKey);
-        const currentQ = weaknessQueue.length > 0 ? weaknessQueue[0] : sessionQuestions[currentIndex];
-        const correct = (parseInt(choiceKey) === currentQ.answer);
-        setIsCorrect(correct);
-        if (correct) setScore(prev => prev + 1);
-        setTotalAnswered(prev => prev + 1);
-
-        if (!correct && currentQ.related_ids && currentQ.related_ids.length > 0) {
-          const randomRelatedId = currentQ.related_ids[Math.floor(Math.random() * currentQ.related_ids.length)];
-          const relatedQ = allQuestions.find(q => q.id === randomRelatedId);
-          if (relatedQ) {
-            setWeaknessQueue(prev => [...prev, relatedQ]);
-          }
-        }
-
-        setIsAiLoading(true);
-        try {
-          const prompt = `
-            ${SYSTEM_PROMPT}
-            【問題データ】
-            問題: ${currentQ.question}
-            選択肢: ${JSON.stringify(currentQ.choices)}
-            正解: ${currentQ.answer}
-            ユーザーの解答: ${choiceKey} (${correct ? '正解' : '不正解'})
-            本来の解説: ${currentQ.explanation}
-            出題者の罠: ${currentQ.examiner_trap}
-          `;
-
-          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-          });
-          const data = await response.json();
-          setExplanation(data.candidates[0].content.parts[0].text);
-        } catch (error) {
-          setExplanation("AI解説の取得に失敗しました。現場の電波状況を確認してください。");
-        }
-        setIsAiLoading(false);
-      };
-
-      const nextQuestion = () => {
-        resetTurn();
-        if (weaknessQueue.length > 0) {
-          setWeaknessQueue(prev => prev.slice(1));
-        } else {
-          if (currentIndex + 1 < sessionQuestions.length) {
-            setCurrentIndex(prev => prev + 1);
-          } else {
-            setMode('result');
-          }
-        }
-      };
-
-      if (mode === 'loading') return <div className="p-10 text-center text-xl font-bold">現場の足場を組立て中...</div>;
-      
-      if (mode === 'expired') return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-900 text-white">
-          <h1 className="text-3xl font-bold mb-4 text-red-500">【公開終了】</h1>
-          <p className="mb-8 text-center">先行テスト配布期間は終了しました。<br/>最新のAIアプリと攻略情報はBANDコミュニティにて提供中です。</p>
-          <a href={BAND_URL} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg">
-            相馬塾 BANDコミュニティへ合流する
-          </a>
-        </div>
-      );
-
-      if (mode === 'start') return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center border-t-8 border-blue-600">
-          <h1 className="text-2xl font-extrabold mb-2">seko-can.com</h1>
-          <p className="text-gray-600 mb-6 font-bold">一級建築施工管理技士 AI過去問アプリ</p>
-          <button onClick={() => startSession(false)} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded mb-4 shadow-md transition">
-            1次試験 全範囲テストを開始（10問）
-          </button>
-          <button onClick={() => startSession(true)} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-4 rounded shadow-md transition">
-            🔥 2次試験直結ルートを開始
-          </button>
-        </div>
-      );
-
-      if (mode === 'result') return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center border-t-8 border-yellow-500">
-          <h2 className="text-2xl font-bold mb-4">本日の作業終了！</h2>
-          <p className="text-4xl font-extrabold mb-2">{score} / {totalAnswered} 問正解</p>
-          <p className="text-xl font-bold text-gray-700 mb-6">現在の称号: <span className="text-blue-600">{getRank(score, totalAnswered)}</span></p>
-          <button onClick={() => setMode('start')} className="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded mb-4">
-            現場事務所（トップ）へ戻る
-          </button>
-          <div className="mt-8 p-4 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-sm text-green-800 font-bold mb-2">＼ 改善要望や2次試験の質問はこちら ／</p>
-            <a href={BAND_URL} target="_blank" className="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded text-center">
-              BANDコミュニティを開く
-            </a>
-          </div>
-        </div>
-      );
-
-      const currentQ = weaknessQueue.length > 0 ? weaknessQueue[0] : sessionQuestions[currentIndex];
-      const isWeaknessMode = weaknessQueue.length > 0;
-
-      return (
-        <div className="max-w-xl mx-auto mt-6 p-4">
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="flex flex-wrap justify-between items-center mb-4 text-sm font-bold border-b pb-2">
-              <span className="text-gray-500">{isWeaknessMode ? '⚠️ 弱点克服モード' : `第 ${currentIndex + 1} 問`}</span>
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">{currentQ.year}年度 {currentQ.session}</span>
-              <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded">{currentQ.subcategory}</span>
-            </div>
-            {currentQ.frequency >= 3 && (
-              <div className="mb-2 text-red-600 font-extrabold text-sm animate-pulse">
-                🔥 頻出重要問題（過去{currentQ.frequency}回出題）
-              </div>
-            )}
-            <h2 className="text-lg font-bold mb-6 leading-relaxed text-gray-800">
-              {currentQ.question}
-            </h2>
-            <div className="space-y-3 mb-6">
-              {Object.entries(currentQ.choices).map(([key, text]) => {
-                let btnClass = "w-full text-left p-4 rounded border-2 font-medium transition-all ";
-                if (!selectedChoice) {
-                  btnClass += "border-gray-200 hover:border-blue-400 hover:bg-blue-50";
-                } else {
-                  if (parseInt(key) === currentQ.answer) {
-                    btnClass += "border-green-500 bg-green-50 text-green-900";
-                  } else if (selectedChoice === key) {
-                    btnClass += "border-red-500 bg-red-50 text-red-900";
-                  } else {
-                    btnClass += "border-gray-200 opacity-50";
-                  }
+                if ((now >= deadline || isTestMode) && !isBandAccess) {
+                    setMode('locked_406');
                 }
-                return (
-                  <button key={key} onClick={() => handleAnswer(key)} disabled={selectedChoice !== null} className={btnClass}>
-                    <span className="inline-block w-6 h-6 text-center rounded-full bg-gray-200 text-gray-700 mr-3 text-sm leading-6">{key}</span>
-                    {text}
-                  </button>
-                );
-              })}
-            </div>
-            {selectedChoice && (
-              <div className="mt-6 animate-fade-in">
-                <div className={`text-2xl font-extrabold mb-4 text-center ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                  {isCorrect ? '⭕ 正解！ヨシ！' : '❌ 不正解... (類似問題をキューに追加しました)'}
-                </div>
-                <div className="bg-gray-800 text-white p-5 rounded-lg shadow-inner">
-                  <h3 className="text-yellow-400 font-bold mb-2 border-b border-gray-600 pb-1">AI現場所長の解説</h3>
-                  {isAiLoading ? (
-                    <div className="text-gray-300 animate-pulse">所長が解説を打設中...</div>
-                  ) : (
-                    <div className="text-sm leading-relaxed whitespace-pre-wrap">{explanation}</div>
-                  )}
-                </div>
-                {!isAiLoading && (
-                  <button onClick={nextQuestion} className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded shadow-lg text-lg">
-                    次の現場（問題）へ向かう
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
+            }, []);
 
-    ReactDOM.render(<App />, document.getElementById('root'));
-  </script>
-  <style>
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-  </style>
+            const handlePremiumClick = () => {
+                if (isPremium) {
+                    setMode('quiz'); 
+                } else {
+                    setShowPasswordModal(true); 
+                }
+            };
+
+            const checkPassword = () => {
+                if (passwordInput === SECRET_PASSWORD) {
+                    setIsPremium(true);
+                    setShowPasswordModal(false);
+                    setShowUnlockMessage(true); 
+                } else {
+                    alert("⚠️ 鍵が違います。BAND内の動画でパスワードを確認してください！");
+                }
+            };
+
+            if (mode === 'locked_406') {
+                return (
+                    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center border-t-8 border-gray-600">
+                        <div className="text-4xl mb-4">🚧</div>
+                        <h2 className="text-2xl font-bold mb-4 text-red-600">LINEからの直接公開は<br/>終了しました</h2>
+                        <p className="text-gray-700 mb-6 text-left leading-relaxed">
+                            4/6をもちまして、こちらのURLからのアプリへの直接アクセスは封鎖いたしました。<br/><br/>
+                            今後のアプリ利用（ショーケン版の継続）、および改善要望の受付は、すべて<strong>【BANDコミュニティ】</strong>へ一本化されました。
+                        </p>
+                        <a href={BAND_URL} target="_blank" rel="noopener noreferrer" 
+                           className="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-4 rounded-lg shadow-md transition text-lg">
+                            BANDコミュニティへ合流する
+                        </a>
+                    </div>
+                );
+            }
+
+            if (showUnlockMessage) {
+                return (
+                    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center border-t-8 border-red-600 animate-pulse">
+                        <div className="text-5xl mb-4">🔥</div>
+                        <h2 className="text-2xl font-extrabold mb-4 text-red-700">ロック解除・着工ヨシ！</h2>
+                        <p className="text-xl text-gray-800 font-bold mb-8 leading-relaxed">
+                            「1次合格を単なる『通過点』に変え、<br/>
+                            2次を『確信』へ昇華させる<br/>
+                            最短直結ルートだ！」
+                        </p>
+                        <button onClick={() => { setShowUnlockMessage(false); setMode('quiz'); }} 
+                                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition text-lg">
+                            建龍版 特訓を開始する
+                        </button>
+                    </div>
+                );
+            }
+
+            if (mode === 'start') {
+                return (
+                    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center">
+                        <h1 className="text-3xl font-extrabold mb-2 text-gray-800">seko-can.com</h1>
+                        <p className="text-sm font-bold text-gray-500 mb-8 border-b-2 pb-4">一級建築施工管理技士 AI過去問アプリ</p>
+                        
+                        <div className="mb-6">
+                            <button onClick={() => setMode('quiz')} 
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg shadow-md transition text-lg">
+                                【ショーケン版】<br/>1次試験 全範囲テストを開始
+                            </button>
+                            <p className="text-xs text-gray-500 mt-2">1次試験の基礎固めはこちら（無料）</p>
+                        </div>
+
+                        <div className="mt-8 border-t-2 pt-6 border-dashed border-gray-300">
+                            <button onClick={handlePremiumClick} 
+                                    className="w-full bg-gradient-to-r from-red-700 to-red-900 hover:from-red-800 hover:to-red-950 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition text-lg border-2 border-red-500">
+                                🔥【建龍版】<br/>1次試験突破（2次直結型）<br/>ルートを開始
+                            </button>
+                            <p className="text-xs text-red-600 font-bold mt-2">※有料版</p>
+                        </div>
+
+                        {showPasswordModal && (
+                            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+                                <div className="bg-white p-6 rounded-xl w-full max-w-sm">
+                                    <h3 className="text-lg font-bold mb-4">建龍版 解除キー入力</h3>
+                                    <input 
+                                        type="text" 
+                                        value={passwordInput}
+                                        onChange={(e) => setPasswordInput(e.target.value)}
+                                        placeholder="パスワードを入力" 
+                                        className="w-full border-2 border-gray-300 p-3 rounded mb-4 font-bold text-center"
+                                    />
+                                    <button onClick={checkPassword} className="w-full bg-red-600 text-white font-bold py-3 rounded mb-2">
+                                        認証して解除する
+                                    </button>
+                                    <button onClick={() => setShowPasswordModal(false)} className="w-full bg-gray-400 text-white font-bold py-2 rounded hover:bg-gray-500">
+                                        キャンセル
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            if (mode === 'quiz') {
+                return (
+                    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg">
+                        <div className="flex justify-between items-center mb-4 border-b pb-2">
+                            <span className="font-bold text-gray-600">
+                                実行モード: {isPremium ? <span className="text-red-600">🔥建龍版（2次直結）</span> : <span className="text-blue-600">🔵ショーケン版</span>}
+                            </span>
+                        </div>
+                        
+                        <h2 className="text-lg font-bold mb-4">【テスト問題】鉄筋のガス圧接について...</h2>
+                        
+                        <div className="mt-6 border-t-2 pt-4">
+                            <h3 className="font-bold text-blue-800 mb-2">💡 出題者の目線（1次解説）</h3>
+                            <p className="text-sm text-gray-700 mb-6 bg-blue-50 p-3 rounded">
+                                この問題は加熱温度の数値をひっかける定番問題です。規定値は〇〇度なので、この選択肢は不適当となります。
+                            </p>
+
+                            <h3 className="font-bold text-red-800 mb-2">👷‍♂️ 現場監督の目線（2次直結解説）</h3>
+                            
+                            {isPremium ? (
+                                /* 建龍版：はっきり読める */
+                                <p className="text-sm text-gray-900 bg-red-50 p-3 rounded border-2 border-red-200 font-medium">
+                                    現場では天候による温度管理が命だ。この「風速〇〇m/s以上で作業中止」という基準は、2次試験の「品質管理」の経験記述でそのまま使えるぞ！絶対に暗記しろ！
+                                </p>
+                            ) : (
+                                /* ショーケン版：ぼかし（モザイク）が入る */
+                                <div className="relative">
+                                    <p className="text-sm text-gray-900 bg-gray-100 p-3 rounded blur-[4px] select-none opacity-60">
+                                        ダミーテキスト現場では天候による温度管理が命だ。この基準は、2次試験の「品質管理」の経験記述でそのまま使えるぞ！絶対に暗記しろ！ダミーテキスト
+                                    </p>
+                                    <div className="absolute inset-0 flex items-center justify-center bg-white/20 rounded">
+                                        <span className="bg-gray-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-md border border-gray-400">
+                                            🔒 建龍版でロック解除
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* トップへ戻るボタンもマイルドなグレーに変更 */}
+                        <button onClick={() => setMode('start')} className="w-full mt-8 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded shadow-sm transition">
+                            現場事務所（トップ）へ戻る
+                        </button>
+                    </div>
+                );
+            }
+
+            return null;
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>
