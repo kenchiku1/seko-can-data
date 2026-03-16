@@ -9,6 +9,10 @@ export default async function handler(req, res) {
   const { prompt } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
+  if (!apiKey) {
+    return res.status(500).json({ error: 'APIキーが設定されていません' });
+  }
+
   try {
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
@@ -20,8 +24,19 @@ export default async function handler(req, res) {
         })
       }
     );
+
     const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '解説を生成できませんでした';
+
+    // エラーレスポンスの詳細をログに出す
+    if (!response.ok) {
+      return res.status(500).json({ error: JSON.stringify(data) });
+    }
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      return res.status(500).json({ error: 'レスポンス形式エラー: ' + JSON.stringify(data) });
+    }
+
     res.status(200).json({ result: text });
   } catch (error) {
     res.status(500).json({ error: '通電エラー：' + error.message });
