@@ -9,36 +9,23 @@ export default async function handler(req, res) {
   const { prompt } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
-  if (!apiKey) return res.status(500).json({ error: 'APIキーが未設定' });
+  if (!apiKey) return res.status(500).json({ error: 'APIキーが未設定です' });
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-    
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 500 }
+        contents: [{ parts: [{ text: prompt }] }]
       })
     });
 
     const raw = await response.text();
-    
-    let data;
-    try { data = JSON.parse(raw); }
-    catch(e) { return res.status(500).json({ error: 'JSON解析エラー: ' + raw.substring(0,200) }); }
-
-    if (!response.ok) {
-      return res.status(500).json({ error: 'Geminiエラー: ' + JSON.stringify(data?.error) });
-    }
-
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) return res.status(500).json({ error: 'テキストなし: ' + JSON.stringify(data).substring(0,200) });
-
-    res.status(200).json({ result: text });
+    return res.status(200).json({ debug: raw });
 
   } catch (error) {
-    res.status(500).json({ error: 'catchエラー: ' + error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
