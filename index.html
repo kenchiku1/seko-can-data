@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>seko-can.com | 一級建築施工管理技士</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js" crossorigin></script>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body { font-family: sans-serif; background-color: #f3f4f6; }
         .blur-text { filter: blur(4px); user-select: none; pointer-events: none; opacity: 0.6; }
@@ -31,6 +30,7 @@
             const [mode, setMode] = useState('shoken');
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
+            const [score, setScore] = useState(0); // 正解数
             const [showModal, setShowModal] = useState(false);
             const [isExplaining, setIsExplaining] = useState(false);
             const [judge, setJudge] = useState('');
@@ -48,6 +48,7 @@
             const startQuiz = async (m) => {
                 setMode(m);
                 setView('loading');
+                setScore(0);
                 try {
                     const res = await fetch('/H20-R7.json');
                     const data = await res.json();
@@ -60,12 +61,13 @@
             const handleAnswer = async (key, text) => {
                 const q = questions[currentIdx];
                 const isCorrect = String(key) === String(q.answer);
+                if (isCorrect) setScore(score + 1);
+                
                 setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
                 setShowModal(true);       
                 setIsExplaining(true);    
                 
-                // 🔽 AIへの指示を極限まで短く（スピード重視）
-                const promptText = "1級建築施工管理技士として短く解説して。前置き不要。\n" +
+                const promptText = "1級建築施工管理技士として短文で解説。前置き不要。\n" +
                                    "問題:" + q.question + "\n正解:" + q.answer + "\n回答:" + text + "\n\n" +
                                    "【1次】正解の根拠を100文字以内で。\n【2次】現場の注意点を100文字以内で。";
 
@@ -84,6 +86,14 @@
                 setIsExplaining(false); 
             };
 
+            const getRank = (rate) => {
+                if (rate === 100) return { title: "伝説の監理技術者", color: "text-red-600" };
+                if (rate >= 80) return { title: "凄腕現場総監督", color: "text-orange-600" };
+                if (rate >= 60) return { title: "一級施工管理技士", color: "text-blue-600" };
+                if (rate >= 40) return { title: "中堅現場監督", color: "text-green-600" };
+                return { title: "現場見習い", color: "text-gray-600" };
+            };
+
             if (!isLoggedIn) return null;
 
             if (view === 'menu') {
@@ -99,13 +109,37 @@
                                 </div>
                             ) : (
                                 <div className="bg-gray-100 p-6 rounded-xl border fade-in">
-                                    <input type="text" value={inputPass} onChange={(e)=>setInputPass(e.target.value)} className="w-full p-3 border rounded-lg mb-4 text-center font-bold" placeholder="パスワード入力" />
+                                    <input type="text" value={inputPass} onChange={(e)=>setInputPass(e.target.value)} className="w-full p-3 border rounded-lg mb-4 text-center font-bold" placeholder="パスワード：KENRYU" />
                                     <div className="flex gap-2">
                                         <button onClick={()=>setShowPassword(false)} className="flex-1 py-3 bg-gray-300 rounded-lg">戻る</button>
                                         <button onClick={()=>{ if(inputPass===SECRET_PASSWORD) startQuiz('kenno'); else alert("不一致"); }} className="flex-1 py-3 bg-blue-600 text-white rounded-lg">解除</button>
                                     </div>
                                 </div>
                             )}
+                        </div>
+                    </div>
+                );
+            }
+
+            if (view === 'result') {
+                const rate = Math.round((score / questions.length) * 100);
+                const rank = getRank(rate);
+                return (
+                    <div className="max-w-md mx-auto p-6 pt-12 fade-in">
+                        <div className="bg-white rounded-2xl shadow-2xl p-8 text-center border-t-8 border-orange-500">
+                            <h2 className="text-xl font-bold mb-4 text-gray-600">現場演習 終了</h2>
+                            <div className="mb-6">
+                                <p className="text-sm font-bold text-gray-400">正解率</p>
+                                <p className="text-5xl font-black text-gray-800">{rate}%</p>
+                                <p className="text-sm text-gray-500 mt-1">{questions.length}問中 {score}問正解</p>
+                            </div>
+                            <div className="bg-orange-50 p-6 rounded-2xl mb-8 border border-orange-100">
+                                <p className="text-xs font-bold text-orange-400 mb-1">現在の職位</p>
+                                <p className={`text-2xl font-black ${rank.color}`}>{rank.title}</p>
+                            </div>
+                            <button onClick={() => setView('menu')} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow-lg active:scale-95 transition">
+                                現場事務所へ戻る
+                            </button>
                         </div>
                     </div>
                 );
@@ -118,7 +152,10 @@
                 <div className="max-w-md mx-auto bg-white min-h-screen p-6 relative">
                     {!showModal ? (
                         <div className="fade-in">
-                            <p className="text-xs font-bold text-gray-400 mb-4">No.{q.no || currentIdx + 1} | {mode==='shoken'?'ショーケン':'建龍'}</p>
+                            <div className="flex justify-between items-center mb-6">
+                                <p className="text-xs font-bold text-gray-400">No.{q.no || currentIdx + 1} / {questions.length}</p>
+                                <p className="text-xs font-bold text-blue-600">{mode==='shoken'?'🔵ショーケン':'🔥建龍'}</p>
+                            </div>
                             <p className="font-bold text-gray-800 text-lg mb-8 leading-snug">{q.question}</p>
                             <div className="space-y-3">
                                 {Object.entries(q.choices).map(([k, t]) => (
@@ -134,24 +171,24 @@
                             <div className={`text-4xl font-black text-center mb-6 ${judge.includes('⭕️') ? 'text-green-600' : 'text-red-600'}`}>{judge}</div>
                             <div className="flex-1 space-y-6">
                                 <div>
-                                    <h3 className="text-xs font-bold text-blue-600 mb-1">■1次試験対策（根拠）</h3>
+                                    <h3 className="text-xs font-bold text-blue-600 mb-1">■1次試験対策</h3>
                                     <div className="bg-blue-50 p-4 rounded-xl text-sm leading-relaxed">{isExplaining ? 'AI解析中...' : explanation1}</div>
                                 </div>
                                 <div>
-                                    <h3 className="text-xs font-bold text-red-600 mb-1">■2次試験・現場実務</h3>
+                                    <h3 className="text-xs font-bold text-red-600 mb-1">■2次試験・実務</h3>
                                     {mode === 'kenno' ? (
                                         <div className="bg-red-50 p-4 rounded-xl text-sm leading-relaxed">{isExplaining ? '分析中...' : explanation2}</div>
                                     ) : (
                                         <div className="relative rounded-xl bg-gray-50 p-4 border border-dashed overflow-hidden">
-                                            <p className="text-sm blur-text">（ここは建龍版限定の解説エリアです。記述対策に役立つ現場の勘所を表示します）</p>
+                                            <p className="text-sm blur-text">（建龍版限定の記述対策アドバイスを表示します。現場目線の勘所をマスターしましょう）</p>
                                             <button onClick={() => { setView('menu'); setShowModal(false); setShowPassword(true); }} className="absolute inset-0 m-auto h-10 w-40 bg-gray-800 text-white text-[10px] font-bold rounded-full shadow-lg">🔒 建龍版で解除</button>
                                         </div>
                                     )}
                                 </div>
                             </div>
                             <div className="mt-10 space-y-4 pb-10">
-                                {!isExplaining && <button onClick={()=>{setShowModal(false); if(currentIdx+1 < questions.length) setCurrentIdx(currentIdx+1); else setView('menu');}} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg">次へ進む</button>}
-                                <button onClick={()=>{setView('menu'); setShowModal(false);}} className="w-full text-gray-400 text-xs underline">中断してメニューへ</button>
+                                {!isExplaining && <button onClick={()=>{setShowModal(false); if(currentIdx+1 < questions.length) setCurrentIdx(currentIdx+1); else setView('result');}} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg">次へ進む</button>}
+                                <button onClick={()=>{setView('menu'); setShowModal(false);}} className="w-full text-gray-400 text-xs underline">中断</button>
                             </div>
                         </div>
                     )}
