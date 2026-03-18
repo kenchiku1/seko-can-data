@@ -26,21 +26,30 @@
 
     <script type="text/babel">
         const { useState, useEffect, useCallback } = React;
-        const liffId = "2009463648-LX7h6H1q"; // 所長のLIFF ID
+  const liffId = "2009463648-LX7h6H1q";
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const initializeLiff = async () => {
       try {
         await liff.init({ liffId });
-        if (!liff.isLoggedIn()) {
+        if (liff.isLoggedIn()) {
+          setIsLoggedIn(true);
+        } else {
           liff.login();
         }
       } catch (error) {
-        console.error("LIFFの初期化に失敗しました", error);
+        console.error("LIFF初期化エラー", error);
       }
     };
     initializeLiff();
   }, []);
+
+  if (!isLoggedIn) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f3f4f6' }}>
+      <p>ログイン認証中...</p>
+    </div>;
+  }
 
         // =============================================
         // AI解説を取得する関数（中継ボックスを呼び出す）
