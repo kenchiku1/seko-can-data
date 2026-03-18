@@ -39,9 +39,15 @@
             return arr;
         }
 
-        // 問題ID：year + no のみ
+        // 問題ID：使えるフィールドを優先順位で組み合わせる（フォールバック付き）
         function getQId(q) {
-            return `${q.year}_${q.no}`;
+            const year = q.year || q.Year || q.nen || '';
+            const no   = q.no   || q.No   || q.num || q.id || '';
+            if (year !== '' || no !== '') {
+                return `${year}_${no}`;
+            }
+            // year/no が両方ない場合は問題文全体をIDとして使う
+            return (q.question || q.Question || JSON.stringify(q)).substring(0, 60);
         }
 
         // 履歴をSetで返す（旧キーも統合して自動移行）
