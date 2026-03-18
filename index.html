@@ -34,11 +34,8 @@
             const [explanation, setExplanation] = useState('');
             const [judgeResult, setJudgeResult] = useState(''); 
 
-            // 🔽 追加設備：パスワード入力用のスイッチと記憶装置
             const [showPassword, setShowPassword] = useState(false);
             const [inputPass, setInputPass] = useState('');
-            
-            // ⚠️ ここがパスワードです！好きな文字（英語や数字）に変えてください ⚠️
             const SECRET_PASSWORD = "0000"; 
 
             useEffect(() => {
@@ -69,10 +66,10 @@
             const unlockKenno = () => {
                 if (inputPass === SECRET_PASSWORD) {
                     setShowPassword(false);
-                    setInputPass(''); // パスワードをリセット
+                    setInputPass('');
                     startQuiz('kenno');
                 } else {
-                    alert("パスワードが違います。有料版の購入者のみアクセス可能です。");
+                    alert("パスワードが違います。");
                 }
             };
 
@@ -137,7 +134,7 @@
                     <div className="max-w-md mx-auto p-6 pt-12">
                         <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-blue-600">
                             <h1 className="text-3xl font-black mb-2">seko-can.com</h1>
-                            <p className="text-blue-600 font-bold mb-8 text-sm">一級建築施工管理技士 AI過去問アプリ</p>
+                            <p className="text-blue-600 font-bold mb-8 text-sm">AI過去問アプリ <span className="text-red-500">【ロック機能版】</span></p>
                             
                             {!showPassword ? (
                                 <div>
@@ -233,4 +230,40 @@
                                     </div>
                                 )}
 
-                                <h3 className="font-black text-lg mb-4 text-
+                                <h3 className="font-black text-lg mb-4 text-gray-800 border-b pb-2">
+                                    🤖 {mode === 'kenno' ? '現場目線の解説' : '基礎解説'}
+                                </h3>
+                                
+                                {isExplaining ? (
+                                    <div className="text-center py-8">
+                                        <div className="animate-spin rounded-full h-10 w-10 border-b-4 border-blue-600 mx-auto mb-4"></div>
+                                        <p className="text-sm font-bold text-gray-500">AIが解説を作成中...</p>
+                                    </div>
+                                ) : (
+                                    <div className="w-full">
+                                        <div className="mb-4 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap font-medium">
+                                            {explanation}
+                                        </div>
+                                        
+                                        {mode === 'shoken' && (
+                                            <div className="mb-6 relative border-t pt-4">
+                                                <h4 className="font-bold text-orange-600 text-xs mb-2">🔥 現場監督の目線（建能版）</h4>
+                                                <div className="relative rounded-lg bg-orange-50 p-3 border border-orange-100 overflow-hidden">
+                                                    <p className="text-xs text-gray-800 filter blur-[3px] select-none pointer-events-none leading-relaxed">
+                                                        現場でこれをやると即事故に繋がります。なぜなら、2次試験の記述でも問われる「品質管理」が根本的に欠落しているからです。実際の現場では、打設前に必ず…
+                                                    </p>
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/20">
+                                                        <span className="bg-orange-600 text-white text-[10px] font-bold py-1 px-3 rounded-full shadow-md">ロック解除は有料版で</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                
+                                <button 
+                                    onClick={nextQuestion} 
+                                    disabled={isExplaining}
+                                    className={`w-full py-4 text-white rounded-xl font-bold disabled:bg-gray-300 disabled:cursor-not-allowed shadow active:scale-95 transition mt-auto ${mode === 'kenno' ? 'bg-orange-600' : 'bg-blue-600'}`}
+                                >
+                                    {isExplaining ? 'AIの解説を待っています...' : (currentIdx + 1 < questions.length ? '次の問題へ進む'
