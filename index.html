@@ -11,6 +11,8 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body { font-family: sans-serif; background-color: #f3f4f6; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -26,6 +28,11 @@
             const [mode, setMode] = useState('shoken');
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
+            
+            // AI解説用のスイッチ（追加設備）
+            const [showModal, setShowModal] = useState(false);
+            const [isExplaining, setIsExplaining] = useState(false);
+            const [explanation, setExplanation] = useState('');
 
             useEffect(() => {
                 const init = async () => {
@@ -52,14 +59,42 @@
                 }
             };
 
-            const handleAnswer = (choiceKey, choiceText) => {
-                // ※明日、ここに「AI解説の中継ボックス」を繋ぎます！
-                alert(`あなたが選んだのは「選択肢 ${choiceKey}」ですね！\n\n※ここにAIによる詳しい解説が表示されるようになります。\nOKを押すと次の問題へ進みます。`);
-                
+            // 🔽 AI中継ボックスを呼び出す関数
+            const handleAnswer = async (choiceKey, choiceText) => {
+                const currentQ = questions[currentIdx];
+                setShowModal(true);       // 解説画面を出す
+                setIsExplaining(true);    // 「考え中...」のぐるぐるを出す
+                setExplanation('');       // 前の解説を消す
+
+                try {
+                    // 以前所長が作っていた「/api/chat」へデータを送る配線
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            question: currentQ.question,
+                            userAnswer: choiceText,
+                            isPremium: mode === 'kenno'
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error("APIエラー");
+                    
+                    const data = await response.json();
+                    // AIからの返答をセット
+                    setExplanation(data.reply || data.message || data.text || "【テスト表示】AIからの解説データを受信しました。（※実際の文章はapi側の設定に依存します）");
+                } catch(error) {
+                    setExplanation("AIの呼び出しに失敗しました。Vercelのapiフォルダ（chat.js等）の設定を確認してください。");
+                }
+                setIsExplaining(false); // ぐるぐるを止める
+            };
+
+            const nextQuestion = () => {
+                setShowModal(false);
                 if (currentIdx + 1 < questions.length) {
                     setCurrentIdx(currentIdx + 1);
                 } else {
-                    alert('全問終了しました！お疲れ様でした。');
+                    alert('全問終了しました！トップに戻ります。');
                     setView('menu');
                 }
             };
@@ -90,29 +125,23 @@
 
             const currentQ = questions[currentIdx];
             if (!currentQ) return null;
-
-            // JSONデータの中から選択肢（choices）を取り出して並べる準備
             const choicesArray = currentQ.choices ? Object.entries(currentQ.choices) : [];
 
             return (
-                <div className="max-w-md mx-auto p-4 pt-6">
+                <div className="max-w-md mx-auto p-4 pt-6 relative">
                     <div className="bg-white rounded-2xl p-6 shadow-xl border-t-8 border-blue-600">
                         <div className="flex justify-between items-center mb-4">
                             <p className="text-xs font-bold text-blue-600 bg-blue-50 py-1 px-3 rounded-full">
                                 {mode === 'kenno' ? '🔥 建能版' : '📘 ショーケン版'}
                             </p>
-                            <p className="text-xs font-bold text-gray-500">
-                                第 {currentIdx + 1} 問 / 全 {questions.length} 問
-                            </p>
+                            <p className="text-xs font-bold text-gray-500">第 {currentIdx + 1} 問 / 全 {questions.length} 問</p>
                         </div>
                         
                         <div className="mb-2 text-xs text-gray-400 font-bold">
                             [{currentQ.year}年 {currentQ.session} No.{currentQ.no}] {currentQ.category} - {currentQ.subcategory}
                         </div>
                         
-                        <p className="font-bold text-gray-800 leading-relaxed mb-6 text-lg">
-                            {currentQ.question}
-                        </p>
+                        <p className="font-bold text-gray-800 leading-relaxed mb-6 text-lg">{currentQ.question}</p>
 
                         <div className="space-y-3">
                             {choicesArray.map(([key, text]) => (
@@ -128,11 +157,37 @@
                         </div>
 
                         <div className="mt-8 pt-4 border-t border-gray-100 text-center">
-                            <button onClick={() => setView('menu')} className="text-gray-400 text-xs font-bold underline px-4 py-2">
-                                メニューに戻る
-                            </button>
+                            <button onClick={() => setView('menu')} className="text-gray-400 text-xs font-bold underline px-4 py-2">メニューに戻る</button>
                         </div>
                     </div>
+
+                    {/* 🔽 AI解説の画面（モーダル） */}
+                    {showModal && (
+                        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center p-4 z-50 fade-in">
+                            <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl max-h-[85vh] overflow-y-auto">
+                                <h3 className="font-black text-xl mb-4 text-blue-600 border-b pb-2">🤖 AI解説</h3>
+                                
+                                {isExplaining ? (
+                                    <div className="text-center py-10">
+                                        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mx-auto mb-4"></div>
+                                        <p className="text-sm font-bold text-gray-500">AIが現場目線で解説を作成中...</p>
+                                    </div>
+                                ) : (
+                                    <div className="mb-6 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap font-medium">
+                                        {explanation}
+                                    </div>
+                                )}
+                                
+                                <button 
+                                    onClick={nextQuestion} 
+                                    disabled={isExplaining}
+                                    className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold disabled:bg-gray-300 disabled:cursor-not-allowed shadow active:scale-95 transition"
+                                >
+                                    {currentIdx + 1 < questions.length ? '次の問題へ進む' : '結果を見る'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         }
