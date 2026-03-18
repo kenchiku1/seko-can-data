@@ -12,7 +12,7 @@
     <style>
         body { font-family: sans-serif; background-color: #f3f4f6; }
         .blur-text { filter: blur(4px); user-select: none; pointer-events: none; opacity: 0.6; }
-        .fade-in { animation: fadeIn 0.2s ease-out; }
+        .fade-in { animation: fadeIn 0.15s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -38,7 +38,7 @@
             const [explanation2, setExplanation2] = useState(''); 
             const [showPassword, setShowPassword] = useState(false);
             const [inputPass, setInputPass] = useState('');
-            const [totalInFile, setTotalInFile] = useState(0);
+            const [totalCount, setTotalCount] = useState(0);
 
             useEffect(() => {
                 liff.init({ liffId }).then(() => {
@@ -53,21 +53,22 @@
                 try {
                     const res = await fetch('/H20-R7.json');
                     const data = await res.json();
-                    
                     let all = Array.isArray(data) ? data : (data.questions || []);
-                    setTotalInFile(all.length);
+                    setTotalCount(all.length);
 
-                    // 🔽 修正：重要度(frequency)を優先しつつ、ランダムにシャッフルする「重み付きランダム」
-                    const sorted = [...all].sort((a, b) => {
-                        const weightA = (a.frequency || 0) + (Math.random() * 5); // 頻度にランダムな「揺らぎ」を加える
-                        const weightB = (b.frequency || 0) + (Math.random() * 5);
-                        return weightB - weightA;
-                    });
+                    // 🔥 【超・揺らぎロジック】
+                    // 頻出度(frequency)が高いほど上位に来やすいが、
+                    // 強めの乱数を掛け合わせることで、毎回違う並び順を生成
+                    const randomized = [...all].map(q => ({
+                        ...q,
+                        // 抽選スコア = (頻出度 + 1) * 0〜1の乱数
+                        drawScore: (Number(q.frequency) || 1) * Math.random()
+                    })).sort((a, b) => b.drawScore - a.drawScore);
 
-                    setQuestions(sorted);
+                    setQuestions(randomized);
                     setCurrentIdx(0);
                     setView('quiz');
-                } catch (e) { alert("データ読込エラー"); setView('menu'); }
+                } catch (e) { alert("データロード失敗"); setView('menu'); }
             };
 
             const handleAnswer = async (key, text) => {
@@ -78,8 +79,9 @@
                 setShowModal(true);       
                 setIsExplaining(true);    
                 
-                let persona = mode === 'shoken' ? "親切な先輩監督" : "厳しい現場責任者";
-                const prompt = persona + "として短文解説。前置き不要。\n問題:" + q.question + "\n正解:" + q.answer + "\n回答:" + text + "\n【1次】正解根拠(80字)\n【2次】現場実務の勘所(80字)";
+                // 🚀 AI指示：よりキレのある短文へ（正午のサクサク感を再現）
+                let persona = mode === 'shoken' ? "一級技士の先輩" : "厳しい現場所長";
+                const prompt = persona + "として即答。余計な挨拶不要。\n問題:" + q.question + "\n正解:" + q.answer + "\n回答:" + text + "\n【1次】根拠(70字)\n【2次】現場実務の要(70字)";
 
                 try {
                     const res = await fetch('/api/chat', {
@@ -90,16 +92,16 @@
                     const data = await res.json();
                     const parts = (data.result || "").split('【2次】');
                     setExplanation1(parts[0].replace('【1次】','').trim());
-                    setExplanation2(parts[1] ? parts[1].trim() : "現場管理の要点。記述対策として理由まで暗記必須。");
-                } catch(e) { setExplanation1("エラー"); }
+                    setExplanation2(parts[1] ? parts[1].trim() : "品質管理の急所です。");
+                } catch(e) { setExplanation1("通信エラー"); }
                 setIsExplaining(false); 
             };
 
             const getRank = (rate) => {
-                if (rate === 100) return { title: "伝説の監理技術者", color: "text-red-600" };
-                if (rate >= 80) return { title: "凄腕現場総監督", color: "text-orange-600" };
-                if (rate >= 60) return { title: "一級施工管理技士", color: "text-blue-600" };
-                return { title: "現場見習い", color: "text-gray-600" };
+                if (rate === 100) return "伝説の監理技術者";
+                if (rate >= 80) return "凄腕現場総監督";
+                if (rate >= 60) return "一級施工管理技士";
+                return "現場見習い";
             };
 
             if (!isLoggedIn) return null;
@@ -107,24 +109,29 @@
             if (view === 'menu') {
                 return (
                     <div className="max-w-md mx-auto p-6 pt-12">
-                        <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-blue-600">
-                            <h1 className="text-3xl font-black mb-1 italic">seko-can</h1>
-                            <p className="text-blue-600 font-bold mb-8 text-xs underline">一級建築施工管理技士 AI過去問</p>
+                        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center border-t-8 border-blue-700">
+                            <h1 className="text-4xl font-black mb-1 italic text-gray-800">seko-can</h1>
+                            <p className="text-blue-700 font-bold mb-10 text-xs tracking-widest">一級建築施工管理技士 AI</p>
                             {!showPassword ? (
-                                <div className="space-y-4">
-                                    <button onClick={() => startQuiz('shoken')} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow-lg active:scale-95 transition">🔵 ショーケン版</button>
-                                    <button onClick={() => setShowPassword(true)} className="w-full py-4 bg-gray-700 text-white rounded-xl font-bold shadow-lg active:scale-95 transition">🔒 建龍版</button>
+                                <div className="space-y-5">
+                                    <button onClick={() => startQuiz('shoken')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition-transform">
+                                        🔵 ショーケン版 <span className="text-[10px] block opacity-80">標準演習モード</span>
+                                    </button>
+                                    <button onClick={() => setShowPassword(true)} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition-transform">
+                                        🔒 建龍版 <span className="text-[10px] block opacity-80">実践・スパルタモード</span>
+                                    </button>
                                 </div>
                             ) : (
-                                <div className="bg-gray-100 p-6 rounded-xl border fade-in text-center">
-                                    <p className="font-bold text-gray-700 mb-3 text-sm">パスワードを入力してください</p>
-                                    <input type="text" value={inputPass} onChange={(e)=>setInputPass(e.target.value)} className="w-full p-3 border rounded-lg mb-4 text-center font-bold" placeholder="パスワード入力" />
-                                    <div className="flex gap-2">
-                                        <button onClick={()=>setShowPassword(false)} className="flex-1 py-3 bg-gray-300 rounded-lg">戻る</button>
-                                        <button onClick={()=>{ if(inputPass===SECRET_PASSWORD) startQuiz('kenno'); else alert("不一致"); }} className="flex-1 py-3 bg-blue-600 text-white rounded-lg">解除</button>
+                                <div className="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-300 fade-in">
+                                    <p className="font-bold text-gray-600 mb-4 text-sm">暗証コードを入力</p>
+                                    <input type="text" value={inputPass} onChange={(e)=>setInputPass(e.target.value)} className="w-full p-4 border-2 rounded-xl mb-4 text-center font-black text-xl tracking-widest focus:border-blue-500 outline-none" placeholder="******" />
+                                    <div className="flex gap-3">
+                                        <button onClick={()=>setShowPassword(false)} className="flex-1 py-3 bg-gray-300 rounded-xl font-bold">戻る</button>
+                                        <button onClick={()=>{ if(inputPass===SECRET_PASSWORD) startQuiz('kenno'); else alert("コードが違います"); }} className="flex-1 py-3 bg-blue-700 text-white rounded-xl font-bold">解除</button>
                                     </div>
                                 </div>
                             )}
+                            <p className="mt-10 text-[10px] text-gray-400 font-bold tracking-tighter text-center">現場事務所 ログイン済：相馬所長</p>
                         </div>
                     </div>
                 );
@@ -132,29 +139,28 @@
 
             if (view === 'result') {
                 const rate = Math.round((score / questions.length) * 100);
-                const rank = getRank(rate);
                 return (
                     <div className="max-w-md mx-auto p-6 pt-12 fade-in">
-                        <div className="bg-white rounded-2xl shadow-2xl p-8 text-center border-t-8 border-orange-500">
-                            <h2 className="text-xl font-bold mb-4 text-gray-600">現場演習 終了</h2>
-                            <div className="mb-6">
-                                <p className="text-5xl font-black text-gray-800">{rate}%</p>
-                                <p className="text-sm text-gray-500 mt-1">{questions.length}問中 {score}問正解</p>
+                        <div className="bg-white rounded-3xl shadow-2xl p-10 text-center border-t-8 border-orange-500">
+                            <h2 className="text-lg font-bold mb-6 text-gray-500 tracking-widest">演習終了</h2>
+                            <div className="mb-8">
+                                <p className="text-6xl font-black text-gray-800">{rate}<span className="text-2xl">%</span></p>
+                                <p className="text-xs text-gray-400 mt-2 font-bold">{questions.length}項目中 {score}項目 適合</p>
                             </div>
-                            <div className="bg-orange-50 p-6 rounded-2xl mb-8 border border-orange-100">
-                                <p className={`text-2xl font-black ${rank.color}`}>{rank.title}</p>
+                            <div className="bg-orange-50 p-6 rounded-2xl mb-10 border border-orange-100">
+                                <p className="text-[10px] font-bold text-orange-400 mb-1 tracking-widest uppercase">Rank</p>
+                                <p className="text-2xl font-black text-orange-600">{getRank(rate)}</p>
                             </div>
-                            <button onClick={() => setView('menu')} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow-lg">戻る</button>
+                            <button onClick={() => setView('menu')} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow-lg active:scale-95 transition">事務所へ戻る</button>
                         </div>
                     </div>
                 );
             }
 
             if (view === 'loading') return (
-                <div className="max-w-md mx-auto p-12 text-center">
-                    <div className="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-                    <p className="font-bold text-gray-600">全 {totalInFile} 問をロード中...</p>
-                    <p className="text-xs text-gray-400 mt-2 italic">重要問題を優先的に抽出しています</p>
+                <div className="max-w-md mx-auto p-20 text-center">
+                    <div className="animate-spin h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
+                    <p className="font-black text-gray-700">現場資料 {totalCount} 件<br/>スクリーニング中...</p>
                 </div>
             );
 
@@ -163,43 +169,43 @@
                 <div className="max-w-md mx-auto bg-white min-h-screen p-6 relative">
                     {!showModal ? (
                         <div className="fade-in">
-                            <div className="flex justify-between items-center mb-6">
-                                <p className="text-xs font-bold text-gray-400 font-mono italic">No.{currentIdx + 1} / {questions.length}</p>
-                                <p className="text-xs font-bold text-blue-600">{mode==='shoken'?'🔵ショーケン':'🔥建龍'}</p>
+                            <div className="flex justify-between items-center mb-8 border-b-2 border-gray-50 pb-3">
+                                <p className="text-[10px] font-bold text-gray-400 tracking-widest">SLOT.{currentIdx + 1} / {questions.length}</p>
+                                <p className="text-[10px] font-bold text-blue-700 uppercase tracking-widest">{mode==='shoken'?'shoken':'kenryu'}</p>
                             </div>
-                            <p className="font-bold text-gray-800 text-lg mb-8 leading-snug">{q.question}</p>
-                            <div className="space-y-3">
+                            <p className="font-bold text-gray-800 text-xl mb-10 leading-relaxed tracking-tight">{q.question}</p>
+                            <div className="space-y-4">
                                 {q.choices && Object.entries(q.choices).map(([k, t]) => (
-                                    <button key={k} onClick={() => handleAnswer(k, t)} className="w-full p-4 text-left border-2 border-gray-100 rounded-xl flex items-start active:bg-blue-50 transition">
-                                        <span className="w-6 h-6 bg-gray-200 rounded-full text-center text-xs leading-6 mr-3 flex-shrink-0 font-bold">{k}</span>
-                                        <span className="text-sm font-medium text-gray-700 leading-snug">{t}</span>
+                                    <button key={k} onClick={() => handleAnswer(k, t)} className="w-full p-5 text-left border-2 border-gray-50 rounded-2xl flex items-start active:bg-blue-50 active:border-blue-200 transition-all duration-100">
+                                        <span className="w-7 h-7 bg-gray-100 rounded-full text-center text-xs leading-7 mr-4 flex-shrink-0 font-black text-gray-500">{k}</span>
+                                        <span className="text-sm font-bold text-gray-700 leading-snug">{t}</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
                     ) : (
                         <div className="fade-in flex flex-col h-full">
-                            <div className={`text-5xl font-black text-center mb-6 p-2 rounded-xl ${judge.includes('⭕️') ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}`}>{judge}</div>
-                            <div className="flex-1 space-y-6">
+                            <div className={`text-6xl font-black text-center mb-10 py-4 rounded-3xl ${judge.includes('⭕️') ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}`}>{judge}</div>
+                            <div className="flex-1 space-y-8">
                                 <div>
-                                    <h3 className="text-xs font-bold text-blue-600 mb-1 flex items-center"><span className="bg-blue-600 text-white text-[10px] rounded px-1.5 mr-2">1次</span> 出題者の目線</h3>
-                                    <div className="bg-blue-50 p-4 rounded-xl text-sm text-gray-800">{isExplaining ? 'AI解析中...' : explanation1}</div>
+                                    <h3 className="text-[10px] font-black text-blue-600 mb-2 tracking-widest uppercase">■ First Stage (Theory)</h3>
+                                    <div className="bg-blue-50 p-5 rounded-2xl text-sm font-bold text-gray-700 leading-relaxed border-l-4 border-blue-600">{isExplaining ? '解析中...' : explanation1}</div>
                                 </div>
                                 <div>
-                                    <h3 className="text-xs font-bold text-red-600 mb-1 flex items-center"><span className="bg-red-600 text-white text-[10px] rounded px-1.5 mr-2">2次</span> 現場監督の目線</h3>
+                                    <h3 className="text-[10px] font-black text-red-600 mb-2 tracking-widest uppercase">■ Second Stage (Site)</h3>
                                     {mode === 'kenno' ? (
-                                        <div className="bg-red-50 p-4 rounded-xl text-sm text-gray-800 border border-red-100">{isExplaining ? '分析中...' : explanation2}</div>
+                                        <div className="bg-red-50 p-5 rounded-2xl text-sm font-bold text-gray-700 leading-relaxed border-l-4 border-red-600">{isExplaining ? '分析中...' : explanation2}</div>
                                     ) : (
-                                        <div className="relative rounded-xl bg-gray-50 p-4 border border-dashed border-gray-300 overflow-hidden">
-                                            <p className="text-sm blur-text leading-relaxed">（建龍版限定のアドバイスを表示。実務の勘所をマスターしましょう）</p>
-                                            <button onClick={() => { setView('menu'); setShowModal(false); setShowPassword(true); }} className="absolute inset-0 m-auto h-10 w-40 bg-gray-800 text-white text-[10px] font-bold rounded-full shadow-lg active:scale-95">🔒 建龍版で解除</button>
+                                        <div className="relative rounded-2xl bg-gray-50 p-5 border-2 border-dashed border-gray-200 overflow-hidden">
+                                            <p className="text-sm blur-text leading-relaxed font-bold">（ここには建龍版限定の実戦アドバイスが表示されます。現場での「勘所」を身につけましょう）</p>
+                                            <button onClick={() => { setView('menu'); setShowModal(false); setShowPassword(true); }} className="absolute inset-0 m-auto h-12 w-48 bg-gray-900 text-white text-[10px] font-black rounded-full shadow-2xl tracking-widest active:scale-95 transition">🔒 建龍版でアンロック</button>
                                         </div>
                                     )}
                                 </div>
                             </div>
-                            <div className="mt-8 space-y-4 pb-10 text-center">
-                                {!isExplaining && <button onClick={()=>{setShowModal(false); if(currentIdx+1 < questions.length) setCurrentIdx(currentIdx+1); else setView('result');}} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg active:scale-95 transition">次へ進む</button>}
-                                <button onClick={()=>{setView('menu'); setShowModal(false);}} className="text-gray-400 text-xs underline">中断</button>
+                            <div className="mt-12 space-y-4 pb-12">
+                                {!isExplaining && <button onClick={()=>{setShowModal(false); if(currentIdx+1 < questions.length) setCurrentIdx(currentIdx+1); else setView('result');}} className="w-full py-5 bg-blue-700 text-white rounded-2xl font-black text-xl shadow-xl active:scale-95 transition">NEXT STEP</button>}
+                                <button onClick={()=>{setView('menu'); setShowModal(false);}} className="text-gray-400 text-[10px] font-bold underline w-full text-center tracking-widest uppercase">Abort Mission</button>
                             </div>
                         </div>
                     )}
