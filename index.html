@@ -38,12 +38,16 @@
             const [inputPass, setInputPass] = useState('');
             const SECRET_PASSWORD = "0000"; 
 
+            // 🚨 ここが新しい「通電チェッカー」です
             useEffect(() => {
+                alert("✅ 現場の最新図面（Ver.4）を読み込みました！");
                 const init = async () => {
                     try {
                         await liff.init({ liffId });
                         if (liff.isLoggedIn()) { setIsLoggedIn(true); } else { liff.login(); }
-                    } catch (e) { console.error("LIFF Error", e); }
+                    } catch (e) { 
+                        alert("通信エラー: " + e.message);
+                    }
                 };
                 init();
             }, []);
@@ -177,7 +181,6 @@
             if (view === 'loading') return <div className="text-center mt-20 font-bold text-gray-600">問題データ展開中...</div>;
 
             const currentQ = questions[currentIdx];
-            // ⚠️ もしデータが見つからなくても、真っ白にならずに警告文を出す安全装置
             if (!currentQ) return <div style={{ textAlign: 'center', marginTop: '50px', fontWeight: 'bold' }}>問題の準備中、またはデータが見つかりません...</div>;
 
             const choicesArray = currentQ.choices ? Object.entries(currentQ.choices) : [];
@@ -222,34 +225,3 @@
                                 
                                 {judgeResult === 'correct' && (
                                     <div className="text-center mb-4">
-                                        <span className="text-5xl">⭕️</span>
-                                        <h2 className="text-2xl font-black text-red-500 mt-2">正解！</h2>
-                                    </div>
-                                )}
-                                {judgeResult === 'incorrect' && (
-                                    <div className="text-center mb-4">
-                                        <span className="text-5xl">❌</span>
-                                        <h2 className="text-2xl font-black text-blue-600 mt-2">不正解...</h2>
-                                    </div>
-                                )}
-
-                                <h3 className="font-black text-lg mb-4 text-gray-800 border-b pb-2">
-                                    🤖 {mode === 'kenno' ? '現場目線の解説' : '基礎解説'}
-                                </h3>
-                                
-                                {isExplaining ? (
-                                    <div className="text-center py-8">
-                                        <div className="animate-spin rounded-full h-10 w-10 border-b-4 border-blue-600 mx-auto mb-4"></div>
-                                        <p className="text-sm font-bold text-gray-500">AIが解説を作成中...</p>
-                                    </div>
-                                ) : (
-                                    <div className="w-full">
-                                        <div className="mb-4 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap font-medium">
-                                            {explanation}
-                                        </div>
-                                        
-                                        {mode === 'shoken' && (
-                                            <div className="mb-6 relative border-t pt-4">
-                                                <h4 className="font-bold text-orange-600 text-xs mb-2">🔥 現場監督の目線（建能版）</h4>
-                                                <div className="relative rounded-lg bg-orange-50 p-3 border border-orange-100 overflow-hidden">
-                                                    <p className="text-xs text
