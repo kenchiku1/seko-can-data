@@ -9,8 +9,11 @@
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: sans-serif; background-color: #f3f4f6; }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -20,69 +23,72 @@
         function App() {
             const [isLoggedIn, setIsLoggedIn] = useState(false);
             const [view, setView] = useState('menu');
-            const [mode, setMode] = useState('');
-            const [questions, setQuestions] = useState([]);
-            const [currentIdx, setCurrentIdx] = useState(0);
+            const [mode, setMode] = useState('shoken');
 
             useEffect(() => {
                 const init = async () => {
                     try {
                         await liff.init({ liffId });
-                        if (liff.isLoggedIn()) { setIsLoggedIn(true); } else { liff.login(); }
-                    } catch (e) { console.error(e); }
+                        if (liff.isLoggedIn()) { 
+                            setIsLoggedIn(true); 
+                        } else { 
+                            liff.login(); 
+                        }
+                    } catch (e) { 
+                        console.error("LIFF Error", e); 
+                    }
                 };
                 init();
             }, []);
 
-            // 問題データを読み込む関数
-            const loadQuestions = async (selectedMode) => {
-                try {
-                    const res = await fetch('/H20-R7.json');
-                    const data = await res.json();
-                    // ランダムにシャッフルしてセット
-                    setQuestions(data.sort(() => 0.5 - Math.random()));
-                    setCurrentIdx(0);
-                    setMode(selectedMode);
-                    setView('quiz');
-                } catch (e) {
-                    alert("問題データの読み込みに失敗しました。ファイルを確認してください。");
-                }
-            };
-
-            if (!isLoggedIn) return <div className="flex h-screen items-center justify-center">認証中...</div>;
+            if (!isLoggedIn) {
+                return (
+                    <div style={{ textAlign: 'center', marginTop: '50px', fontWeight: 'bold' }}>
+                        認証ゲート通過中...
+                    </div>
+                );
+            }
 
             if (view === 'menu') {
                 return (
-                    <div className="max-w-md mx-auto p-6 pt-16">
-                        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center border-t-8 border-blue-600">
-                            <h1 className="text-3xl font-black mb-1">seko-can.com</h1>
+                    <div className="max-w-md mx-auto p-6 pt-12">
+                        <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-blue-600">
+                            <h1 className="text-3xl font-black mb-2">seko-can.com</h1>
                             <p className="text-blue-600 font-bold mb-8 text-sm">一級建築施工管理技士 AI過去問アプリ</p>
-                            <button onClick={() => loadQuestions('shoken')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold mb-4 active:scale-95 transition">
-                                【ショーケン版】1次試験を開始
+                            
+                            <button 
+                                onClick={() => { setMode('shoken'); setView('quiz'); }}
+                                className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow mb-4"
+                            >
+                                【ショーケン版】<br/><span className="text-sm">1次試験 全範囲テスト</span>
                             </button>
-                            <button onClick={() => loadQuestions('kenno')} className="w-full py-5 bg-gradient-to-br from-amber-700 to-orange-800 text-white rounded-2xl font-bold active:scale-95 transition">
-                                🔥【建能版】2次直結ルート
+
+                            <button 
+                                onClick={() => { setMode('kenno'); setView('quiz'); }}
+                                className="w-full py-4 bg-orange-600 text-white rounded-xl font-bold shadow"
+                            >
+                                【建能版】<br/><span className="text-sm">1次突破（2次直結型）</span>
                             </button>
+
+                            <p className="mt-8 text-xs text-gray-400 font-bold">ログイン中：相馬所長</p>
                         </div>
                     </div>
                 );
             }
 
-            const q = questions[currentIdx];
-
             return (
-                <div className="max-w-md mx-auto p-4 pt-10">
-                    <div className={`bg-white rounded-2xl p-6 shadow-xl border-l-8 ${mode === 'kenno' ? 'border-orange-700' : 'border-blue-600'}`}>
-                        <p className="text-xs font-bold mb-2 text-gray-400">Question {currentIdx + 1}</p>
-                        <p className="font-bold text-gray-800 mb-8">{q?.question || "読み込み中..."}</p>
-                        <div className="space-y-3">
-                            {[1, 2, 3, 4].map(n => (
-                                <button key={n} onClick={() => setCurrentIdx(currentIdx + 1)} className="w-full p-4 text-left border rounded-xl font-bold text-gray-700 hover:bg-blue-50">
-                                    {q?.[`option${n}`]}
-                                </button>
-                            ))}
-                        </div>
-                        <button onClick={() => setView('menu')} className="mt-8 text-gray-400 text-xs font-bold underline w-full text-center">メニューへ戻る</button>
+                <div className="max-w-md mx-auto p-6 pt-12">
+                    <div className="bg-white rounded-2xl p-6 shadow-xl border-t-8 border-gray-800">
+                        <p className="text-sm font-bold text-gray-500 mb-4">
+                            {mode === 'kenno' ? '【建能版】テスト問題' : '【ショーケン版】テスト問題'}
+                        </p>
+                        <p className="font-bold text-lg mb-8">ここに問題が表示されます。</p>
+                        <button 
+                            onClick={() => setView('menu')} 
+                            className="w-full py-4 bg-gray-200 text-gray-800 rounded-xl font-bold"
+                        >
+                            メニューに戻る
+                        </button>
                     </div>
                 </div>
             );
