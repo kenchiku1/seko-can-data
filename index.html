@@ -3,30 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>seko-can.com | エラー調査</title>
+    <title>seko-can.com | 一級建築施工管理技士</title>
     
     <script>
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            document.body.innerHTML = '<div style="padding:20px; background:#fff; color:red; font-family:sans-serif; border-top: 8px solid red; margin: 10px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">' +
-                '<h2 style="margin-top:0; font-size: 20px; font-weight: 900;">🚨 アプリ内部でショート（エラー）発生</h2>' +
-                '<p style="font-weight: bold; margin-bottom: 5px;">【エラーの詳細】</p>' +
-                '<div style="background: #fee; padding: 10px; border-radius: 5px; margin-bottom: 15px; word-break: break-all;">' + msg + '</div>' +
-                '<p><strong>発生箇所:</strong> ' + lineNo + '行目</p>' +
-                '<p style="color:#666; font-size:13px; margin-top:20px; font-weight: bold;">※所長、この赤い画面のスクショを私に見せてください！一発で直します。</p>' +
-            '</div>';
+        window.onerror = function(msg, url, lineNo) {
+            document.body.innerHTML = '<div style="padding:20px; color:red; font-weight:bold;">🚨 エラー発生: ' + msg + ' (' + lineNo + '行目)</div>';
             return false;
-        };
-
-        const originalConsoleError = console.error;
-        console.error = function(...args) {
-            originalConsoleError.apply(console, args);
-            const errStr = args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' ');
-            if(errStr.includes('SyntaxError') || errStr.includes('Error:')) {
-                const el = document.createElement('div');
-                el.style.cssText = 'padding:15px; background:#fee; color:red; margin:10px; border:2px solid red; border-radius: 8px; font-family:sans-serif; font-weight: bold;';
-                el.innerHTML = '🚨 翻訳エラー（Babel）:<br><span style="font-weight:normal;">' + errStr + '</span><br><br><span style="color:#333; font-size:12px;">※この赤い画面のスクショを私に見せてください！</span>';
-                document.body.appendChild(el);
-            }
         };
     </script>
 
@@ -35,56 +17,171 @@
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif; background-color: #f3f4f6; }
+        .blur-text { filter: blur(5px); user-select: none; pointer-events: none; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div id="root">
-        <div style="padding: 50px 20px; text-align: center; font-family: sans-serif;">
-            <div style="font-size: 24px; font-weight: 900; margin-bottom: 10px;">⏳ 読込中...</div>
-            <div style="color: #666; font-weight: bold;">（この画面のまま止まる場合は、コードの翻訳エラーです。<br>赤いエラー画面が出るのをお待ちください）</div>
-        </div>
-    </div>
+<body>
+    <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
         const liffId = "2009463648-LX7h6H1q";
+        
+        // ⚠️ 有料版のパスワード設定 ⚠️
+        const SECRET_PASSWORD = "0000"; 
 
         function App() {
-            const [status, setStatus] = useState("テスト開始");
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [view, setView] = useState('menu'); 
+            const [mode, setMode] = useState('shoken');
+            const [questions, setQuestions] = useState([]);
+            const [currentIdx, setCurrentIdx] = useState(0);
+            
+            const [showModal, setShowModal] = useState(false);
+            const [isExplaining, setIsExplaining] = useState(false);
+            
+            // 解説を2つに分ける
+            const [explanation1, setExplanation1] = useState(''); // 1次解説
+            const [explanation2, setExplanation2] = useState(''); // 2次解説
+            
+            const [showPassword, setShowPassword] = useState(false);
+            const [inputPass, setInputPass] = useState('');
 
             useEffect(() => {
                 const init = async () => {
                     try {
-                        setStatus("認証ゲート（LIFF）の起動中...");
                         await liff.init({ liffId });
-                        if (liff.isLoggedIn()) {
-                            setStatus("✅ ログイン完了！アプリは正常です！");
-                        } else {
-                            setStatus("未ログインです。認証画面へ進みます...");
-                            liff.login();
-                        }
-                    } catch (e) { 
-                        setStatus("⚠️ 認証エラー: " + e.message);
-                    }
+                        if (liff.isLoggedIn()) { setIsLoggedIn(true); } else { liff.login(); }
+                    } catch (e) { console.error("LIFF Error", e); }
                 };
                 init();
             }, []);
 
-            return (
-                <div className="max-w-md mx-auto p-6 pt-12">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-green-600">
-                        <h1 className="text-2xl font-black text-green-600 mb-4">通電テスト完了！</h1>
-                        <p className="font-bold text-gray-800 text-lg mb-6">{status}</p>
-                        <p className="text-sm text-gray-600 text-left bg-gray-50 p-4 rounded-lg font-medium leading-relaxed">
-                            もしこの緑色の画面が出た場合、真っ白になっていた原因は「複雑な問題表示コード」のどこかに隠れていました。<br/>
-                            <br/>
-                            所長、この画面（緑か、赤か）のスクショを私に見せてください！
-                        </p>
-                    </div>
-                </div>
-            );
-        }
+            const startQuiz = async (selectedMode) => {
+                setMode(selectedMode);
+                setView('loading');
+                try {
+                    const response = await fetch('/H20-R7.json');
+                    const data = await response.json();
+                    setQuestions(data);
+                    setCurrentIdx(0);
+                    setView('quiz');
+                } catch (error) {
+                    alert("データの読み込みに失敗しました。");
+                    setView('menu');
+                }
+            };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
-</body>
-</html>
+            const unlockKenno = () => {
+                if (inputPass === SECRET_PASSWORD) {
+                    setShowPassword(false);
+                    setInputPass('');
+                    startQuiz('kenno');
+                } else {
+                    alert("パスワードが違います。");
+                }
+            };
+
+            const handleAnswer = async (choiceKey, choiceText) => {
+                const currentQ = questions[currentIdx];
+                if (!currentQ) return;
+                
+                setShowModal(true);       
+                setIsExplaining(true);    
+                setExplanation1('');
+                setExplanation2('');
+
+                // 🚨 AIへの指示：所長のスクショ通り、2つの目線で回答させる
+                const promptText = `あなたは1級建築施工管理技士の凄腕所長です。以下の問題とユーザーの回答に対し、2つに分けて解説してください。
+【1次解説】：選択肢が合っているかの判定と、その理由を端的に。
+【2次解説】：実際の現場でどう役立つか、2次試験（記述）にどう繋がるかの現場目線の深い知識。
+
+問題: ${currentQ.question}
+選んだ選択肢: ${choiceText}`;
+
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: promptText })
+                    });
+                    
+                    const data = await response.json();
+                    if (!response.ok) throw new Error("APIエラー");
+                    
+                    let fullText = data.result || "解説を取得できませんでした。";
+                    let part1 = fullText;
+                    let part2 = "現場では、品質管理を徹底し、事前の施工計画書に基づく確認が重要です。2次試験の記述対策としても、この基本事項を必ず押さえておきましょう。";
+                    
+                    if (fullText.includes('【2次解説】')) {
+                        const parts = fullText.split('【2次解説】');
+                        part1 = parts[0].replace('【1次解説】', '').trim();
+                        part2 = parts[1].trim();
+                    }
+
+                    setExplanation1(part1);
+                    setExplanation2(part2);
+                } catch(error) {
+                    setExplanation1("AIエラー: " + error.message);
+                }
+                setIsExplaining(false); 
+            };
+
+            const nextQuestion = () => {
+                setShowModal(false);
+                if (currentIdx + 1 < questions.length) {
+                    setCurrentIdx(currentIdx + 1);
+                } else {
+                    alert('全問終了しました！トップに戻ります。');
+                    setView('menu');
+                }
+            };
+
+            if (!isLoggedIn) return <div style={{ textAlign: 'center', marginTop: '50px', fontWeight: 'bold' }}>認証ゲート通過中...</div>;
+
+            if (view === 'menu') {
+                return (
+                    <div className="max-w-md mx-auto p-6 pt-12">
+                        <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-blue-600">
+                            <h1 className="text-3xl font-black mb-2">seko-can.com</h1>
+                            <p className="text-blue-600 font-bold mb-8 text-sm">一級建築施工管理技士 AI過去問アプリ</p>
+                            
+                            {!showPassword ? (
+                                <div className="space-y-4">
+                                    <button onClick={() => startQuiz('shoken')} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow active:scale-95 transition">
+                                        🔵【ショーケン版】<br/><span className="text-sm">1次試験 全範囲テスト</span>
+                                    </button>
+
+                                    <button onClick={() => setShowPassword(true)} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow active:scale-95 transition">
+                                        🔒【建能版】ロック解除<br/><span className="text-sm">パスワード入力へ</span>
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="bg-gray-100 p-6 rounded-xl border border-gray-300 fade-in">
+                                    <p className="font-bold text-gray-800 mb-4 text-sm">有料版のパスワードを入力</p>
+                                    <input 
+                                        type="password" 
+                                        value={inputPass}
+                                        onChange={(e) => setInputPass(e.target.value)}
+                                        className="w-full p-3 border border-gray-300 rounded-lg mb-4 text-center text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="****"
+                                    />
+                                    <div className="flex gap-2">
+                                        <button onClick={() => setShowPassword(false)} className="flex-1 py-3 bg-gray-300 text-gray-700 rounded-lg font-bold">戻る</button>
+                                        <button onClick={unlockKenno} className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-bold">解除</button>
+                                    </div>
+                                </div>
+                            )}
+                            <p className="mt-8 text-xs text-gray-400 font-bold">ログイン中：相馬所長</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (view === 'loading') return <div className="text-center mt-20 font-bold text-gray-600">問題データ展開中...</div>;
+
+            const currentQ = questions[currentIdx];
