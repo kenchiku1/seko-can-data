@@ -12,13 +12,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
         body { font-family: 'Noto Sans JP', sans-serif; }
-        .blur-explanation { filter: blur(4px); user-select: none; pointer-events: none; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.4s ease forwards; }
-        @keyframes pulse-red { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); } 50% { box-shadow: 0 0 0 8px rgba(220,38,38,0); } }
-        .pulse-red { animation: pulse-red 2s infinite; }
-        .ai-loading::after { content: ''; display: inline-block; width: 1em; animation: dots 1.2s steps(4,end) infinite; }
-        @keyframes dots { 0%,20%{content:'';} 40%{content:'.';} 60%{content:'..';} 80%,100%{content:'...';} }
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 min-h-screen">
@@ -26,401 +19,56 @@
 
     <script type="text/babel">
         const { useState, useEffect, useCallback } = React;
-  const liffId = "2009463648-LX7h6H1q";
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+        const liffId = "2009463648-LX7h6H1q";
 
-  useEffect(() => {
-    const initializeLiff = async () => {
-      try {
-        await liff.init({ liffId });
-        if (liff.isLoggedIn()) {
-          setIsLoggedIn(true);
-        } else {
-          liff.login();
-        }
-      } catch (error) {
-        console.error("LIFF初期化エラー", error);
-      }
-    };
-    initializeLiff();
-  }, []);
+        function App() {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  if (!isLoggedIn) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f3f4f6' }}>
-      <p>ログイン認証中...</p>
-    </div>;
-  }
-
-        // =============================================
-        // AI解説を取得する関数（中継ボックスを呼び出す）
-        // =============================================
-        const fetchAIExplanation = async (question, correctAnswerText, isPremium) => {
-            const mode = isPremium ? '建龍版（2次直結）' : 'ショーケン版（1次）';
-            const prompt = isPremium
-                ? `あなたは一級建築施工管理技士の試験対策の専門家であり、現場経験豊富な施工管理技士です。
-以下の問題について、【2次試験の経験記述に直結する】実践的な解説をしてください。
-
-問題：${question}
-正解の選択肢：${correctAnswerText}
-
-以下の形式で答えてください：
-【現場監督の視点】
-・この知識が2次試験の経験記述（品質管理・工程管理・安全管理）でどう使えるか
-・現場での具体的な実務との関連
-・絶対に覚えるべきポイント（試験頻出）
-
-語尾は「〜だ！」「〜ぞ！」など力強い口調で、300文字以内で簡潔に。`
-                : `あなたは一級建築施工管理技士の試験対策の専門家です。
-以下の問題について、1次試験対策として簡潔な解説をしてください。
-
-問題：${question}
-正解の選択肢：${correctAnswerText}
-
-・なぜこれが正解（または不適当）なのか
-・試験で狙われるポイント
-200文字以内で簡潔に。`;
-
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt })
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error);
-            return data.result;
-        };
-
-        // =============================================
-        // メインアプリ
-        // =============================================
-        const App = () => {
-            const [mode, setMode] = useState('start');
-            const [isPremium, setIsPremium] = useState(false);
-            const [showPasswordModal, setShowPasswordModal] = useState(false);
-            const [passwordInput, setPasswordInput] = useState('');
-            const [showUnlockMessage, setShowUnlockMessage] = useState(false);
-
-            // 問題関連
-            const [questions, setQuestions] = useState([]);
-            const [currentQ, setCurrentQ] = useState(null);
-            const [selectedAnswer, setSelectedAnswer] = useState(null);
-            const [isCorrect, setIsCorrect] = useState(null);
-            const [showExplanation, setShowExplanation] = useState(false);
-
-            // AI解説関連
-            const [aiExplanation, setAiExplanation] = useState('');
-            const [aiLoading, setAiLoading] = useState(false);
-            const [aiError, setAiError] = useState('');
-
-            // 進捗
-            const [quizCount, setQuizCount] = useState(0);
-            const [correctCount, setCorrectCount] = useState(0);
-
-            const BAND_URL = "https://band.us/";
-            const SECRET_PASSWORD = "KENRYU";
-
-            // 4/6シャットダウン機能
             useEffect(() => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const isBandAccess = urlParams.get('source') === 'band';
-                const isTestMode = urlParams.get('test') === '406';
-                const deadline = new Date('2026-04-07T00:00:00+09:00');
-                const now = new Date();
-                if ((now >= deadline || isTestMode) && !isBandAccess) {
-                    setMode('locked_406');
-                }
+                const initializeLiff = async () => {
+                    try {
+                        await liff.init({ liffId });
+                        if (liff.isLoggedIn()) {
+                            setIsLoggedIn(true);
+                        } else {
+                            liff.login();
+                        }
+                    } catch (error) {
+                        console.error("LIFF初期化エラー", error);
+                    }
+                };
+                initializeLiff();
             }, []);
 
-            // JSONデータ読み込み
-            useEffect(() => {
-                if (mode === 'quiz' && questions.length === 0) {
-                    fetch('/H20-R7.json')
-                        .then(r => r.json())
-                        .then(data => {
-                            setQuestions(data);
-                            pickQuestion(data);
-                        })
-                        .catch(() => setQuestions([]));
-                }
-            }, [mode]);
-
-            const pickQuestion = (qs) => {
-                const pool = qs || questions;
-                if (pool.length === 0) return;
-                const q = pool[Math.floor(Math.random() * pool.length)];
-                setCurrentQ(q);
-                setSelectedAnswer(null);
-                setIsCorrect(null);
-                setShowExplanation(false);
-                setAiExplanation('');
-                setAiError('');
-            };
-
-            const handleAnswer = async (num) => {
-                if (selectedAnswer !== null) return;
-                setSelectedAnswer(num);
-                const correct = num === currentQ.answer;
-                setIsCorrect(correct);
-                setShowExplanation(true);
-                setQuizCount(c => c + 1);
-                if (correct) setCorrectCount(c => c + 1);
-
-                // AI解説を自動取得
-                setAiLoading(true);
-                setAiError('');
-                try {
-                    const correctText = currentQ.choices[String(currentQ.answer)];
-                    const result = await fetchAIExplanation(currentQ.question, correctText, isPremium);
-                    setAiExplanation(result);
-                } catch (e) {
-                    setAiError('AI解説の取得に失敗しました。');
-                } finally {
-                    setAiLoading(false);
-                }
-            };
-
-            const handlePremiumClick = () => {
-                if (isPremium) { setMode('quiz'); }
-                else { setShowPasswordModal(true); }
-            };
-
-            const checkPassword = () => {
-                if (passwordInput === SECRET_PASSWORD) {
-                    setIsPremium(true);
-                    setShowPasswordModal(false);
-                    setShowUnlockMessage(true);
-                } else {
-                    alert("⚠️ 鍵が違います。BAND内の動画でパスワードを確認してください！");
-                }
-            };
-
-            const resetToStart = () => {
-                setMode('start');
-                setQuizCount(0);
-                setCorrectCount(0);
-                setCurrentQ(null);
-                setQuestions([]);
-            };
-
-            // =============================================
-            // 4/6ロック画面
-            // =============================================
-            if (mode === 'locked_406') {
+            if (!isLoggedIn) {
                 return (
-                    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center border-t-8 border-gray-600">
-                        <div className="text-4xl mb-4">🚧</div>
-                        <h2 className="text-2xl font-bold mb-4 text-red-600">LINEからの直接公開は<br/>終了しました</h2>
-                        <p className="text-gray-700 mb-6 text-left leading-relaxed">
-                            4/6をもちまして、こちらのURLからのアプリへの直接アクセスは封鎖いたしました。<br/><br/>
-                            今後のアプリ利用（ショーケン版の継続）、および改善要望の受付は、すべて<strong>【BANDコミュニティ】</strong>へ一本化されました。
-                        </p>
-                        <a href={BAND_URL} target="_blank" rel="noopener noreferrer"
-                           className="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-4 rounded-lg shadow-md transition text-lg">
-                            BANDコミュニティへ合流する
-                        </a>
+                    <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                        <p className="text-gray-600 font-bold">認証ゲートを通過中...</p>
                     </div>
                 );
             }
 
-            // =============================================
-            // ロック解除メッセージ
-            // =============================================
-            if (showUnlockMessage) {
-                return (
-                    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center border-t-8 border-red-600">
-                        <div className="text-5xl mb-4">🔥</div>
-                        <h2 className="text-2xl font-extrabold mb-4 text-red-700">ロック解除・着工ヨシ！</h2>
-                        <p className="text-xl text-gray-800 font-bold mb-8 leading-relaxed">
-                            「1次合格を単なる『通過点』に変え、<br/>
-                            2次を『確信』へ昇華させる<br/>
-                            最短直結ルートだ！」
-                        </p>
-                        <button onClick={() => { setShowUnlockMessage(false); setMode('quiz'); }}
-                                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition text-lg pulse-red">
-                            建龍版 特訓を開始する
-                        </button>
-                    </div>
-                );
-            }
-
-            // =============================================
-            // スタート画面
-            // =============================================
-            if (mode === 'start') {
-                return (
-                    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center">
-                        <h1 className="text-3xl font-extrabold mb-2 text-gray-800">seko-can.com</h1>
-                        <p className="text-sm font-bold text-gray-500 mb-8 border-b-2 pb-4">一級建築施工管理技士 AI過去問アプリ</p>
-
-                        <div className="mb-6">
-                            <button onClick={() => setMode('quiz')}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg shadow-md transition text-lg">
+            // --- ログイン成功後、ここから下がアプリの本編 ---
+            return (
+                <div className="max-w-md mx-auto p-4 pt-10">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-blue-600">
+                        <h1 className="text-2xl font-black text-gray-900 mb-2">seko-can.com</h1>
+                        <p className="text-sm font-bold text-blue-600 mb-6">一級建築施工管理技士 AI過去問アプリ</p>
+                        
+                        <div className="space-y-4">
+                            <button className="w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition">
                                 【ショーケン版】<br/>1次試験 全範囲テストを開始
                             </button>
-                            <p className="text-xs text-gray-500 mt-2">1次試験の基礎固めはこちら（無料）</p>
-                        </div>
-
-                        <div className="mt-8 border-t-2 pt-6 border-dashed border-gray-300">
-                            <button onClick={handlePremiumClick}
-                                    className="w-full bg-gradient-to-r from-red-700 to-red-900 hover:from-red-800 hover:to-red-950 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition text-lg border-2 border-red-500">
-                                🔥【建龍版】<br/>1次試験突破（2次直結型）<br/>ルートを開始
+                            <button className="w-full py-4 bg-gradient-to-r from-amber-700 to-orange-800 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition">
+                                🔥【建能版】<br/>1次試験突破（2次直結型）<br/>ルートを開始
                             </button>
-                            <p className="text-xs text-red-600 font-bold mt-2">※有料版</p>
                         </div>
-
-                        {showPasswordModal && (
-                            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
-                                <div className="bg-white p-6 rounded-xl w-full max-w-sm">
-                                    <h3 className="text-lg font-bold mb-4">建龍版 解除キー入力</h3>
-                                    <input
-                                        type="text"
-                                        value={passwordInput}
-                                        onChange={(e) => setPasswordInput(e.target.value.toUpperCase())}
-                                        placeholder="パスワードを入力"
-                                        className="w-full border-2 border-gray-300 p-3 rounded mb-4 font-bold text-center"
-                                    />
-                                    <button onClick={checkPassword} className="w-full bg-red-600 text-white font-bold py-3 rounded mb-2">
-                                        認証して解除する
-                                    </button>
-                                    <button onClick={() => setShowPasswordModal(false)} className="w-full bg-gray-400 text-white font-bold py-2 rounded hover:bg-gray-500">
-                                        キャンセル
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        <p className="mt-8 text-[10px] text-gray-400">© 1級建築施工管理・認証</p>
                     </div>
-                );
-            }
-
-            // =============================================
-            // 問題画面
-            // =============================================
-            if (mode === 'quiz') {
-                if (!currentQ) {
-                    return (
-                        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-center">
-                            <p className="text-gray-500">問題を読み込み中...</p>
-                        </div>
-                    );
-                }
-
-                return (
-                    <div className="max-w-md mx-auto mt-4 mb-8 p-5 bg-white rounded-xl shadow-lg fade-in">
-
-                        {/* ヘッダー */}
-                        <div className="flex justify-between items-center mb-3 border-b pb-2">
-                            <span className="text-xs font-bold text-gray-500">
-                                {isPremium
-                                    ? <span className="text-red-600">🔥建龍版（2次直結）</span>
-                                    : <span className="text-blue-600">🔵ショーケン版</span>}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                                正解率: {quizCount > 0 ? Math.round(correctCount/quizCount*100) : 0}% ({correctCount}/{quizCount})
-                            </span>
-                        </div>
-
-                        {/* 問題メタ */}
-                        <div className="flex gap-2 mb-3 flex-wrap">
-                            <span className="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-1 rounded">{currentQ.year} {currentQ.session} No.{currentQ.no}</span>
-                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{currentQ.category}</span>
-                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{currentQ.subcategory}</span>
-                        </div>
-
-                        {/* 問題文 */}
-                        <p className="font-bold text-gray-800 mb-4 leading-relaxed text-sm">{currentQ.question}</p>
-
-                        {/* 選択肢 */}
-                        <div className="space-y-2 mb-4">
-                            {[1,2,3,4].map(num => {
-                                let bg = 'bg-gray-50 hover:bg-gray-100 border-gray-200';
-                                if (selectedAnswer !== null) {
-                                    if (num === currentQ.answer) bg = 'bg-green-100 border-green-400';
-                                    else if (num === selectedAnswer && !isCorrect) bg = 'bg-red-100 border-red-400';
-                                    else bg = 'bg-gray-50 border-gray-200 opacity-60';
-                                }
-                                return (
-                                    <button
-                                        key={num}
-                                        onClick={() => handleAnswer(num)}
-                                        disabled={selectedAnswer !== null}
-                                        className={`w-full text-left p-3 rounded-lg border-2 text-sm transition ${bg} ${selectedAnswer === null ? 'cursor-pointer' : 'cursor-default'}`}
-                                    >
-                                        <span className="font-bold mr-2">{num}.</span>{currentQ.choices[String(num)]}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        {/* 正誤表示 */}
-                        {selectedAnswer !== null && (
-                            <div className={`text-center font-extrabold text-xl py-2 mb-4 rounded-lg fade-in ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                {isCorrect ? '⭕ 正解！' : `❌ 不正解（正解は${currentQ.answer}番）`}
-                            </div>
-                        )}
-
-                        {/* 解説エリア */}
-                        {showExplanation && (
-                            <div className="fade-in">
-
-                                {/* 1次解説（JSON） */}
-                                <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                    <h3 className="font-bold text-blue-800 mb-1 text-sm">💡 1次解説（出題者の目線）</h3>
-                                    <p className="text-xs text-gray-700 leading-relaxed">{currentQ.explanation}</p>
-                                    {currentQ.examiner_trap && (
-                                        <p className="text-xs text-orange-700 mt-2 font-bold">⚠️ 罠: {currentQ.examiner_trap}</p>
-                                    )}
-                                </div>
-
-                                {/* 2次直結解説（AI生成） */}
-                                <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 relative">
-                                    <h3 className="font-bold text-red-800 mb-1 text-sm">👷 2次直結解説（AI現場監督）</h3>
-
-                                    {aiLoading && (
-                                        <p className="text-xs text-gray-500 ai-loading">AI解説を生成中</p>
-                                    )}
-
-                                    {aiError && (
-                                        <p className="text-xs text-red-500">{aiError}</p>
-                                    )}
-
-                                    {!aiLoading && !aiError && aiExplanation && (
-                                        isPremium ? (
-                                            // 建龍版：はっきり表示
-                                            <p className="text-xs text-gray-900 leading-relaxed font-medium whitespace-pre-wrap">{aiExplanation}</p>
-                                        ) : (
-                                            // ショーケン版：モザイク
-                                            <div className="relative">
-                                                <p className="text-xs text-gray-900 leading-relaxed blur-explanation">{aiExplanation}</p>
-                                                <div className="absolute inset-0 flex items-center justify-center bg-white/20 rounded">
-                                                    <span className="bg-gray-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-md">
-                                                        🔒 建龍版でロック解除
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-
-                                {/* 次の問題 */}
-                                <button
-                                    onClick={() => pickQuestion()}
-                                    className="w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-lg shadow transition mb-2"
-                                >
-                                    次の問題へ ▶
-                                </button>
-                            </div>
-                        )}
-
-                        {/* トップへ戻る */}
-                        <button onClick={resetToStart} className="w-full mt-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded transition text-sm">
-                            現場事務所（トップ）へ戻る
-                        </button>
-                    </div>
-                );
-            }
-
-            return null;
-        };
+                </div>
+            );
+        }
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
