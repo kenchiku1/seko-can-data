@@ -24,10 +24,12 @@
         const liffId = "2009463648-LX7h6H1q";
         const SECRET_PASSWORD = "KENRYU";
 
-        // ✅ モードごとに履歴キーを分離
-        const HISTORY_KEY = (mode) => `seko_history_v3_${mode}`;
+        // モードごとの履歴キー（v4）
+        const HISTORY_KEY = (mode) => `seko_history_v4_${mode}`;
+        // 旧キー一覧（移行・クリーンアップ用）
+        const LEGACY_KEYS = ['seko_history_v3', 'seko_history_v3_shoken', 'seko_history_v3_kenno'];
 
-        // ✅ Fisher-Yates シャッフル（均一なランダム）
+        // Fisher-Yates シャッフル
         function shuffle(array) {
             const arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -37,9 +39,39 @@
             return arr;
         }
 
-        // ✅ 問題IDを生成（year + no を主キーにして重複誤判定を防止）
+        // 問題ID：year + no のみ
         function getQId(q) {
             return `${q.year}_${q.no}`;
+        }
+
+        // 履歴をSetで返す（旧キーも統合して自動移行）
+        function loadHistory(mode) {
+            const key = HISTORY_KEY(mode);
+            const current = new Set(JSON.parse(localStorage.getItem(key) || '[]'));
+            let merged = false;
+            LEGACY_KEYS.forEach(lk => {
+                const old = JSON.parse(localStorage.getItem(lk) || '[]');
+                if (old.length > 0) {
+                    old.forEach(id => current.add(id));
+                    localStorage.removeItem(lk);
+                    merged = true;
+                }
+            });
+            if (merged) saveHistory(mode, current);
+            return current;
+        }
+
+        // 履歴SetをlocalStorageへ保存
+        function saveHistory(mode, historySet) {
+            localStorage.setItem(HISTORY_KEY(mode), JSON.stringify([...historySet]));
+        }
+
+        // 解答した問題を即時・確実に記録し、最新のSetを返す
+        function recordAnswered(mode, q) {
+            const history = loadHistory(mode);
+            history.add(getQId(q));
+            saveHistory(mode, history);
+            return history;
         }
 
         function App() {
@@ -67,18 +99,14 @@
                 });
             }, []);
 
-            const getHistory = (m) => JSON.parse(localStorage.getItem(HISTORY_KEY(m)) || '[]');
-
             const updateStats = async () => {
                 try {
                     const res = await fetch('/H20-R7.json');
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
-                    const shokenSeen = getHistory('shoken').length;
-                    const kennoSeen  = getHistory('kenno').length;
                     setStats({
-                        shoken: { seen: shokenSeen, total: all.length },
-                        kenno:  { seen: kennoSeen,  total: all.length },
+                        shoken: { seen: loadHistory('shoken').size, total: all.length },
+                        kenno:  { seen: loadHistory('kenno').size,  total: all.length },
                     });
                 } catch (e) { console.error(e); }
             };
@@ -92,19 +120,20 @@
                     const data = await res.json();
                     let all = Array.isArray(data) ? data : (data.questions || []);
 
-                    const history = getHistory(m);
+                    // 最新の履歴をSetで取得（旧キーも自動統合）
+                    let history = loadHistory(m);
 
-                    // ✅ 未解答の問題だけ抽出
-                    let pool = all.filter(q => !history.includes(getQId(q)));
+                    // 未解答の問題だけ抽出
+                    let pool = all.filter(q => !history.has(getQId(q)));
 
-                    // ✅ 全問解き終わり → そのモードの履歴だけリセットして全問再出題
+                    // 全問解き終わり → そのモードの履歴だけリセットして全問再出題
                     if (pool.length === 0) {
                         alert("全ての問題を完工しました！履歴をリセットして新しい順序で再開します。");
-                        localStorage.removeItem(HISTORY_KEY(m));
+                        saveHistory(m, new Set());
                         pool = all;
                     }
 
-                    // ✅ Fisher-Yates で確実にシャッフル
+                    // Fisher-Yates で確実にシャッフル
                     setQuestions(shuffle(pool));
                     setCurrentIdx(0);
                     setView('quiz');
@@ -116,13 +145,8 @@
                 const isCorrect = String(key) === String(q.answer);
                 if (isCorrect) setScore(score + 1);
 
-                // ✅ 解いた瞬間にそのモードの履歴へ記録
-                const history = getHistory(mode);
-                const qId = getQId(q);
-                if (!history.includes(qId)) {
-                    history.push(qId);
-                    localStorage.setItem(HISTORY_KEY(mode), JSON.stringify(history));
-                }
+                // 解いた瞬間に即時・確実に記録（Set管理で重複なし）
+                recordAnswered(mode, q);
 
                 setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
                 setShowModal(true);
@@ -186,8 +210,8 @@
                                     <button onClick={() => startQuiz('shoken')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition">🔵 ショーケン版を開始</button>
                                     <button onClick={() => setShowPassword(true)} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition">🔒 建龍版を解除</button>
                                     <div className="flex gap-3 mt-2 justify-center">
-                                        <button onClick={() => { if (confirm('ショーケン版の履歴を消去しますか？')) { localStorage.removeItem(HISTORY_KEY('shoken')); updateStats(); } }} className="text-[10px] text-blue-300 underline">🔵 履歴リセット</button>
-                                        <button onClick={() => { if (confirm('建龍版の履歴を消去しますか？')) { localStorage.removeItem(HISTORY_KEY('kenno')); updateStats(); } }} className="text-[10px] text-gray-300 underline">🔒 履歴リセット</button>
+                                        <button onClick={() => { if (confirm('ショーケン版の履歴を消去しますか？')) { saveHistory('shoken', new Set()); updateStats(); } }} className="text-[10px] text-blue-300 underline">🔵 履歴リセット</button>
+                                        <button onClick={() => { if (confirm('建龍版の履歴を消去しますか？')) { saveHistory('kenno', new Set()); updateStats(); } }} className="text-[10px] text-gray-300 underline">🔒 履歴リセット</button>
                                     </div>
                                 </div>
                             ) : (
