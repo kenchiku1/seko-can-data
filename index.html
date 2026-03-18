@@ -12,6 +12,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
         body { font-family: 'Noto Sans JP', sans-serif; }
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 min-h-screen">
@@ -23,9 +25,13 @@
 
         function App() {
             const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [view, setView] = useState('menu'); // 'menu' or 'quiz'
+            const [questions, setQuestions] = useState([]);
+            const [currentIdx, setCurrentIdx] = useState(0);
 
+            // LINEログイン初期化
             useEffect(() => {
-                const initializeLiff = async () => {
+                const init = async () => {
                     try {
                         await liff.init({ liffId });
                         if (liff.isLoggedIn()) {
@@ -33,38 +39,54 @@
                         } else {
                             liff.login();
                         }
-                    } catch (error) {
-                        console.error("LIFF初期化エラー", error);
-                    }
+                    } catch (e) { console.error(e); }
                 };
-                initializeLiff();
+                init();
             }, []);
 
+            // 問題データの読み込み（H20-R7.jsonを想定）
+            const startQuiz = async () => {
+                try {
+                    const res = await fetch('/H20-R7.json');
+                    const data = await res.json();
+                    setQuestions(data.sort(() => 0.5 - Math.random()).slice(0, 10)); // 10問ランダム
+                    setView('quiz');
+                } catch (e) {
+                    alert("問題データの読み込みに失敗しました。ファイルがVercelにあるか確認してください。");
+                }
+            };
+
             if (!isLoggedIn) {
+                return <div className="flex h-screen items-center justify-center">認証中...</div>;
+            }
+
+            if (view === 'menu') {
                 return (
-                    <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-                        <p className="text-gray-600 font-bold">認証ゲートを通過中...</p>
+                    <div className="max-w-md mx-auto p-6 pt-20 fade-in">
+                        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center border-t-8 border-blue-600">
+                            <h1 className="text-3xl font-black mb-2">seko-can.com</h1>
+                            <p className="text-blue-600 font-bold mb-8">一級建築施工管理技士 合格アプリ</p>
+                            <button onClick={startQuiz} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition mb-4">
+                                【ショーケン版】1次試験を開始
+                            </button>
+                            <p className="text-xs text-gray-400">ログイン中：{liff.getDecodedIDToken()?.name} 様</p>
+                        </div>
                     </div>
                 );
             }
 
-            // --- ログイン成功後、ここから下がアプリの本編 ---
             return (
-                <div className="max-w-md mx-auto p-4 pt-10">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-blue-600">
-                        <h1 className="text-2xl font-black text-gray-900 mb-2">seko-can.com</h1>
-                        <p className="text-sm font-bold text-blue-600 mb-6">一級建築施工管理技士 AI過去問アプリ</p>
-                        
-                        <div className="space-y-4">
-                            <button className="w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition">
-                                【ショーケン版】<br/>1次試験 全範囲テストを開始
-                            </button>
-                            <button className="w-full py-4 bg-gradient-to-r from-amber-700 to-orange-800 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition">
-                                🔥【建能版】<br/>1次試験突破（2次直結型）<br/>ルートを開始
-                            </button>
+                <div className="max-w-md mx-auto p-4 fade-in">
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <p className="text-sm text-blue-600 font-bold mb-2">第 {currentIdx + 1} 問</p>
+                        <p className="font-bold text-lg mb-6">{questions[currentIdx]?.question}</p>
+                        <div className="space-y-3">
+                            {[1, 2, 3, 4].map(n => (
+                                <button key={n} className="w-full p-4 text-left border-2 border-gray-100 rounded-xl hover:bg-blue-50 transition font-medium">
+                                    {questions[currentIdx]?.[`option${n}`]}
+                                </button>
+                            ))}
                         </div>
-                        <p className="mt-8 text-[10px] text-gray-400">© 1級建築施工管理・認証</p>
                     </div>
                 </div>
             );
