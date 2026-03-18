@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // アクセス許可の設定
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -13,9 +12,10 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(500).json({ error: 'APIキーが未設定です' });
 
   try {
-    // 外部ツールを使わず、直接Googleに通信する最も原始的で確実な方法
+    // ❌ 誤：gemini-1.5-flash（すでに撤去済みの古い廃材）
+    // ✅ 正：gemini-3.0-flash（2026年現在の最新規格）
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -27,12 +27,10 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Googleからのエラー通知があればそのまま返す
     if (data.error) {
       return res.status(500).json({ error: JSON.stringify(data.error) });
     }
 
-    // 回答テキストの抽出
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!text) {
