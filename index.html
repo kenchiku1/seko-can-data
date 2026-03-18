@@ -6,9 +6,8 @@
     <title>seko-can.com | 一級建築施工管理技士</title>
     
     <script>
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            var errDetails = error ? error.stack : '';
-            document.body.innerHTML = '<div style="padding:20px; color:red; font-weight:bold;">🚨 エラー発生: ' + msg + '<br>行数: ' + lineNo + '<br><pre style="font-size:10px; margin-top:10px;">' + errDetails + '</pre></div>';
+        window.onerror = function(msg, url, lineNo) {
+            document.body.innerHTML = '<div style="padding:20px; color:red; font-weight:bold;">🚨 エラー発生: ' + msg + ' (' + lineNo + '行目)</div>';
             return false;
         };
     </script>
@@ -16,27 +15,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js" crossorigin></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" crossorigin></script>
     <style>
-        body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif; background-color: #f3f4f6; }
+        body { font-family: sans-serif; background-color: #f3f4f6; }
         .blur-text { filter: blur(5px); user-select: none; pointer-events: none; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <div id="root">
-        <div style="padding: 50px; text-align: center; font-weight: bold; color: #666;">
-            ⏳ 現場（アプリ）を構築中...<br>
-            <span style="font-size: 12px; font-weight: normal;">※この画面で止まる場合は翻訳エラーです</span>
-        </div>
-    </div>
+    <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
         const liffId = "2009463648-LX7h6H1q";
-        
         const SECRET_PASSWORD = "0000"; 
 
         function App() {
@@ -45,13 +38,10 @@
             const [mode, setMode] = useState('shoken');
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
-            
             const [showModal, setShowModal] = useState(false);
             const [isExplaining, setIsExplaining] = useState(false);
-            
             const [explanation1, setExplanation1] = useState(''); 
             const [explanation2, setExplanation2] = useState(''); 
-            
             const [showPassword, setShowPassword] = useState(false);
             const [inputPass, setInputPass] = useState('');
 
@@ -59,14 +49,8 @@
                 const init = async () => {
                     try {
                         await liff.init({ liffId });
-                        if (liff.isLoggedIn()) { 
-                            setIsLoggedIn(true); 
-                        } else { 
-                            liff.login(); 
-                        }
-                    } catch (e) { 
-                        console.error("LIFF Error", e); 
-                    }
+                        if (liff.isLoggedIn()) { setIsLoggedIn(true); } else { liff.login(); }
+                    } catch (e) { console.error("LIFF Error", e); }
                 };
                 init();
             }, []);
@@ -99,18 +83,12 @@
             const handleAnswer = async (choiceKey, choiceText) => {
                 const currentQ = questions[currentIdx];
                 if (!currentQ) return;
-                
                 setShowModal(true);       
                 setIsExplaining(true);    
                 setExplanation1('');
                 setExplanation2('');
 
-                // 🚨 原因だった箇所を「最も安全な文字の繋ぎ方」に完全修正
-                const promptText = "あなたは1級建築施工管理技士の凄腕所長です。以下の問題とユーザーの回答に対し、2つに分けて解説してください。\n" +
-                                   "【1次解説】：選択肢が合っているかの判定と、その理由を端的に。\n" +
-                                   "【2次解説】：実際の現場でどう役立つか、2次試験（記述）にどう繋がるかの現場目線の深い知識。\n\n" +
-                                   "問題: " + currentQ.question + "\n" +
-                                   "選んだ選択肢: " + choiceText;
+                const promptText = "あなたは1級建築施工管理技士の凄腕所長です。2つに分けて解説してください。\n【1次解説】：正誤判定と理由\n【2次解説】：現場目線の知識\n\n問題: " + currentQ.question + "\n選んだ選択肢: " + choiceText;
 
                 try {
                     const response = await fetch('/api/chat', {
@@ -118,22 +96,14 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ prompt: promptText })
                     });
-                    
                     const data = await response.json();
-                    if (!response.ok) throw new Error("APIエラー");
-                    
                     let fullText = data.result || "解説を取得できませんでした。";
-                    let part1 = fullText;
-                    let part2 = "現場では、品質管理を徹底し、事前の施工計画書に基づく確認が重要です。2次試験の記述対策としても、この基本事項を必ず押さえておきましょう。";
-                    
+                    let part1 = fullText, part2 = "現場管理の重要ポイントです。";
                     if (fullText.indexOf('【2次解説】') !== -1) {
                         const parts = fullText.split('【2次解説】');
                         part1 = parts[0].replace('【1次解説】', '').trim();
-                        if (parts[1]) {
-                            part2 = parts[1].trim();
-                        }
+                        part2 = parts[1].trim();
                     }
-
                     setExplanation1(part1);
                     setExplanation2(part2);
                 } catch(error) {
@@ -152,7 +122,7 @@
                 }
             };
 
-            if (!isLoggedIn) return <div style={{ textAlign: 'center', marginTop: '50px', fontWeight: 'bold' }}>認証ゲート通過中...</div>;
+            if (!isLoggedIn) return <div className="text-center mt-10 font-bold">認証中...</div>;
 
             if (view === 'menu') {
                 return (
@@ -160,31 +130,80 @@
                         <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-blue-600">
                             <h1 className="text-3xl font-black mb-2">seko-can.com</h1>
                             <p className="text-blue-600 font-bold mb-8 text-sm">一級建築施工管理技士 AI過去問アプリ</p>
-                            
                             {!showPassword ? (
                                 <div className="space-y-4">
-                                    <button onClick={() => startQuiz('shoken')} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow active:scale-95 transition">
-                                        🔵【ショーケン版】<br/><span className="text-sm">1次試験 全範囲テスト</span>
-                                    </button>
-
-                                    <button onClick={() => setShowPassword(true)} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow active:scale-95 transition">
-                                        🔒【建能版】ロック解除<br/><span className="text-sm">パスワード入力へ</span>
-                                    </button>
+                                    <button onClick={() => startQuiz('shoken')} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow active:scale-95 transition">🔵【ショーケン版】</button>
+                                    <button onClick={() => setShowPassword(true)} className="w-full py-4 bg-gray-600 text-white rounded-xl font-bold shadow active:scale-95 transition">🔒【建能版】解除</button>
                                 </div>
                             ) : (
-                                <div className="bg-gray-100 p-6 rounded-xl border border-gray-300 fade-in">
-                                    <p className="font-bold text-gray-800 mb-4 text-sm">有料版のパスワードを入力</p>
-                                    <input 
-                                        type="password" 
-                                        value={inputPass}
-                                        onChange={(e) => setInputPass(e.target.value)}
-                                        className="w-full p-3 border border-gray-300 rounded-lg mb-4 text-center text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="****"
-                                    />
+                                <div className="bg-gray-100 p-6 rounded-xl border border-gray-300">
+                                    <input type="password" value={inputPass} onChange={(e) => setInputPass(e.target.value)} className="w-full p-3 border rounded-lg mb-4 text-center" placeholder="****" />
                                     <div className="flex gap-2">
-                                        <button onClick={() => setShowPassword(false)} className="flex-1 py-3 bg-gray-300 text-gray-700 rounded-lg font-bold">戻る</button>
-                                        <button onClick={unlockKenno} className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-bold">解除</button>
+                                        <button onClick={() => setShowPassword(false)} className="flex-1 py-3 bg-gray-300 rounded-lg">戻る</button>
+                                        <button onClick={unlockKenno} className="flex-1 py-3 bg-blue-600 text-white rounded-lg">解除</button>
                                     </div>
                                 </div>
                             )}
-                            <p className="mt-8 text-xs text-gray-400 font-bold">ログイン
+                            <p className="mt-8 text-xs text-gray-400 font-bold">ログイン中：相馬所長</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (view === 'loading') return <div className="text-center mt-20 font-bold">読込中...</div>;
+
+            const currentQ = questions[currentIdx];
+            if (!currentQ) return null;
+            const choicesArray = currentQ.choices ? Object.entries(currentQ.choices) : [];
+
+            return (
+                <div className="max-w-md mx-auto bg-white min-h-screen p-6 relative">
+                    {!showModal ? (
+                        <div className="fade-in">
+                            <p className="text-sm font-bold text-gray-800 mb-6 border-b pb-2">モード: {mode === 'shoken' ? '🔵ショーケン' : '🔥建能'}</p>
+                            <p className="font-bold text-gray-800 leading-relaxed mb-6">【第{currentIdx + 1}問】<br/>{currentQ.question}</p>
+                            <div className="space-y-3">
+                                {choicesArray.map(([key, text]) => (
+                                    <button key={key} onClick={() => handleAnswer(key, text)} className="w-full p-4 text-left border rounded-xl flex items-start">
+                                        <span className="w-6 h-6 bg-gray-200 rounded-full text-center text-xs leading-6 mr-3 flex-shrink-0">{key}</span>
+                                        <span className="text-sm">{text}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="fade-in flex flex-col h-full">
+                            <p className="font-bold text-gray-800 mb-6 border-b pb-4">【問題】<br/><span className="text-base font-normal">{currentQ.question}</span></p>
+                            <div className="flex-1 space-y-6 overflow-y-auto">
+                                <div>
+                                    <h3 className="font-bold text-blue-800 mb-2 text-sm">💡 出題者の目線</h3>
+                                    <div className="bg-blue-50 p-4 rounded-xl text-sm leading-relaxed">{isExplaining ? '作成中...' : explanation1}</div>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-red-800 mb-2 text-sm">👷 現場監督の目線</h3>
+                                    {mode === 'kenno' ? (
+                                        <div className="bg-red-50 p-4 rounded-xl text-sm leading-relaxed">{isExplaining ? '作成中...' : explanation2}</div>
+                                    ) : (
+                                        <div className="relative rounded-xl bg-gray-50 p-4 border overflow-hidden">
+                                            <p className="text-sm blur-text">現場管理において重要な数値です。2次試験でも問われるため、必ず暗記しましょう。</p>
+                                            <div className="absolute inset-0 flex items-center justify-center bg-white/20">
+                                                <button onClick={() => { setView('menu'); setShowModal(false); setShowPassword(true); }} className="bg-gray-700 text-white text-xs font-bold py-2 px-4 rounded-full shadow-lg">🔒 建能版で解除</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="mt-8 space-y-3">
+                                <button onClick={nextQuestion} className="w-full py-3 border-2 rounded-xl font-bold">次の問題へ</button>
+                                <button onClick={() => { setView('menu'); setShowModal(false); }} className="w-full py-3 bg-gray-600 text-white rounded-xl font-bold">トップへ戻る</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
