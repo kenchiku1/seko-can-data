@@ -30,7 +30,7 @@
             const [mode, setMode] = useState('shoken');
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
-            const [score, setScore] = useState(0); // 正解数
+            const [score, setScore] = useState(0);
             const [showModal, setShowModal] = useState(false);
             const [isExplaining, setIsExplaining] = useState(false);
             const [judge, setJudge] = useState('');
@@ -52,10 +52,19 @@
                 try {
                     const res = await fetch('/H20-R7.json');
                     const data = await res.json();
-                    setQuestions(data);
+                    
+                    // 🔽 修正：3問ループを解消し、全問題を設定
+                    if (Array.isArray(data) && data.length > 0) {
+                        setQuestions(data);
+                    } else if (data.questions && Array.isArray(data.questions)) {
+                        setQuestions(data.questions);
+                    } else {
+                        throw new Error("データ形式エラー");
+                    }
+                    
                     setCurrentIdx(0);
                     setView('quiz');
-                } catch (e) { alert("データエラー"); setView('menu'); }
+                } catch (e) { alert("データエラー:" + e.message); setView('menu'); }
             };
 
             const handleAnswer = async (key, text) => {
@@ -67,9 +76,17 @@
                 setShowModal(true);       
                 setIsExplaining(true);    
                 
-                const promptText = "1級建築施工管理技士として短文で解説。前置き不要。\n" +
+                // 🔽 AIへの指示をモードによって変更（差別化）
+                let systemPersona = "";
+                if (mode === 'shoken') {
+                    systemPersona = "あなたは1級建築施工管理技士の親切な先輩です。短く、わかりやすく解説してください。";
+                } else {
+                    systemPersona = "あなたは1級建築施工管理技士の凄腕所長です。2次記述試験も見据え、厳しく、実践的な現場目線の解説をしてください。";
+                }
+
+                const promptText = systemPersona + "\n前置き不要。100文字以内で回答。\n" +
                                    "問題:" + q.question + "\n正解:" + q.answer + "\n回答:" + text + "\n\n" +
-                                   "【1次】正解の根拠を100文字以内で。\n【2次】現場の注意点を100文字以内で。";
+                                   "【1次】正解の根拠を。\n【2次】現場の実務知識を。";
 
                 try {
                     const res = await fetch('/api/chat', {
@@ -81,7 +98,7 @@
                     const fullText = data.result || "";
                     const parts = fullText.split('【2次】');
                     setExplanation1(parts[0].replace('【1次】','').trim());
-                    setExplanation2(parts[1] ? parts[1].trim() : "現場管理の要点です。");
+                    setExplanation2(parts[1] ? parts[1].trim() : "現場管理の要点です。記述対策として、なぜこの処置が必要かの理由まで含めて暗記しましょう。");
                 } catch(e) { setExplanation1("エラー"); }
                 setIsExplaining(false); 
             };
@@ -104,12 +121,18 @@
                             <p className="text-blue-600 font-bold mb-8 text-xs underline">一級建築施工管理技士 AI</p>
                             {!showPassword ? (
                                 <div className="space-y-4">
-                                    <button onClick={() => startQuiz('shoken')} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow-lg active:scale-95">🔵 ショーケン版</button>
-                                    <button onClick={() => setShowPassword(true)} className="w-full py-4 bg-gray-700 text-white rounded-xl font-bold shadow-lg active:scale-95">🔒 建龍版</button>
+                                    <button onClick={() => startQuiz('shoken')} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow-lg active:scale-95 transition">🔵 ショーケン版</button>
+                                    <button onClick={() => setShowPassword(true)} className="w-full py-4 bg-gray-700 text-white rounded-xl font-bold shadow-lg active:scale-95 transition">🔒 建龍版</button>
                                 </div>
                             ) : (
                                 <div className="bg-gray-100 p-6 rounded-xl border fade-in">
-                                    <input type="text" value={inputPass} onChange={(e)=>setInputPass(e.target.value)} className="w-full p-3 border rounded-lg mb-4 text-center font-bold" placeholder="パスワード：KENRYU" />
+                                    <input 
+                                        type="text" 
+                                        value={inputPass} 
+                                        onChange={(e)=>setInputPass(e.target.value)} 
+                                        className="w-full p-3 border rounded-lg mb-4 text-center font-bold" 
+                                        placeholder="パスワード入力" 
+                                    />
                                     <div className="flex gap-2">
                                         <button onClick={()=>setShowPassword(false)} className="flex-1 py-3 bg-gray-300 rounded-lg">戻る</button>
                                         <button onClick={()=>{ if(inputPass===SECRET_PASSWORD) startQuiz('kenno'); else alert("不一致"); }} className="flex-1 py-3 bg-blue-600 text-white rounded-lg">解除</button>
@@ -145,9 +168,10 @@
                 );
             }
 
-            if (view === 'loading') return <div className="text-center mt-20 font-bold">準備中...</div>;
+            if (view === 'loading') return <div className="text-center mt-20 font-bold">データ展開中...</div>;
 
             const q = questions[currentIdx];
+            if (!q) return <div className="text-center mt-20 font-bold text-red-500">エラー：問題データが見つかりません</div>;
             return (
                 <div className="max-w-md mx-auto bg-white min-h-screen p-6 relative">
                     {!showModal ? (
@@ -158,7 +182,7 @@
                             </div>
                             <p className="font-bold text-gray-800 text-lg mb-8 leading-snug">{q.question}</p>
                             <div className="space-y-3">
-                                {Object.entries(q.choices).map(([k, t]) => (
+                                {q.choices && Object.entries(q.choices).map(([k, t]) => (
                                     <button key={k} onClick={() => handleAnswer(k, t)} className="w-full p-4 text-left border rounded-xl flex items-start active:bg-blue-50 transition">
                                         <span className="w-6 h-6 bg-gray-200 rounded-full text-center text-xs leading-6 mr-3 flex-shrink-0 font-bold">{k}</span>
                                         <span className="text-sm font-medium">{t}</span>
@@ -175,12 +199,12 @@
                                     <div className="bg-blue-50 p-4 rounded-xl text-sm leading-relaxed">{isExplaining ? 'AI解析中...' : explanation1}</div>
                                 </div>
                                 <div>
-                                    <h3 className="text-xs font-bold text-red-600 mb-1">■2次試験・実務</h3>
+                                    <h3 className="text-xs font-bold text-red-800 mb-1">■2次試験・実務</h3>
                                     {mode === 'kenno' ? (
-                                        <div className="bg-red-50 p-4 rounded-xl text-sm leading-relaxed">{isExplaining ? '分析中...' : explanation2}</div>
+                                        <div className="bg-red-50 p-4 rounded-xl text-sm leading-relaxed border border-red-100">{isExplaining ? '分析中...' : explanation2}</div>
                                     ) : (
                                         <div className="relative rounded-xl bg-gray-50 p-4 border border-dashed overflow-hidden">
-                                            <p className="text-sm blur-text">（建龍版限定の記述対策アドバイスを表示します。現場目線の勘所をマスターしましょう）</p>
+                                            <p className="text-sm blur-text leading-relaxed">（建龍版限定の記述対策アドバイスを表示します。現場目線の勘所をマスターしましょう）</p>
                                             <button onClick={() => { setView('menu'); setShowModal(false); setShowPassword(true); }} className="absolute inset-0 m-auto h-10 w-40 bg-gray-800 text-white text-[10px] font-bold rounded-full shadow-lg">🔒 建龍版で解除</button>
                                         </div>
                                     )}
