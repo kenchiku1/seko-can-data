@@ -29,7 +29,6 @@
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
             
-            // AI解説用のスイッチ（追加設備）
             const [showModal, setShowModal] = useState(false);
             const [isExplaining, setIsExplaining] = useState(false);
             const [explanation, setExplanation] = useState('');
@@ -59,34 +58,44 @@
                 }
             };
 
-            // 🔽 AI中継ボックスを呼び出す関数
+            // 🔽 修正完了：AIとの通信配線（chat.jsの規格に完全対応！）
             const handleAnswer = async (choiceKey, choiceText) => {
                 const currentQ = questions[currentIdx];
-                setShowModal(true);       // 解説画面を出す
-                setIsExplaining(true);    // 「考え中...」のぐるぐるを出す
-                setExplanation('');       // 前の解説を消す
+                setShowModal(true);       
+                setIsExplaining(true);    
+                setExplanation('');       
+
+                // chat.js が待機している「prompt」という1つの文章に組み立てる
+                const promptText = mode === 'kenno' 
+                    ? `あなたは1級建築施工管理技士の凄腕所長です。以下の問題とユーザーの回答に対し、2次試験（記述）にも繋がるような実践的で厳しい現場目線の解説をしてください。\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceText}`
+                    : `あなたは1級建築施工管理技士の親切な先輩です。以下の問題とユーザーの回答に対し、基礎からわかりやすく解説してください。\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceText}`;
 
                 try {
-                    // 以前所長が作っていた「/api/chat」へデータを送る配線
                     const response = await fetch('/api/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            question: currentQ.question,
-                            userAnswer: choiceText,
-                            isPremium: mode === 'kenno'
+                            prompt: promptText // 📦 chat.jsが要求する「prompt」という名前で送る
                         })
                     });
                     
-                    if (!response.ok) throw new Error("APIエラー");
-                    
                     const data = await response.json();
-                    // AIからの返答をセット
-                    setExplanation(data.reply || data.message || data.text || "【テスト表示】AIからの解説データを受信しました。（※実際の文章はapi側の設定に依存します）");
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || "APIエラー");
+                    }
+                    
+                    // 📦 chat.jsが返してくる「result」という名前で受け取る
+                    if (data.result) {
+                        setExplanation(data.result);
+                    } else {
+                        setExplanation("解説を取得できませんでした。");
+                    }
+
                 } catch(error) {
-                    setExplanation("AIの呼び出しに失敗しました。Vercelのapiフォルダ（chat.js等）の設定を確認してください。");
+                    setExplanation("AIの呼び出しに失敗しました。\n詳細: " + error.message);
                 }
-                setIsExplaining(false); // ぐるぐるを止める
+                setIsExplaining(false); 
             };
 
             const nextQuestion = () => {
@@ -161,7 +170,6 @@
                         </div>
                     </div>
 
-                    {/* 🔽 AI解説の画面（モーダル） */}
                     {showModal && (
                         <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center p-4 z-50 fade-in">
                             <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl max-h-[85vh] overflow-y-auto">
