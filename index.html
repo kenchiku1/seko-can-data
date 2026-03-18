@@ -39,15 +39,16 @@
             return arr;
         }
 
-        // 問題ID：使えるフィールドを優先順位で組み合わせる（フォールバック付き）
+        // 問題ID：JSONの"id"フィールド（例:"R7-AM-01"）を最優先で使う
+        // → 絶対にユニーク、year/session/noの組み合わせ衝突なし
         function getQId(q) {
-            const year = q.year || q.Year || q.nen || '';
-            const no   = q.no   || q.No   || q.num || q.id || '';
-            if (year !== '' || no !== '') {
-                return `${year}_${no}`;
-            }
-            // year/no が両方ない場合は問題文全体をIDとして使う
-            return (q.question || q.Question || JSON.stringify(q)).substring(0, 60);
+            if (q.id) return q.id;
+            // idがない場合のフォールバック
+            const year    = q.year    || '';
+            const session = q.session || '';
+            const no      = q.no      || '';
+            if (year || no) return `${year}_${session}_${no}`;
+            return (q.question || JSON.stringify(q)).substring(0, 60);
         }
 
         // 履歴をSetで返す（旧キーも統合して自動移行）
