@@ -78,7 +78,6 @@
                     ? `\n【公式の正解】選択肢 ${correctAnswerKey}` 
                     : `\n（公式の正解データが未設定です。あなたが正解を判定してください）`;
 
-                // 🔽 AIへの指示を変更：ショーケン版は「3行以内で短く」
                 const promptText = mode === 'kenno' 
                     ? `あなたは1級建築施工管理技士の凄腕所長です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、2次試験（記述）にも繋がるような実践的で厳しい現場目線の解説をしてください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`
                     : `あなたは1級建築施工管理技士の親切な先輩です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、要点のみを3行以内で短く端的に解説してください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`;
@@ -203,12 +202,11 @@
                                         <p className="text-sm font-bold text-gray-500">AIが解説を作成中...</p>
                                     </div>
                                 ) : (
-                                    <>
+                                    <div className="w-full">
                                         <div className="mb-4 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap font-medium">
                                             {explanation}
                                         </div>
                                         
-                                        {/* 🔽 追加設備：ショーケン版のみに表示する「建能版のチラ見せ（ぼかし）」 */}
                                         {mode === 'shoken' && (
                                             <div className="mb-6 relative border-t pt-4">
                                                 <h4 className="font-bold text-orange-600 text-xs mb-2">🔥 現場監督の目線（建能版）</h4>
@@ -222,7 +220,7 @@
                                                 </div>
                                             </div>
                                         )}
-                                    </>
+                                    </div>
                                 )}
                                 
                                 <button 
