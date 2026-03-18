@@ -11,7 +11,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
-        body { font-family: 'Noto Sans JP', sans-serif; overflow-x: hidden; }
+        body { font-family: 'Noto Sans JP', sans-serif; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -24,28 +24,19 @@
         function App() {
             const [isLoggedIn, setIsLoggedIn] = useState(false);
             const [view, setView] = useState('menu');
+            const [mode, setMode] = useState(''); // 'shoken' or 'kenno'
 
             useEffect(() => {
                 const init = async () => {
                     try {
                         await liff.init({ liffId });
-                        if (liff.isLoggedIn()) {
-                            setIsLoggedIn(true);
-                        } else {
-                            liff.login();
-                        }
-                    } catch (e) { console.error("LIFF Error:", e); }
+                        if (liff.isLoggedIn()) { setIsLoggedIn(true); } else { liff.login(); }
+                    } catch (e) { console.error(e); }
                 };
                 init();
             }, []);
 
-            if (!isLoggedIn) {
-                return (
-                    <div className="flex h-screen items-center justify-center bg-white text-gray-500 font-bold">
-                        認証ゲートを通過中...
-                    </div>
-                );
-            }
+            if (!isLoggedIn) return <div className="flex h-screen items-center justify-center">認証ゲート通過中...</div>;
 
             if (view === 'menu') {
                 return (
@@ -55,15 +46,21 @@
                             <p className="text-blue-600 font-bold mb-8 text-sm">一級建築施工管理技士 AI過去問アプリ</p>
                             
                             <button 
-                                onClick={() => setView('quiz')}
-                                className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-transform mb-4 text-lg"
+                                onClick={() => { setMode('shoken'); setView('quiz'); }}
+                                className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg mb-4 text-lg active:scale-95 transition"
                             >
-                                【ショーケン版】<br/>1次試験を開始
+                                【ショーケン版】<br/><span className="text-sm opacity-90">1次試験 全範囲テスト</span>
                             </button>
 
-                            <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                                <p className="text-xs text-gray-400 font-medium">ログイン中</p>
-                                <p className="text-sm font-bold text-gray-600">相馬所長（テストユーザー）</p>
+                            <button 
+                                onClick={() => { setMode('kenno'); setView('quiz'); }}
+                                className="w-full py-5 bg-gradient-to-br from-amber-700 to-orange-800 text-white rounded-2xl font-bold shadow-lg text-lg active:scale-95 transition"
+                            >
+                                🔥【建能版】<br/><span className="text-sm opacity-90">1次突破（2次直結型）ルート</span>
+                            </button>
+
+                            <div className="mt-8 p-4 bg-gray-50 rounded-xl border border-gray-100 text-sm font-bold text-gray-500">
+                                ログイン中：相馬所長
                             </div>
                         </div>
                     </div>
@@ -72,23 +69,19 @@
 
             return (
                 <div className="max-w-md mx-auto p-4 pt-10">
-                    <div className="bg-white rounded-2xl p-6 shadow-xl border-l-4 border-blue-600">
-                        <p className="text-xs text-blue-600 font-black mb-2 tracking-widest uppercase">Question 01</p>
-                        <p className="font-bold text-gray-800 leading-relaxed mb-8">「建築基準法」において、床面積の算定に関する記述として、正しいものはどれか？</p>
-                        
+                    <div className={`bg-white rounded-2xl p-6 shadow-xl border-l-8 ${mode === 'kenno' ? 'border-orange-700' : 'border-blue-600'}`}>
+                        <p className={`text-xs font-black mb-2 ${mode === 'kenno' ? 'text-orange-700' : 'text-blue-600'}`}>
+                            {mode === 'kenno' ? '🔥 建能版・実戦演習' : '📘 ショーケン版・基礎演習'}
+                        </p>
+                        <p className="font-bold text-gray-800 leading-relaxed mb-8">
+                            {mode === 'kenno' ? '【記述式対策】コンクリートの打込みにおいて、コールドジョイントを防止するための留意点を述べよ。' : '建築基準法上の「延べ面積」の定義として正しいものはどれか？'}
+                        </p>
                         <div className="space-y-3">
-                            {["ピロティ部分は算定に含める", "吹抜け部分は算定から除外する", "階段室は2階分を算定する", "ベランダはすべて算定に含める"].map((txt, i) => (
-                                <button 
-                                    key={i} 
-                                    onClick={() => alert('正解！施工管理の基本ですね。')}
-                                    className="w-full p-4 text-left border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition font-bold text-gray-700 active:bg-blue-100"
-                                >
-                                    <span className="inline-block w-6 h-6 bg-gray-100 rounded-full text-center text-xs leading-6 mr-3 text-gray-400">{i+1}</span>
-                                    {txt}
-                                </button>
-                            ))}
+                            <button onClick={() => alert('明日、AI解説機能を連結します！')} className="w-full p-4 text-left border rounded-xl font-bold text-gray-700 hover:bg-gray-50 active:bg-gray-100">
+                                回答を表示してAI解説を聞く
+                            </button>
                         </div>
-                        <button onClick={() => setView('menu')} className="mt-8 text-gray-400 text-xs font-bold underline w-full text-center">メニューに戻る</button>
+                        <button onClick={() => setView('menu')} className="mt-8 text-gray-400 text-xs font-bold underline w-full text-center">メニューへ戻る</button>
                     </div>
                 </div>
             );
