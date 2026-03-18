@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
         body { font-family: 'Noto Sans JP', sans-serif; }
@@ -25,6 +26,21 @@
 
     <script type="text/babel">
         const { useState, useEffect, useCallback } = React;
+        const liffId = "2009463648-LX7h6H1q"; // 所長のLIFF ID
+
+  useEffect(() => {
+    const initializeLiff = async () => {
+      try {
+        await liff.init({ liffId });
+        if (!liff.isLoggedIn()) {
+          liff.login();
+        }
+      } catch (error) {
+        console.error("LIFFの初期化に失敗しました", error);
+      }
+    };
+    initializeLiff();
+  }, []);
 
         // =============================================
         // AI解説を取得する関数（中継ボックスを呼び出す）
