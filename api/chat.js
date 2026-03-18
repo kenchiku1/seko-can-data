@@ -1,7 +1,9 @@
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -12,35 +14,15 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(500).json({ error: 'APIキーが未設定です' });
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`,
-      {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: "gemini-1.5-flash",
-          messages: [{ role: "user", content: prompt }]
-        })
-      }
-    );
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const data = await response.json();
-
-    if (data.error) {
-      return res.status(500).json({ error: 'Google API Error: ' + JSON.stringify(data.error) });
-    }
-
-    const text = data.choices?.[0]?.message?.content;
-
-    if (!text) {
-      return res.status(500).json({ error: 'AIからの応答が空でした。詳細: ' + JSON.stringify(data) });
-    }
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
     res.status(200).json({ result: text });
   } catch (error) {
-    res.status(500).json({ error: 'System Error: ' + error.message });
+    res.status(500).json({ error: '現場エラー: ' + error.message });
   }
 }
