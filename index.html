@@ -32,7 +32,6 @@
             const [showModal, setShowModal] = useState(false);
             const [isExplaining, setIsExplaining] = useState(false);
             const [explanation, setExplanation] = useState('');
-            // 🔽 追加設備：正誤判定スイッチ
             const [judgeResult, setJudgeResult] = useState(''); 
 
             useEffect(() => {
@@ -63,7 +62,6 @@
             const handleAnswer = async (choiceKey, choiceText) => {
                 const currentQ = questions[currentIdx];
                 
-                // 🔽 追加工事：選んだ答えが正解かどうかを瞬時に判定！
                 const correctAnswerKey = currentQ.answer || currentQ.correctAnswer || currentQ.correct_answer || currentQ.correct;
                 if (correctAnswerKey) {
                     const isCorrect = String(choiceKey) === String(correctAnswerKey);
@@ -80,9 +78,10 @@
                     ? `\n【公式の正解】選択肢 ${correctAnswerKey}` 
                     : `\n（公式の正解データが未設定です。あなたが正解を判定してください）`;
 
+                // 🔽 AIへの指示を変更：ショーケン版は「3行以内で短く」
                 const promptText = mode === 'kenno' 
                     ? `あなたは1級建築施工管理技士の凄腕所長です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、2次試験（記述）にも繋がるような実践的で厳しい現場目線の解説をしてください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`
-                    : `あなたは1級建築施工管理技士の親切な先輩です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、基礎からわかりやすく解説してください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`;
+                    : `あなたは1級建築施工管理技士の親切な先輩です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、要点のみを3行以内で短く端的に解説してください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`;
 
                 try {
                     const response = await fetch('/api/chat', {
@@ -181,7 +180,6 @@
                         <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center p-4 z-50 fade-in">
                             <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl max-h-[85vh] overflow-y-auto flex flex-col">
                                 
-                                {/* 🔽 ここが新しい「⭕️❌掲示板」です！ */}
                                 {judgeResult === 'correct' && (
                                     <div className="text-center mb-4">
                                         <span className="text-5xl">⭕️</span>
@@ -195,7 +193,9 @@
                                     </div>
                                 )}
 
-                                <h3 className="font-black text-lg mb-4 text-gray-800 border-b pb-2">🤖 現場目線の解説</h3>
+                                <h3 className="font-black text-lg mb-4 text-gray-800 border-b pb-2">
+                                    🤖 {mode === 'kenno' ? '現場目線の解説' : '基礎解説'}
+                                </h3>
                                 
                                 {isExplaining ? (
                                     <div className="text-center py-8">
@@ -203,15 +203,32 @@
                                         <p className="text-sm font-bold text-gray-500">AIが解説を作成中...</p>
                                     </div>
                                 ) : (
-                                    <div className="mb-6 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap font-medium">
-                                        {explanation}
-                                    </div>
+                                    <>
+                                        <div className="mb-4 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap font-medium">
+                                            {explanation}
+                                        </div>
+                                        
+                                        {/* 🔽 追加設備：ショーケン版のみに表示する「建能版のチラ見せ（ぼかし）」 */}
+                                        {mode === 'shoken' && (
+                                            <div className="mb-6 relative border-t pt-4">
+                                                <h4 className="font-bold text-orange-600 text-xs mb-2">🔥 現場監督の目線（建能版）</h4>
+                                                <div className="relative rounded-lg bg-orange-50 p-3 border border-orange-100 overflow-hidden">
+                                                    <p className="text-xs text-gray-800 filter blur-[3px] select-none pointer-events-none leading-relaxed">
+                                                        現場でこれをやると即事故に繋がります。なぜなら、2次試験の記述でも問われる「品質管理」が根本的に欠落しているからです。実際の現場では、打設前に必ず…
+                                                    </p>
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/20">
+                                                        <span className="bg-orange-600 text-white text-[10px] font-bold py-1 px-3 rounded-full shadow-md">ロック解除は有料版で</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                                 
                                 <button 
                                     onClick={nextQuestion} 
                                     disabled={isExplaining}
-                                    className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold disabled:bg-gray-300 disabled:cursor-not-allowed shadow active:scale-95 transition mt-auto"
+                                    className={`w-full py-4 text-white rounded-xl font-bold disabled:bg-gray-300 disabled:cursor-not-allowed shadow active:scale-95 transition mt-auto ${mode === 'kenno' ? 'bg-orange-600' : 'bg-blue-600'}`}
                                 >
                                     {isExplaining ? 'AIの解説を待っています...' : (currentIdx + 1 < questions.length ? '次の問題へ進む' : '結果を見る')}
                                 </button>
