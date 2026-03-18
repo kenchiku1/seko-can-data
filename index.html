@@ -32,6 +32,8 @@
             const [showModal, setShowModal] = useState(false);
             const [isExplaining, setIsExplaining] = useState(false);
             const [explanation, setExplanation] = useState('');
+            // 🔽 追加設備：正誤判定スイッチ
+            const [judgeResult, setJudgeResult] = useState(''); 
 
             useEffect(() => {
                 const init = async () => {
@@ -58,40 +60,45 @@
                 }
             };
 
-            // 🔽 修正完了：AIとの通信配線（chat.jsの規格に完全対応！）
             const handleAnswer = async (choiceKey, choiceText) => {
                 const currentQ = questions[currentIdx];
+                
+                // 🔽 追加工事：選んだ答えが正解かどうかを瞬時に判定！
+                const correctAnswerKey = currentQ.answer || currentQ.correctAnswer || currentQ.correct_answer || currentQ.correct;
+                if (correctAnswerKey) {
+                    const isCorrect = String(choiceKey) === String(correctAnswerKey);
+                    setJudgeResult(isCorrect ? 'correct' : 'incorrect');
+                } else {
+                    setJudgeResult('waiting'); 
+                }
+
                 setShowModal(true);       
                 setIsExplaining(true);    
                 setExplanation('');       
 
-                // chat.js が待機している「prompt」という1つの文章に組み立てる
+                const answerInfo = correctAnswerKey 
+                    ? `\n【公式の正解】選択肢 ${correctAnswerKey}` 
+                    : `\n（公式の正解データが未設定です。あなたが正解を判定してください）`;
+
                 const promptText = mode === 'kenno' 
-                    ? `あなたは1級建築施工管理技士の凄腕所長です。以下の問題とユーザーの回答に対し、2次試験（記述）にも繋がるような実践的で厳しい現場目線の解説をしてください。\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceText}`
-                    : `あなたは1級建築施工管理技士の親切な先輩です。以下の問題とユーザーの回答に対し、基礎からわかりやすく解説してください。\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceText}`;
+                    ? `あなたは1級建築施工管理技士の凄腕所長です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、2次試験（記述）にも繋がるような実践的で厳しい現場目線の解説をしてください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`
+                    : `あなたは1級建築施工管理技士の親切な先輩です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、基礎からわかりやすく解説してください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`;
 
                 try {
                     const response = await fetch('/api/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            prompt: promptText // 📦 chat.jsが要求する「prompt」という名前で送る
-                        })
+                        body: JSON.stringify({ prompt: promptText })
                     });
                     
                     const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || "APIエラー");
                     
-                    if (!response.ok) {
-                        throw new Error(data.error || "APIエラー");
-                    }
-                    
-                    // 📦 chat.jsが返してくる「result」という名前で受け取る
                     if (data.result) {
                         setExplanation(data.result);
                     } else {
                         setExplanation("解説を取得できませんでした。");
                     }
-
                 } catch(error) {
                     setExplanation("AIの呼び出しに失敗しました。\n詳細: " + error.message);
                 }
@@ -172,13 +179,28 @@
 
                     {showModal && (
                         <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center p-4 z-50 fade-in">
-                            <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl max-h-[85vh] overflow-y-auto">
-                                <h3 className="font-black text-xl mb-4 text-blue-600 border-b pb-2">🤖 AI解説</h3>
+                            <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl max-h-[85vh] overflow-y-auto flex flex-col">
+                                
+                                {/* 🔽 ここが新しい「⭕️❌掲示板」です！ */}
+                                {judgeResult === 'correct' && (
+                                    <div className="text-center mb-4">
+                                        <span className="text-5xl">⭕️</span>
+                                        <h2 className="text-2xl font-black text-red-500 mt-2">正解！</h2>
+                                    </div>
+                                )}
+                                {judgeResult === 'incorrect' && (
+                                    <div className="text-center mb-4">
+                                        <span className="text-5xl">❌</span>
+                                        <h2 className="text-2xl font-black text-blue-600 mt-2">不正解...</h2>
+                                    </div>
+                                )}
+
+                                <h3 className="font-black text-lg mb-4 text-gray-800 border-b pb-2">🤖 現場目線の解説</h3>
                                 
                                 {isExplaining ? (
-                                    <div className="text-center py-10">
-                                        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mx-auto mb-4"></div>
-                                        <p className="text-sm font-bold text-gray-500">AIが現場目線で解説を作成中...</p>
+                                    <div className="text-center py-8">
+                                        <div className="animate-spin rounded-full h-10 w-10 border-b-4 border-blue-600 mx-auto mb-4"></div>
+                                        <p className="text-sm font-bold text-gray-500">AIが解説を作成中...</p>
                                     </div>
                                 ) : (
                                     <div className="mb-6 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap font-medium">
@@ -189,9 +211,9 @@
                                 <button 
                                     onClick={nextQuestion} 
                                     disabled={isExplaining}
-                                    className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold disabled:bg-gray-300 disabled:cursor-not-allowed shadow active:scale-95 transition"
+                                    className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold disabled:bg-gray-300 disabled:cursor-not-allowed shadow active:scale-95 transition mt-auto"
                                 >
-                                    {currentIdx + 1 < questions.length ? '次の問題へ進む' : '結果を見る'}
+                                    {isExplaining ? 'AIの解説を待っています...' : (currentIdx + 1 < questions.length ? '次の問題へ進む' : '結果を見る')}
                                 </button>
                             </div>
                         </div>
