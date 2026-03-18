@@ -6,8 +6,9 @@
     <title>seko-can.com | 一級建築施工管理技士</title>
     
     <script>
-        window.onerror = function(msg, url, lineNo) {
-            document.body.innerHTML = '<div style="padding:20px; color:red; font-weight:bold;">🚨 エラー発生: ' + msg + ' (' + lineNo + '行目)</div>';
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            var errDetails = error ? error.stack : '';
+            document.body.innerHTML = '<div style="padding:20px; color:red; font-weight:bold;">🚨 エラー発生: ' + msg + '<br>行数: ' + lineNo + '<br><pre style="font-size:10px; margin-top:10px;">' + errDetails + '</pre></div>';
             return false;
         };
     </script>
@@ -15,8 +16,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js" crossorigin="anonymous"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" crossorigin></script>
     <style>
         body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif; background-color: #f3f4f6; }
         .blur-text { filter: blur(5px); user-select: none; pointer-events: none; }
@@ -25,13 +26,17 @@
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div style="padding: 50px; text-align: center; font-weight: bold; color: #666;">
+            ⏳ 現場（アプリ）を構築中...<br>
+            <span style="font-size: 12px; font-weight: normal;">※この画面で止まる場合は翻訳エラーです</span>
+        </div>
+    </div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
         const liffId = "2009463648-LX7h6H1q";
         
-        // ⚠️ 有料版のパスワード設定 ⚠️
         const SECRET_PASSWORD = "0000"; 
 
         function App() {
@@ -44,9 +49,8 @@
             const [showModal, setShowModal] = useState(false);
             const [isExplaining, setIsExplaining] = useState(false);
             
-            // 解説を2つに分ける
-            const [explanation1, setExplanation1] = useState(''); // 1次解説
-            const [explanation2, setExplanation2] = useState(''); // 2次解説
+            const [explanation1, setExplanation1] = useState(''); 
+            const [explanation2, setExplanation2] = useState(''); 
             
             const [showPassword, setShowPassword] = useState(false);
             const [inputPass, setInputPass] = useState('');
@@ -55,8 +59,14 @@
                 const init = async () => {
                     try {
                         await liff.init({ liffId });
-                        if (liff.isLoggedIn()) { setIsLoggedIn(true); } else { liff.login(); }
-                    } catch (e) { console.error("LIFF Error", e); }
+                        if (liff.isLoggedIn()) { 
+                            setIsLoggedIn(true); 
+                        } else { 
+                            liff.login(); 
+                        }
+                    } catch (e) { 
+                        console.error("LIFF Error", e); 
+                    }
                 };
                 init();
             }, []);
@@ -95,13 +105,12 @@
                 setExplanation1('');
                 setExplanation2('');
 
-                // 🚨 AIへの指示：所長のスクショ通り、2つの目線で回答させる
-                const promptText = `あなたは1級建築施工管理技士の凄腕所長です。以下の問題とユーザーの回答に対し、2つに分けて解説してください。
-【1次解説】：選択肢が合っているかの判定と、その理由を端的に。
-【2次解説】：実際の現場でどう役立つか、2次試験（記述）にどう繋がるかの現場目線の深い知識。
-
-問題: ${currentQ.question}
-選んだ選択肢: ${choiceText}`;
+                // 🚨 原因だった箇所を「最も安全な文字の繋ぎ方」に完全修正
+                const promptText = "あなたは1級建築施工管理技士の凄腕所長です。以下の問題とユーザーの回答に対し、2つに分けて解説してください。\n" +
+                                   "【1次解説】：選択肢が合っているかの判定と、その理由を端的に。\n" +
+                                   "【2次解説】：実際の現場でどう役立つか、2次試験（記述）にどう繋がるかの現場目線の深い知識。\n\n" +
+                                   "問題: " + currentQ.question + "\n" +
+                                   "選んだ選択肢: " + choiceText;
 
                 try {
                     const response = await fetch('/api/chat', {
@@ -117,10 +126,12 @@
                     let part1 = fullText;
                     let part2 = "現場では、品質管理を徹底し、事前の施工計画書に基づく確認が重要です。2次試験の記述対策としても、この基本事項を必ず押さえておきましょう。";
                     
-                    if (fullText.includes('【2次解説】')) {
+                    if (fullText.indexOf('【2次解説】') !== -1) {
                         const parts = fullText.split('【2次解説】');
                         part1 = parts[0].replace('【1次解説】', '').trim();
-                        part2 = parts[1].trim();
+                        if (parts[1]) {
+                            part2 = parts[1].trim();
+                        }
                     }
 
                     setExplanation1(part1);
@@ -176,12 +187,4 @@
                                     </div>
                                 </div>
                             )}
-                            <p className="mt-8 text-xs text-gray-400 font-bold">ログイン中：相馬所長</p>
-                        </div>
-                    </div>
-                );
-            }
-
-            if (view === 'loading') return <div className="text-center mt-20 font-bold text-gray-600">問題データ展開中...</div>;
-
-            const currentQ = questions[currentIdx];
+                            <p className="mt-8 text-xs text-gray-400 font-bold">ログイン
