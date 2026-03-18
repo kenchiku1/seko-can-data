@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -13,10 +13,13 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
         body: JSON.stringify({
           model: "gemini-1.5-flash",
           messages: [{ role: "user", content: prompt }]
@@ -26,9 +29,8 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // エラーレスポンスのチェック
     if (data.error) {
-      return res.status(500).json({ error: JSON.stringify(data.error) });
+      return res.status(500).json({ error: 'Google API Error: ' + JSON.stringify(data.error) });
     }
 
     const text = data.choices?.[0]?.message?.content;
@@ -39,6 +41,6 @@ export default async function handler(req, res) {
 
     res.status(200).json({ result: text });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'System Error: ' + error.message });
   }
 }
