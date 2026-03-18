@@ -75,6 +75,7 @@
 
             const handleAnswer = async (choiceKey, choiceText) => {
                 const currentQ = questions[currentIdx];
+                if (!currentQ) return;
                 
                 const correctAnswerKey = currentQ.answer || currentQ.correctAnswer || currentQ.correct_answer || currentQ.correct;
                 if (correctAnswerKey) {
@@ -89,12 +90,12 @@
                 setExplanation('');       
 
                 const answerInfo = correctAnswerKey 
-                    ? `\n【公式の正解】選択肢 ${correctAnswerKey}` 
-                    : `\n（公式の正解データが未設定です。あなたが正解を判定してください）`;
+                    ? "\n【公式の正解】選択肢 " + correctAnswerKey
+                    : "\n（公式の正解データが未設定です。あなたが正解を判定してください）";
 
                 const promptText = mode === 'kenno' 
-                    ? `あなたは1級建築施工管理技士の凄腕所長です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、2次試験（記述）にも繋がるような実践的で厳しい現場目線の解説をしてください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`
-                    : `あなたは1級建築施工管理技士の親切な先輩です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、要点のみを3行以内で短く端的に解説してください。${answerInfo}\n\n【問題】${currentQ.question}\n【ユーザーが選んだ選択肢】${choiceKey}番: ${choiceText}`;
+                    ? "あなたは1級建築施工管理技士の凄腕所長です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、2次試験（記述）にも繋がるような実践的で厳しい現場目線の解説をしてください。" + answerInfo + "\n\n【問題】" + currentQ.question + "\n【ユーザーが選んだ選択肢】" + choiceKey + "番: " + choiceText
+                    : "あなたは1級建築施工管理技士の親切な先輩です。ユーザーが選んだ選択肢が正解かどうかを最初に宣言し、要点のみを3行以内で短く端的に解説してください。" + answerInfo + "\n\n【問題】" + currentQ.question + "\n【ユーザーが選んだ選択肢】" + choiceKey + "番: " + choiceText;
 
                 try {
                     const response = await fetch('/api/chat', {
@@ -134,7 +135,7 @@
                     <div className="max-w-md mx-auto p-6 pt-12">
                         <div className="bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-blue-600">
                             <h1 className="text-3xl font-black mb-2">seko-can.com</h1>
-                            <p className="text-blue-600 font-bold mb-8 text-sm">AI過去問アプリ <span className="text-red-500">【ロック機能版】</span></p>
+                            <p className="text-blue-600 font-bold mb-8 text-sm">AI過去問アプリ <span className="text-red-500">【最終ロック版】</span></p>
                             
                             {!showPassword ? (
                                 <div>
@@ -176,7 +177,9 @@
             if (view === 'loading') return <div className="text-center mt-20 font-bold text-gray-600">問題データ展開中...</div>;
 
             const currentQ = questions[currentIdx];
-            if (!currentQ) return null;
+            // ⚠️ もしデータが見つからなくても、真っ白にならずに警告文を出す安全装置
+            if (!currentQ) return <div style={{ textAlign: 'center', marginTop: '50px', fontWeight: 'bold' }}>問題の準備中、またはデータが見つかりません...</div>;
+
             const choicesArray = currentQ.choices ? Object.entries(currentQ.choices) : [];
 
             return (
@@ -249,21 +252,4 @@
                                             <div className="mb-6 relative border-t pt-4">
                                                 <h4 className="font-bold text-orange-600 text-xs mb-2">🔥 現場監督の目線（建能版）</h4>
                                                 <div className="relative rounded-lg bg-orange-50 p-3 border border-orange-100 overflow-hidden">
-                                                    <p className="text-xs text-gray-800 filter blur-[3px] select-none pointer-events-none leading-relaxed">
-                                                        現場でこれをやると即事故に繋がります。なぜなら、2次試験の記述でも問われる「品質管理」が根本的に欠落しているからです。実際の現場では、打設前に必ず…
-                                                    </p>
-                                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/20">
-                                                        <span className="bg-orange-600 text-white text-[10px] font-bold py-1 px-3 rounded-full shadow-md">ロック解除は有料版で</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                                
-                                <button 
-                                    onClick={nextQuestion} 
-                                    disabled={isExplaining}
-                                    className={`w-full py-4 text-white rounded-xl font-bold disabled:bg-gray-300 disabled:cursor-not-allowed shadow active:scale-95 transition mt-auto ${mode === 'kenno' ? 'bg-orange-600' : 'bg-blue-600'}`}
-                                >
-                                    {isExplaining ? 'AIの解説を待っています...' : (currentIdx + 1 < questions.length ? '次の問題へ進む'
+                                                    <p className="text-xs text
