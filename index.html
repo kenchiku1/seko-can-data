@@ -37,9 +37,9 @@
             return arr;
         }
 
-        // ✅ 問題IDを生成
+        // ✅ 問題IDを生成（year + no を主キーにして重複誤判定を防止）
         function getQId(q) {
-            return `${q.year}_${q.no}_${q.question.substring(0, 10)}`;
+            return `${q.year}_${q.no}`;
         }
 
         function App() {
