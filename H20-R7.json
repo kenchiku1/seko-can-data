@@ -126,6 +126,7 @@
     "category": "建築学",
     "subcategory": "構造力学",
     "question": "【構造計算】長さ6mの単純梁（左端A：ピン、右端B：ローラー）において、全体に右下がりの等変分布荷重（左端w=1kN/m、右端0）と、時計回りのモーメント荷重 12kN・m が作用している。このときの支点Bの反力 R_B を求めよ。",
+    "image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h23-am-08.jpg",
     "choices": [
       "0 kN",
       "1 kN",
@@ -143,6 +144,7 @@
     "category": "建築学",
     "subcategory": "構造力学",
     "question": "【BMD判別】スパンLの梁において、左半分に等分布荷重、右端に集中荷重が作用している。このときの曲げモーメント図（BMD）の形状に関する記述として、正しいものはどれか。",
+    "image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h23-am-09.jpg",
     "choices": [
       "等分布荷重区間は放物線となり、集中荷重が作用する支点部でモーメントが最大となる。",
       "すべての区間において直線状のグラフとなる。",
