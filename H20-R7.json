@@ -1,344 +1,221 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>seko-can.com | 一級建築施工管理技士</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <style>
-        body { font-family: sans-serif; background-color: #f3f4f6; }
-        .blur-text { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.6; }
-        .fade-in { animation: fadeIn 0.2s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-        const liffId = "2009463648-LX7h6H1q";
-        const SECRET_PASSWORD = "KENRYU";
-
-        // モードごとの履歴キー（v4）
-        const HISTORY_KEY = (mode) => `seko_history_v4_${mode}`;
-        // 旧キー一覧（移行・クリーンアップ用）
-        const LEGACY_KEYS = ['seko_history_v3', 'seko_history_v3_shoken', 'seko_history_v3_kenno'];
-
-        // Fisher-Yates シャッフル
-        function shuffle(array) {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        // 問題ID：JSONの"id"フィールド（例:"R7-AM-01"）を最優先で使う
-        // → 絶対にユニーク、year/session/noの組み合わせ衝突なし
-        function getQId(q) {
-            if (q.id) return q.id;
-            // idがない場合のフォールバック
-            const year    = q.year    || '';
-            const session = q.session || '';
-            const no      = q.no      || '';
-            if (year || no) return `${year}_${session}_${no}`;
-            return (q.question || JSON.stringify(q)).substring(0, 60);
-        }
-
-        // ======================================================
-        // H23形式（question_text/choices配列/correct_answer）と
-        // R7形式（question/choicesオブジェクト/answer/id）を統一する
-        // ======================================================
-        function normalizeQuestion(q) {
-            // 問題文
-            const question = q.question || q.question_text || '';
-
-            // 選択肢：配列 → {1:..., 2:..., 3:..., 4:...} に変換
-            let choices = q.choices;
-            if (Array.isArray(choices)) {
-                const obj = {};
-                choices.forEach((text, i) => { obj[String(i + 1)] = text; });
-                choices = obj;
-            }
-
-            // 正解キー：数値でも文字列でも "1"〜"4" に統一
-            const answer = String(q.answer ?? q.correct_answer ?? '');
-
-            // ID：idがあればそのまま、なければ year + question_number で生成
-            const id = q.id || `${q.year || ''}_${q.session || ''}_${q.no || q.question_number || ''}`;
-
-            return { ...q, question, choices, answer, id };
-        }
-
-        // 履歴をSetで返す（旧キーも統合して自動移行）
-        function loadHistory(mode) {
-            const key = HISTORY_KEY(mode);
-            const current = new Set(JSON.parse(localStorage.getItem(key) || '[]'));
-            let merged = false;
-            LEGACY_KEYS.forEach(lk => {
-                const old = JSON.parse(localStorage.getItem(lk) || '[]');
-                if (old.length > 0) {
-                    old.forEach(id => current.add(id));
-                    localStorage.removeItem(lk);
-                    merged = true;
-                }
-            });
-            if (merged) saveHistory(mode, current);
-            return current;
-        }
-
-        // 履歴SetをlocalStorageへ保存
-        function saveHistory(mode, historySet) {
-            localStorage.setItem(HISTORY_KEY(mode), JSON.stringify([...historySet]));
-        }
-
-        // 解答した問題を即時・確実に記録し、最新のSetを返す
-        function recordAnswered(mode, q) {
-            const history = loadHistory(mode);
-            history.add(getQId(q));
-            saveHistory(mode, history);
-            return history;
-        }
-
-        function App() {
-            const [isLoggedIn, setIsLoggedIn] = useState(false);
-            const [view, setView] = useState('menu');
-            const [mode, setMode] = useState('shoken');
-            const [questions, setQuestions] = useState([]);
-            const [currentIdx, setCurrentIdx] = useState(0);
-            const [score, setScore] = useState(0);
-            const [showModal, setShowModal] = useState(false);
-            const [isExplaining, setIsExplaining] = useState(false);
-            const [judge, setJudge] = useState('');
-            const [explanation1, setExplanation1] = useState('');
-            const [explanation2, setExplanation2] = useState('');
-            const [showPassword, setShowPassword] = useState(false);
-            const [inputPass, setInputPass] = useState('');
-            const [stats, setStats] = useState({ shoken: { seen: 0, total: 0 }, kenno: { seen: 0, total: 0 } });
-
-            useEffect(() => {
-                liff.init({ liffId }).then(() => {
-                    if (liff.isLoggedIn()) {
-                        setIsLoggedIn(true);
-                        updateStats();
-                    } else { liff.login(); }
-                });
-            }, []);
-
-            const updateStats = async () => {
-                try {
-                    const res = await fetch('/H20-R7.json');
-                    const data = await res.json();
-                    const all = Array.isArray(data) ? data : (data.questions || []);
-                    setStats({
-                        shoken: { seen: loadHistory('shoken').size, total: all.length },
-                        kenno:  { seen: loadHistory('kenno').size,  total: all.length },
-                    });
-                } catch (e) { console.error(e); }
-            };
-
-            const startQuiz = async (m) => {
-                setMode(m);
-                setView('loading');
-                setScore(0);
-                try {
-                    const res = await fetch('/H20-R7.json');
-                    const data = await res.json();
-                    let all = Array.isArray(data) ? data : (data.questions || []);
-
-                    // 両フォーマット（H23形式・R7形式）を統一 + 重複IDを除去
-                    const seenIds = new Set();
-                    all = all
-                        .filter(q => q && (q.question || q.question_text))  // 壊れた行を除外
-                        .map(normalizeQuestion)
-                        .filter(q => {
-                            if (seenIds.has(q.id)) return false;
-                            seenIds.add(q.id);
-                            return true;
-                        });
-
-                    // 最新の履歴をSetで取得（旧キーも自動統合）
-                    let history = loadHistory(m);
-
-                    // 未解答の問題だけ抽出
-                    let pool = all.filter(q => !history.has(getQId(q)));
-
-                    // 全問解き終わり → そのモードの履歴だけリセットして全問再出題
-                    if (pool.length === 0) {
-                        alert("全ての問題を完工しました！履歴をリセットして新しい順序で再開します。");
-                        saveHistory(m, new Set());
-                        pool = all;
-                    }
-
-                    // Fisher-Yates で確実にシャッフル
-                    setQuestions(shuffle(pool));
-                    setCurrentIdx(0);
-                    setView('quiz');
-                } catch (e) { alert("読込エラー"); setView('menu'); }
-            };
-
-            const handleAnswer = async (key, text) => {
-                const q = questions[currentIdx];
-                const isCorrect = String(key) === String(q.answer);
-                if (isCorrect) setScore(score + 1);
-
-                // 解いた瞬間に即時・確実に記録（Set管理で重複なし）
-                recordAnswered(mode, q);
-
-                setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
-                setShowModal(true);
-                setIsExplaining(true);
-
-                let persona = mode === 'shoken' ? "先輩監督" : "現場所長";
-                const prompt = persona + "として即答。前置き不要。\n問題:" + q.question + "\n正解:" + q.answer + "\n回答:" + text + "\n【1次】根拠(80字)\n【2次】実務のアドバイス(80字)";
-
-                try {
-                    const res = await fetch('/api/chat', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: prompt })
-                    });
-                    const data = await res.json();
-                    const parts = (data.result || "").split('【2次】');
-                    setExplanation1(parts[0].replace('【1次】', '').trim());
-                    setExplanation2(parts[1] ? parts[1].trim() : "品質管理の急所です。");
-                } catch (e) { setExplanation1("エラー"); }
-                setIsExplaining(false);
-            };
-
-            if (!isLoggedIn) return null;
-
-            if (view === 'menu') {
-                const shokenRemaining = stats.shoken.total - stats.shoken.seen;
-                const kennoRemaining  = stats.kenno.total  - stats.kenno.seen;
-                return (
-                    <div className="max-w-md mx-auto p-6 pt-12">
-                        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center border-t-8 border-blue-700">
-                            <h1 className="text-4xl font-black mb-1 italic text-gray-800">seko-can</h1>
-                            <p className="text-blue-700 font-bold mb-6 text-[10px] tracking-widest uppercase">Construction Management AI</p>
-
-                            {/* ショーケン版プログレス */}
-                            <div className="mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-inner text-left">
-                                <p className="text-[10px] font-bold text-blue-400 mb-1 tracking-widest">🔵 SHOKEN PROGRESS</p>
-                                <div className="flex justify-between text-xs font-black mb-1">
-                                    <span className="text-blue-600">既習: {stats.shoken.seen}</span>
-                                    <span className="text-gray-400">未習: {shokenRemaining}</span>
-                                </div>
-                                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div className="bg-blue-600 h-full transition-all duration-700" style={{ width: `${stats.shoken.total ? (stats.shoken.seen / stats.shoken.total) * 100 : 0}%` }}></div>
-                                </div>
-                            </div>
-
-                            {/* 建龍版プログレス */}
-                            <div className="mb-8 bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-inner text-left">
-                                <p className="text-[10px] font-bold text-gray-500 mb-1 tracking-widest">🔒 KENRYU PROGRESS</p>
-                                <div className="flex justify-between text-xs font-black mb-1">
-                                    <span className="text-gray-600">既習: {stats.kenno.seen}</span>
-                                    <span className="text-gray-400">未習: {kennoRemaining}</span>
-                                </div>
-                                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div className="bg-gray-600 h-full transition-all duration-700" style={{ width: `${stats.kenno.total ? (stats.kenno.seen / stats.kenno.total) * 100 : 0}%` }}></div>
-                                </div>
-                                <p className="text-[10px] text-gray-400 mt-2 font-bold">全 {stats.kenno.total} 問 ／ 各モードで独立管理</p>
-                            </div>
-
-                            {!showPassword ? (
-                                <div className="space-y-4">
-                                    <button onClick={() => startQuiz('shoken')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition">🔵 ショーケン版を開始</button>
-                                    <button onClick={() => setShowPassword(true)} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition">🔒 建龍版を解除</button>
-                                    <div className="flex gap-3 mt-2 justify-center">
-                                        <button onClick={() => { if (confirm('ショーケン版の履歴を消去しますか？')) { saveHistory('shoken', new Set()); updateStats(); } }} className="text-[10px] text-blue-300 underline">🔵 履歴リセット</button>
-                                        <button onClick={() => { if (confirm('建龍版の履歴を消去しますか？')) { saveHistory('kenno', new Set()); updateStats(); } }} className="text-[10px] text-gray-300 underline">🔒 履歴リセット</button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="bg-gray-50 p-6 rounded-2xl border-2 border-dashed fade-in">
-                                    <input type="text" value={inputPass} onChange={(e) => setInputPass(e.target.value)} className="w-full p-4 border-2 rounded-xl mb-4 text-center font-black text-xl tracking-widest uppercase focus:border-blue-500 outline-none" placeholder="******" />
-                                    <div className="flex gap-2">
-                                        <button onClick={() => setShowPassword(false)} className="flex-1 py-3 bg-gray-300 rounded-xl font-bold">戻る</button>
-                                        <button onClick={() => { if (inputPass.toUpperCase() === SECRET_PASSWORD) startQuiz('kenno'); else alert("不一致"); }} className="flex-1 py-3 bg-blue-700 text-white rounded-xl font-bold">解除</button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                );
-            }
-
-            if (view === 'result') {
-                const rate = Math.round((score / questions.length) * 100);
-                return (
-                    <div className="max-w-md mx-auto p-6 pt-12 fade-in">
-                        <div className="bg-white rounded-3xl shadow-2xl p-10 text-center border-t-8 border-orange-500">
-                            <h2 className="text-sm font-bold mb-6 text-gray-400 tracking-widest uppercase">Mission Result</h2>
-                            <div className="mb-8 text-6xl font-black text-gray-800">{rate}%</div>
-                            <div className="bg-orange-50 p-6 rounded-2xl mb-8 border border-orange-100 italic font-black text-orange-600">
-                                {rate === 100 ? '伝説の監理技術者' : rate >= 80 ? '凄腕現場総監督' : rate >= 60 ? '一級施工管理技士' : '現場見習い'}
-                            </div>
-                            <button onClick={() => { setView('menu'); updateStats(); }} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow-lg">事務所へ戻る</button>
-                        </div>
-                    </div>
-                );
-            }
-
-            if (view === 'loading') return <div className="text-center mt-40 font-black text-gray-400 animate-pulse tracking-widest">未体験の問題を抽出中...</div>;
-
-            const q = questions[currentIdx];
-            return (
-                <div className="max-w-md mx-auto bg-white min-h-screen p-6 relative">
-                    {!showModal ? (
-                        <div className="fade-in">
-                            <div className="flex justify-between items-center mb-6 border-b-2 border-gray-50 pb-2">
-                                <p className="text-[10px] font-bold text-gray-400 uppercase italic">Step.{currentIdx + 1} / {questions.length}</p>
-                                <p className="text-[10px] font-bold text-blue-700 uppercase">{mode}</p>
-                            </div>
-                            <p className="font-bold text-gray-800 text-xl mb-10 leading-relaxed tracking-tight">{q.question}</p>
-                            <div className="space-y-4">
-                                {q.choices && Object.entries(q.choices).map(([k, t]) => (
-                                    <button key={k} onClick={() => handleAnswer(k, t)} className="w-full p-5 text-left border-2 border-gray-100 rounded-2xl flex items-start active:bg-blue-50 transition-all">
-                                        <span className="w-7 h-7 bg-gray-100 rounded-full text-center text-[10px] leading-7 mr-4 flex-shrink-0 font-black text-gray-400">{k}</span>
-                                        <span className="text-sm font-bold text-gray-700 leading-snug">{t}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="fade-in flex flex-col h-full">
-                            <div className={`text-6xl font-black text-center mb-10 py-4 rounded-3xl ${judge.includes('⭕️') ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}`}>{judge}</div>
-                            <div className="flex-1 space-y-8 overflow-y-auto">
-                                <div>
-                                    <h3 className="text-[10px] font-black text-blue-600 mb-2 uppercase tracking-widest">■ Examination</h3>
-                                    <div className="bg-blue-50 p-5 rounded-2xl text-sm font-bold text-gray-700 leading-relaxed border-l-4 border-blue-600">{isExplaining ? '解析中...' : explanation1}</div>
-                                </div>
-                                <div>
-                                    <h3 className="text-[10px] font-black text-red-600 mb-2 uppercase tracking-widest">■ Site Management</h3>
-                                    {mode === 'kenno' ? (
-                                        <div className="bg-red-50 p-5 rounded-2xl text-sm font-bold text-gray-700 leading-relaxed border-l-4 border-red-600">{isExplaining ? '分析中...' : explanation2}</div>
-                                    ) : (
-                                        <div className="relative rounded-2xl bg-gray-50 p-5 border-2 border-dashed border-gray-200 overflow-hidden">
-                                            <p className="text-sm blur-text font-bold leading-relaxed">（建龍版でアンロックすると、記述対策に繋がる実戦知識が表示されます）</p>
-                                            <button onClick={() => { setView('menu'); setShowModal(false); setShowPassword(true); }} className="absolute inset-0 m-auto h-12 w-48 bg-gray-900 text-white text-[10px] font-black rounded-full shadow-2xl active:scale-95 transition">🔒 建龍版で解除</button>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="mt-12 space-y-4 pb-12">
-                                {!isExplaining && <button onClick={() => { setShowModal(false); if (currentIdx + 1 < questions.length) setCurrentIdx(currentIdx + 1); else { setView('result'); updateStats(); } }} className="w-full py-5 bg-blue-700 text-white rounded-2xl font-black text-xl shadow-xl active:scale-95 transition">NEXT STEP</button>}
-                                <button onClick={() => { setView('menu'); setShowModal(false); updateStats(); }} className="text-gray-400 text-[10px] font-bold underline w-full text-center tracking-widest uppercase">事務所へ戻る</button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        }
-
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
-</body>
-</html>
+[
+  {
+    "year": "H23",
+    "question_number": 1,
+    "question_text": "日照、日影に関する記述として、最も不適当なものはどれか。",
+    "choices": [
+      "冬至日における終日日影とは、日出から日没までの間、常に日影となる範囲をいう。",
+      "等時間日影図は、冬至日において日影時間の等しい地点を結んだものである。",
+      "日窓図（サンチャート）は、建築物の壁面のある一点における日照時間を把握するために用いる。",
+      "可照時間は、日出から日没までの時間（昼生）をいう。"
+    ],
+    "correct_answer": 1,
+    "explanation_shoken": "【ショーケン版解説】『終日日影』って言葉に騙されるなよ！日出から日没までずっと影なんて場所、普通はないだろ。これは『1日のうち、一定時間以上影になる範囲』のことだ。定義の引っかけだぞ！",
+    "explanation_kenryu": "【建龍版解説】環境工学の用語定義は正確に覚えろ。終日日影と永久日影の混同は、設計ミスに直結する。指差喚呼で言葉の意味を叩き込め。"
+  },
+  {
+    "year": "H23",
+    "question_number": 2,
+    "question_text": "換気に関する記述として、最も不適当なものはどれか。",
+    "choices": [
+      "室内の二酸化炭素濃度を基準として必要換気量を算出する場合、一般に、外気の二酸化炭素濃度は考慮しない。",
+      "第1種機械換気方式は、送風機と排風機を併用する方式である。",
+      "自然換気量は、室内外の温度差によるものと、風圧によるものがある。",
+      "換気回数は、1時間当たりの換気量を室の容積で除したものである。"
+    ],
+    "correct_answer": 1,
+    "explanation_shoken": "【ショーケン版解説】外気のCO2濃度を無視してどうする！『外にどれだけ綺麗な空気があるか』を引いて計算しなきゃ、正しい換気量は出せないだろ。計算式をイメージしろ！",
+    "explanation_kenryu": "【建龍版解説】必要換気量の算出式 Q = M / (Ci - Co) において、Co（外気濃度）は必須項目だ。実務での測定時も外気の状態を必ず確認せよ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 3,
+    "question_text": "伝熱及び結露に関する記述として、最も不適当なものはどれか。",
+    "choices": [
+      "壁体の熱貫流率は、壁体各層の熱抵抗と、室外・室内の表面熱伝達抵抗の合計の逆数である。",
+      "熱伝導率は、材料の厚さ1m、面積1m2について、両表面温度差が1℃あるときの1時間当たりの伝熱量をいう。",
+      "内部結露の防止策として、防湿層を断熱材の室外側に設けるのが有効である。",
+      "表面結露の防止策として、壁体表面の温度を、室内の空気の露点温度より高く保つのが有効である。"
+    ],
+    "correct_answer": 3,
+    "explanation_shoken": "【ショーケン版解説】防湿層は『暖かい部屋側（室内側）』に貼るのが鉄則だ！外に貼ったら、壁の中に入った湿気が逃げ場を失って、中でビショビショになっちまうぞ！",
+    "explanation_kenryu": "【建龍版解説】湿流と熱流の方向を意識せよ。冬期は室内から室外へ湿気が動く。防湿層を高温側に設けるのは、断熱欠陥を防ぐための現場管理の急所だ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 4,
+    "question_text": "音響に関する記述として、最も不適当なものはどれか。",
+    "choices": [
+      "残響時間は、室の容積に比例し、室内の平均吸音率と総表面積の積に反比例する。",
+      "音の強さのレベル（dB）が10dB増えると、音の強さは10倍になる。",
+      "吸音率は、材料の表面に入射した音のエネルギーに対する、反射した音のエネルギーの割合をいう。",
+      "遮音性能は、音響透過損失の値が大きいものほど、遮音性能が優れているといえる。"
+    ],
+    "correct_answer": 3,
+    "explanation_shoken": "【ショーケン版解説】吸音ってのは『吸い込んだ』割合のことだ！反射した割合を測ったら、それは『反射率』になっちまうだろ。逆だ、逆！",
+    "explanation_kenryu": "【建龍版解説】吸音率＝（入射－反射）／入射。つまり透過した音も『吸音』に含まれる。この物理的定義を現場の遮音対策に活かせ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 5,
+    "question_text": "色彩に関する記述として、最も不適当なものはどれか。",
+    "choices": [
+      "マンセル記号「5R 4/14」の14は、彩度を表している。",
+      "純色に白を混ぜた色を、明清色という。",
+      "補色は、色相環において、正反対に位置する色の関係をいう。",
+      "明度は、色の明るさの度合いをいい、白が0、黒が10となる。"
+    ],
+    "correct_answer": 4,
+    "explanation_shoken": "【ショーケン版解説】これも数字が逆！真っ黒が『0』で、一番明るい白が『10』だ。0は無、10は満点。白の方が偉そう（10）だと覚えとけ！",
+    "explanation_kenryu": "【建龍版解説】マンセル色体系の数値はJISでも規定されている。白の明度は理想的には10だが、実務上の白ペイント等は9.0程度。このスケール感を指差喚呼で確認しろ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 6,
+    "question_text": "木造の構造設計に関する記述として、最も不適当なものはどれか。",
+    "choices": [
+      "風圧力に対する必要な耐力壁の長さの算出において、見付け面積に乗ずる数値は、その地方の基準風速に応じた値を用いる。",
+      "耐力壁の配置の検討において、偏心率が大きいほど、地震時の建物のねじれが生じやすい。",
+      "耐力壁を片側に寄せて配置すると、地震時に建物がねじれる原因となる。",
+      "地震力に対する必要な耐力壁の長さの算出において、床面積に乗ずる数値は、屋根の重さにかかわらず一定である。"
+    ],
+    "correct_answer": 4,
+    "explanation_shoken": "【ショーケン版解説】重い頭（屋根）を支える方が大変だろ！瓦屋根と金属屋根じゃ、必要な壁の長さは変わる。重い屋根には長い壁。当たり前の話だ！",
+    "explanation_kenryu": "【建龍版解説】木造軸組工法における必要壁量の算出。屋根重量区分（重・軽）によって乗ずる係数が異なる。構造の基本バランスを現場でも確認せよ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 7,
+    "question_text": "鉄筋コンクリート構造に関する記述として、最も不適当なものはどれか。",
+    "choices": [
+      "柱のせん断強度は、一般に、軸方向力が大きくなるほど大きくなる。",
+      "梁の引張鉄筋比が大きくなると、一般に、梁の曲げ剛性は大きくなる。",
+      "柱の軸方向鉄筋の断面積の合計は、コンクリートの断面積の0.8％以上としなければならない。",
+      "梁のせん断補強筋（あばら筋）の間隔は、一般に、梁せいの3/4以下、かつ250mm以下とする。"
+    ],
+    "correct_answer": 4,
+    "explanation_shoken": "【ショーケン版解説】あばら筋の間隔、スカスカすぎだ！正解は『梁せいの1/2以下』かつ『250mm以下』だ。あばら（肋骨）が折れたら中身（コンクリート）がバラバラになっちまうぞ！",
+    "explanation_kenryu": "【建龍版解説】せん断補強筋の間隔規定は配筋検査の最重要チェック項目だ。3/4ではなく1/2。この数値を間違えると構造耐力が保証されない。指差喚呼で覚えろ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 8,
+    "image_url": "https://seko-can.com/images/h23-am-08.jpg",
+    "question_text": "図に示す単純梁に等変分布荷重 w = 1kN/m 及びモーメント荷重 M = 12kN・m が同時に作用するとき、支点Bの反力（R_B）の大きさとして、正しいものはどれか。なお、梁の長さは6m、支点Aはピン支点、支点Bはローラー支点とする。",
+    "choices": [
+      "0 kN",
+      "1 kN",
+      "3 kN",
+      "4 kN"
+    ],
+    "correct_answer": 4,
+    "explanation_shoken": "【ショーケン版解説】まずは梁の状況をイメージしろ！\n①等変分布荷重を集中荷重に置き換える：三角形の面積だから (1kN/m × 6m) ÷ 2 = 3kN。重心は支点Aから 4m（6mの2/3）の位置だ。\n②支点A周りのモーメントのつり合い：ΣMA = 0 より、(3kN × 4m) + 12kN・m - (R_B × 6m) = 0。\n12 + 12 = 6R_B だから、R_B = 4kN！計算ヨシ！",
+    "explanation_kenryu": "【建龍版解説】構造力学の基本中の基本、反力の算出だ。三角形の荷重は2/3の位置に集中荷重として置くという鉄則を思い出せ。2次試験の計算問題でも、この反力の出し方を間違えると全ての計算が狂うぞ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 9,
+    "image_url": "https://seko-can.com/images/h23-am-09.jpg",
+    "question_text": "図に示す梁のAB間に等分布荷重 w = 2kN/m が、C点に集中荷重 P = 3kN が同時に作用するとき、曲げモーメント図（BMD）として、正しいものはどれか。ただし、曲げモーメントは材の引張り側に描くものとする。",
+    "choices": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "correct_answer": 1,
+    "explanation_shoken": "【ショーケン版解説】まずはパッと見の『形』で絞り込め！\n①AB間（左側）：等分布荷重 w がかかっているから、この区間は必ず『放物線』になる！カクカクした直線になっている『2』はここで脱落だ。\n②B点（支点）：C点の荷重 P によって、B点には 3kN × 3m = 9kN・m の曲げモーメントが発生する。ここが一番尖るはずだ。\n③AB間の中央付近：等分布荷重によって下に膨らむ（1.5kN・m）のが正解。全体を見て『1』を選べれば完璧だ！",
+    "explanation_kenryu": "【建龍版解説】BMDの形状判別は、荷重の種類と対応させるのが鉄則だ。等分布荷重＝放物線、集中荷重＝直線。また、ヒンジ（支点A）や自由端（点C）でモーメントが0になっているかも重要なチェックポイントだ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 10,
+    "question_text": "コンクリートに関する記述として、最も不適当なものはどれか。",
+    "choices": ["単位水量の小さいコンクリートほど、乾燥収縮が小さくなる。", "コンクリートにAE剤を混入すると、凍結融解作用に対する抵抗性が改善される。", "空気量が1％増加すると、コンクリートの圧縮強度は4〜6％低下する。", "コンクリートのヤング係数は、圧縮強度が大きくなるほど小さくなる。"],
+    "correct_answer": 4,
+    "explanation_shoken": "【ショーケン版解説】コンクリートのヤング係数（変形のしにくさ）は、強くなればなるほど『大きく』なるんだ。ガチガチに固い奴ほど、変形もしないってイメージだな！",
+    "explanation_kenryu": "【建龍版解説】ヤング係数と圧縮強度の相関関係は基本中の基本だ。強度が上がればヤング係数も上がる。この比例関係を指差喚呼で覚えろ！"
+  },
+  {
+    "year": "H23",
+    "question_number": 11,
+    "question_text": "左官材料に関する記述として、最も不適当なものはどれか。",
+    "choices": ["せっこうプラスターは気硬性であり、しっくいは水硬性である。", "ポルトランドセメントは練り混ぜ後にアルカリ性を示し、せっこうプラスターは弱酸性を示す。", "せっこうプラスターはドロマイトプラスターに比べ、硬化に伴う乾燥収縮が小さい。", "ドロマイトプラスターはしっくいに比べ、粘度が高く粘性がある。"],
+    "correct_answer": 1,
+    "explanation_shoken": "【ショーケン版解説】これは逆だ！せっこうプラスターは『水硬性』、しっくいは『気硬性』だ。しっくいは空気中の二酸化炭素を吸ってゆっくり固まるんだぞ！",
+    "explanation_kenryu": "【建龍版解説】水硬性と気硬性の区別は左官工事の要だ。しっくいは空気で固まるから『気』。これを間違えると現場の工期管理が破綻する。"
+  },
+  {
+    "year": "H23",
+    "question_number": 12,
+    "question_text": "建築用ガラスに関する記述として、最も不適当なものはどれか。",
+    "choices": ["複層ガラスは、2枚のガラスの間に乾燥空気層を設けて密封したもので、結露防止に効果がある。", "合わせガラスは、2枚以上のガラスをプラスチックフィルムを挟み接着したもので、防犯に効果がある。", "熱線吸収板ガラスは、板ガラスの表面に金属皮膜を形成したもので、冷房負荷の軽減に効果がある。", "強化ガラスは、板ガラスを熱処理してガラス表面に強い圧縮応力層を形成したもので、衝撃強度が高い。"],
+    "correct_answer": 3,
+    "explanation_shoken": "【ショーケン版解説】表面に金属皮膜があるのは『熱線反射ガラス』だ！『吸収』はガラスの中に金属酸化物を練り込んだもの。字面で判断せずに中身を見ろよ！",
+    "explanation_kenryu": "【建龍版解説】反射と吸収の違いは、熱を跳ね返すか、自ら吸って外に出すかの違いだ。施工管理として材料の素性を正確に把握せよ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 13,
+    "question_text": "防水材料に関する記述として、最も不適当なものはどれか。",
+    "choices": ["ストレッチルーフィング1000の数値1000は、製品の抗張積を表している。", "改質アスファルトルーフィングシートにはⅠ類とⅡ類があり、Ⅰ類の方が低温時の耐折り曲げ性がよい。", "塗膜防水に用いる補強布は、必要な塗膜厚さの確保と防水材の垂れ下がり防止に有効である。", "通気緩衝シートは、塗膜防水層の破断やふくれの発生を低減するために用いる。"],
+    "correct_answer": 2,
+    "explanation_shoken": "【ショーケン版解説】アスファルトルーフィングのⅠ類とⅡ類、性能が良いのは『Ⅱ類』だ！高品質な方が数字が大きい。間違えて安い方を搬入するなよ！",
+    "explanation_kenryu": "【建龍版解説】JIS規格の類別は、基本的に数字が大きい方が高性能だ。特に改質アスファルトは低温時の追従性が問われる。Ⅱ類の品質を基準として覚えろ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 14,
+    "question_text": "JISによる建築用シーリング材に関する記述として、最も不適当なものはどれか。",
+    "choices": ["1成分形シーリング材は、基剤と着色剤の2成分を施工直前に練り混ぜて使用する。", "シーリング材のクラスは、目地に対する拡大率、縮小率などで区分されている。", "シーリング材の引張応力による区分で、LMは低モジュラスを表す。", "タイプGはグレイジング（サッシ周り）に使用するシーリング材を指す。"],
+    "correct_answer": 1,
+    "explanation_shoken": "【ショーケン版解説】『1成分形』って言ってるんだから、混ぜる必要はないんだよ！そのままガンにセットして使える手軽な奴だ。混ぜるのは『2成分形』な！",
+    "explanation_kenryu": "【建龍版解説】現場での撹拌ミスを防ぐのが1成分形のメリットだ。2成分形は練り混ぜ時間が不足すると硬化不良を起こす。成分数を正確に把握せよ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 15,
+    "question_text": "ボード類に関する記述として、最も不適当なものはどれか。",
+    "choices": ["フレキシブル板は、火山性ガラス質堆積物などの無機質原料及びセメントを原料として製造した板である。", "けい酸カルシウム板は、石灰質原料、けい酸質原料、石綿以外の繊維、混和材料を原料とした板である。", "シージングせっこうボードは、両面のボード用原紙及び芯のせっこうに防水処理を施したものである。", "ロックウール化粧吸音板は、ロックウールを主材料とし、結合材、混和材を用いて成形したものである。"],
+    "correct_answer": 1,
+    "explanation_shoken": "【ショーケン版解説】火山性ガラスを使っているのは『シラスバルーン板』だ！フレキシブル板は、セメントと繊維を高圧プレスした、めちゃくちゃ固い板のことだぞ！",
+    "explanation_kenryu": "【建龍版解説】ボード類は原料の名称と製品名が混乱しやすい。フレキシブル板は『高強度セメント板』だと理解せよ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 16,
+    "question_text": "舗装に関する記述として、最も不適当なものはどれか。",
+    "choices": ["プライムコートは、路盤の仕上がり面を保護し、その上のアスファルト層との接着をよくするために施す。", "フィラーは、アスファルトと一体となって、混合物の安定性、耐久性を向上させるために施す。", "タックコートは、アスファルト混合物からなる基層と表層の接着をよくするために施す。", "シールコートは、路床の水分が凍結しないように路床の上に施す。"],
+    "correct_answer": 4,
+    "explanation_shoken": "【ショーケン版解説】シールコートは舗装の『一番上（表面）』に施す水密性のための処理だ。一番下の『路床（土）』の上にやるもんじゃない。上下が逆さまだな！",
+    "explanation_kenryu": "【建龍版解説】舗装の各層の役割は下から積み上げる順序で理解せよ。シールコートは表面の磨耗防止や防水。路床の凍結防止とは別物だ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 17,
+    "question_text": "測量に関する記述として、最も不適当なものはどれか。",
+    "choices": ["スタジア測量は、レベルと標尺によって2点間の距離を正確に測定する方法である。", "トラバース測量は、測点を結んだ多角形の各辺の長さと角度を順次測定していく方法である。", "直接水準測量は、レベルと標尺によって高低を測定する方法である。", "平板測量は、アリダードと巻尺で測量した結果を、平板上で直接作図していく方法である。"],
+    "correct_answer": 1,
+    "explanation_shoken": "【ショーケン版解説】スタジア測量は『だいたいの距離』を測る簡易的なものだ！『正確に』って言葉に騙されるなよ。本当に正確に測るなら光波（トータルステーション）を使うんだ！",
+    "explanation_kenryu": "【建龍版解説】測量には許容誤差がある。スタジア測量は望遠鏡の視距糸を使う略測法だ。現場での使い分け、精度管理は管理者の責務だ。"
+  },
+  {
+    "year": "H23",
+    "question_number": 18,
+    "question_text": "避雷設備に関する記述として、最も不適当なものはどれか。",
+    "choices": ["高さが20mを超える建築物には、原則として避雷設備を設けなければならない。", "危険物を貯蔵する倉庫は、高さや貯蔵量にかかわらず、避雷設備を設けなければならない。", "鉄骨造の鉄骨は、構造体利用の引下げ導線の構成部材として利用することができる。", "受雷部は、建築物の重要度等に対応した3段階の保護レベルに応じて配置する。"],
+    "correct_answer": 4,
+    "explanation_shoken": "【ショーケン版解説】避雷針の保護レベルは『4段階（Ⅰ、Ⅱ、Ⅲ、Ⅳ）』だ！3段階じゃないぞ。こういう数字の引っかけはセコカン試験の常套手段だな！",
+    "explanation_kenryu": "【建龍版解説】JIS A 4201による保護レベルの区分を覚えろ。レベルⅠが最も厳重だ。法規と規格の数字のズレは現場の死角になる。"
+  },
+  {
+    "year": "H23",
+    "question_number": 19,
+    "question_text": "消火設備に関する記述として、最も不適当なものはどれか。",
+    "choices": ["連結散水設備は、火災が発生すると煙が充満して消火活動が困難な地下街などに設置される。", "水噴霧消火設備は、霧状の水の冷却、窒息効果により、自動車車庫などの火災に適している。", "屋内消火栓設備は、消火活動上必要な消防隊専用の施設として設置される。", "粉末消火設備は、消炎作用が大きく、油などの表面火災に適している。"],
+    "correct_answer": 3,
+    "explanation_shoken": "【ショーケン版解説】屋内消火栓は『建物にいる人（一般人）』が初期消火に使うものだ！消防隊専用なのは『連結送水管』の方だな。間違えたら初期消火が遅れるぞ！",
+    "explanation_kenryu": "【建龍版解説】消防設備の目的区分を明確にせよ。屋内消火栓は居住者用、連結送水管はプロ（消防隊）用だ。"
+  },
+  {
+    "
