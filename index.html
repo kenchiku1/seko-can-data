@@ -260,10 +260,11 @@
                         <div className="fade-in">
                             <div className="flex justify-between items-center mb-6 border-b-2 border-gray-50 pb-2">
                                 <p className="text-[10px] font-bold text-gray-400 uppercase italic">Step.{currentIdx + 1} / {questions.length}</p>
-                                <p className="text-[10px] font-bold text-blue-700 uppercase">{mode}</p>
-                            </div>
-                            <p className="font-bold text-gray-800 text-xl mb-10 leading-relaxed tracking-tight">{q.question}</p>
-                            <div className="space-y-4">
+                               <p className="text-[10px] font-bold text-blue-700 uppercase">{mode}</p>
+                            </div>
+                            <p className="font-bold text-gray-800 text-xl mb-6 leading-relaxed tracking-tight">{q.question}</p>
+                            {q.image_url && <img src={q.image_url} alt="問題図解" className="w-full h-auto mb-10 rounded-xl shadow-md border border-gray-200" />}
+                            <div className="space-y-4">
                                 {q.choices && Object.entries(q.choices).map(([k, t]) => (
                                     <button key={k} onClick={() => handleAnswer(k, t)} className="w-full p-5 text-left border-2 border-gray-100 rounded-2xl flex items-start active:bg-blue-50 transition-all">
                                         <span className="w-7 h-7 bg-gray-100 rounded-full text-center text-[10px] leading-7 mr-4 flex-shrink-0 font-black text-gray-400">{k}</span>
