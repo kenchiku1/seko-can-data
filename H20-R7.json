@@ -2973,6 +2973,64 @@
     "explanation_image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h22-am-07-explanation.png",
     "explanation": "【ショーケン版】断面二次モーメントの計算は、『デカい四角から、左右の空洞部分を引き算する』のが一番ミスがねえんだ！公式は $I = \\frac{bh^3}{12}$。今回の外側の四角は幅4a、高さ6a。引く方の空洞は、左右合わせて幅3a、高さ4a。引き算の段取りさえ間違えなきゃ、56a⁴に辿り着くはずだぜ！【建龍版】断面二次モーメントの算出。図のような対称断面の場合、外側の長方形（幅B=4a, 高さH=6a）から、欠損部（幅b=3a, 高さh=4a）を差し引いて求めるのが効率的である。公式 $I_x = \\frac{BH^3}{12} - \\frac{bh^3}{12}$ に代入すると、 $I_x = \\frac{4a \\times (6a)^3}{12} - \\frac{3a \\times (4a)^3}{12} = 72a^4 - 16a^4 = 56a^4$ となる。"
   },
+  {
+    "id": "H22-AM-07",
+    "year": "H22",
+    "session": "午前",
+    "no": 7,
+    "category": "建築学",
+    "subcategory": "構造力学",
+    "question": "図に示す断面の X－X 軸に対する断面二次モーメントの値として、正しいものはどれか。",
+    "question_image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h22-am-07-question.png",
+    "choices": [
+      "16 a⁴",
+      "24 a⁴",
+      "56 a⁴",
+      "72 a⁴"
+    ],
+    "answer": "3",
+    "explanation_image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h22-am-07-explanation.png",
+    "explanation": "【ショーケン版】断面二次モーメントの計算は、『デカい四角から、左右の空洞部分を引き算する』のが一番ミスがねえんだ！公式は $I = \\frac{bh^3}{12}$。今回の外側の四角は幅4a、高さ6a。引く方の空洞は、左右合わせて幅3a（1.5a×2）、高さ4a。引き算の段取りさえ間違えなきゃ、56a⁴に辿り着くはずだぜ！【建龍版】断面二次モーメントの算出。図のような対称断面の場合、外側の長方形（幅B=4a, 高さH=6a）から、欠損部（幅b=3a, 高さh=4a）を差し引いて求めるのが効率的である。公式 $I_x = \\frac{BH^3}{12} - \\frac{bh^3}{12}$ に代入すると、 $I_x = \\frac{4a \\times (6a)^3}{12} - \\frac{3a \\times (4a)^3}{12} = 72a^4 - 16a^4 = 56a^4$ となる。"
+  },
+  {
+    "id": "H22-AM-08",
+    "year": "H22",
+    "session": "午前",
+    "no": 8,
+    "category": "建築学",
+    "subcategory": "構造力学",
+    "question": "図に示す架構の C 点に集中荷重 P が作用したときの曲げモーメント図として、正しいものはどれか。\nただし、曲げモーメントは材の引張り側に描くものとする。",
+    "question_image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h22-am-08-question.png",
+    "choices": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "answer": "2",
+    "explanation_image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h22-am-08-explanation.png",
+    "explanation": "【ショーケン版】モーメント図を描く時は、まず『どこに力がかかるか』と『どこが固定されてるか』を見極めるんだ。荷重PがかかるC点と、固定点である支点A・B、そして節点Dに注目しろ！C点は下に押されるから下が引張られる。節点DはA・Bの支点によってモーメントが複雑に変化するが、材AB、材CDの引張り側、そして材BD、材DEの引張り側を考えると、選択肢2のような山型の図になるはずだぜ！【建龍版】曲げモーメント図（M図）の判別。C点に下向きの集中荷重Pが作用するため、梁ACD上ではC点で下に凸（下側引張り）となり、Mは正（下側）の値をとる。節点Dは剛接合であり、材BD（柱）からのMが伝達されるため、D点ではA・B方向へのモーメントの連続性を考慮する必要がある。各材の引張り側を考慮すると、選択肢2のような形状となる。"
+  },
+  {
+    "id": "H22-AM-09",
+    "year": "H22",
+    "session": "午前",
+    "no": 9,
+    "category": "建築学",
+    "subcategory": "構造力学",
+    "question": "図に示す静定トラスにおいて、部材 A 及び B に生ずる軸方向力の値の組合せとして、正しいものはどれか。\nただし、軸方向力は引張り力を「＋」、圧縮力を「－」とする。",
+    "question_image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h22-am-09-question.png",
+    "choices": [
+      "A：+P ／ B：-P",
+      "A：+P ／ B：-√2P",
+      "A：+2P ／ B：-P",
+      "A：+2P ／ B：-√2P"
+    ],
+    "answer": "4",
+    "explanation_image_url": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/h22-am-09-explanation.png",
+    "explanation": "【ショーケン版】トラスの軸力は『切断法』でスパッと切って考えるのが一番だ！まず左側の支点反力を出すと、上向きに2P。部材Aを含む垂直断面で切って、左側のモーメントのつり合いを見れば、Aは引張りの+2Pだとすぐわかる。部材Bは斜め材だから、垂直方向の力（反力2Pと荷重P）の差を打ち消すために、圧縮の-√2Pがかかる計算になる。力の流れをイメージしろ！【建龍版】静定トラスの軸力算出。①支点反力の算出：ΣMa=0より、右側支点の反力は0、よって左側支点の垂直反力は2P（上向き）。②部材Aの算出：中央の節点で切断し、右側部分のモーメントのつり合いを考慮すると、A=+2P（引張り）。③部材Bの算出：垂直方向の力のつり合い（ΣY=0）より、反力2P - 荷重P + Bsin45° = 0。これよりB = -√2P（圧縮）となる。"
+  },
+
 
   {
     "id": "H23-AM-01",
