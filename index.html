@@ -24,12 +24,9 @@
         const liffId = "2009463648-LX7h6H1q";
         const SECRET_PASSWORD = "KENRYU";
 
-        // モードごとの履歴キー（v4）
         const HISTORY_KEY = (mode) => `seko_history_v4_${mode}`;
-        // 旧キー一覧（移行・クリーンアップ用）
         const LEGACY_KEYS = ['seko_history_v3', 'seko_history_v3_shoken', 'seko_history_v3_kenno'];
 
-        // Fisher-Yates シャッフル
         function shuffle(array) {
             const arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -39,11 +36,8 @@
             return arr;
         }
 
-        // 問題ID：JSONの"id"フィールド（例:"R7-AM-01"）を最優先で使う
-        // → 絶対にユニーク、year/session/noの組み合わせ衝突なし
         function getQId(q) {
             if (q.id) return q.id;
-            // idがない場合のフォールバック
             const year    = q.year    || '';
             const session = q.session || '';
             const no      = q.no      || '';
@@ -51,7 +45,6 @@
             return (q.question || JSON.stringify(q)).substring(0, 60);
         }
 
-        // 履歴をSetで返す（旧キーも統合して自動移行）
         function loadHistory(mode) {
             const key = HISTORY_KEY(mode);
             const current = new Set(JSON.parse(localStorage.getItem(key) || '[]'));
@@ -68,12 +61,10 @@
             return current;
         }
 
-        // 履歴SetをlocalStorageへ保存
         function saveHistory(mode, historySet) {
             localStorage.setItem(HISTORY_KEY(mode), JSON.stringify([...historySet]));
         }
 
-        // 解答した問題を即時・確実に記録し、最新のSetを返す
         function recordAnswered(mode, q) {
             const history = loadHistory(mode);
             history.add(getQId(q));
@@ -124,25 +115,19 @@
                 setView('loading');
                 setScore(0);
                 try {
-                   const year = document.getElementById('year-select').value;
+                    const year = document.getElementById('year-select').value;
                     const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
                     const data = await res.json();
                     let all = Array.isArray(data) ? data : (data.questions || []);
-
-                    // 最新の履歴をSetで取得（旧キーも自動統合）
                     let history = loadHistory(m);
-
-                    // 未解答の問題だけ抽出
                     let pool = all.filter(q => !history.has(getQId(q)));
 
-                    // 全問解き終わり → そのモードの履歴だけリセットして全問再出題
                     if (pool.length === 0) {
-                        alert("全ての問題を完工しました！履歴をリセットして新しい順序で再開します。");
+                        alert("全ての問題を完工しました！履歴をリセットして再開します。");
                         saveHistory(m, new Set());
                         pool = all;
                     }
 
-                    // Fisher-Yates で確実にシャッフル
                     setQuestions(shuffle(pool));
                     setCurrentIdx(0);
                     setView('quiz');
@@ -153,10 +138,7 @@
                 const q = questions[currentIdx];
                 const isCorrect = String(key) === String(q.answer);
                 if (isCorrect) setScore(score + 1);
-
-                // 解いた瞬間に即時・確実に記録（Set管理で重複なし）
                 recordAnswered(mode, q);
-
                 setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
                 setShowModal(true);
                 setIsExplaining(true);
@@ -187,23 +169,21 @@
                     <div className="max-w-md mx-auto p-6 pt-12">
                         <div className="bg-white rounded-3xl shadow-2xl p-8 text-center border-t-8 border-blue-700">
                             <h1 className="text-4xl font-black mb-1 italic text-gray-800">seko-can</h1>
-                          
                             <p className="text-blue-700 font-bold mb-6 text-[10px] tracking-widest uppercase">Construction Management AI</p>
 
-<div className="mb-6 px-4">
-    <select 
-        id="year-select"
-        className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-blue-500 transition-all text-lg"
-        defaultValue="R7"
-        onChange={() => updateStats()}
-    >
-        {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y => (
-            <option key={y} value={y}>{y}年度</option>
-        ))}
-    </select>
-</div>
+                            <div className="mb-6 px-4">
+                                <select 
+                                    id="year-select"
+                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-blue-500 transition-all text-lg"
+                                    defaultValue="R7"
+                                    onChange={() => updateStats()}
+                                >
+                                    {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y => (
+                                        <option key={y} value={y}>{y}年度</option>
+                                    ))}
+                                </select>
+                            </div>
 
-{/* ショーケン版プログレス */}
                             <div className="mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-inner text-left">
                                 <p className="text-[10px] font-bold text-blue-400 mb-1 tracking-widest">🔵 SHOKEN PROGRESS</p>
                                 <div className="flex justify-between text-xs font-black mb-1">
@@ -215,7 +195,6 @@
                                 </div>
                             </div>
 
-                            {/* 建龍版プログレス */}
                             <div className="mb-8 bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-inner text-left">
                                 <p className="text-[10px] font-bold text-gray-500 mb-1 tracking-widest">🔒 KENRYU PROGRESS</p>
                                 <div className="flex justify-between text-xs font-black mb-1">
@@ -277,10 +256,10 @@
                             <div className="flex justify-between items-center mb-6 border-b-2 border-gray-50 pb-2">
                                 <p className="text-[10px] font-bold text-gray-400 uppercase italic">Step.{currentIdx + 1} / {questions.length}</p>
                                <p className="text-[10px] font-bold text-blue-700 uppercase">{mode}</p>
-                            </div>
-                            <p className="font-bold text-gray-800 text-xl mb-6 leading-relaxed tracking-tight">{q.question}</p>
-                            {q.image_url && <img src={q.image_url} alt="問題図解" className="w-full h-auto mb-10 rounded-xl shadow-md border border-gray-200" />}
-                            <div className="space-y-4">
+                            </div>
+                            <p className="font-bold text-gray-800 text-xl mb-6 leading-relaxed tracking-tight">{q.question}</p>
+                            {q.image_url && <img src={q.image_url} alt="問題図解" className="w-full h-auto mb-10 rounded-xl shadow-md border border-gray-200" />}
+                            <div className="space-y-4">
                                 {q.choices && Object.entries(q.choices).map(([k, t]) => (
                                     <button key={k} onClick={() => handleAnswer(k, t)} className="w-full p-5 text-left border-2 border-gray-100 rounded-2xl flex items-start active:bg-blue-50 transition-all">
                                         <span className="w-7 h-7 bg-gray-100 rounded-full text-center text-[10px] leading-7 mr-4 flex-shrink-0 font-black text-gray-400">{k}</span>
