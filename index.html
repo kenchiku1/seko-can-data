@@ -94,12 +94,16 @@
                         setIsLoggedIn(true);
                         updateStats();
                     } else { liff.login(); }
+                }).catch(err => {
+                    setIsLoggedIn(true); 
+                    updateStats();
                 });
             }, []);
 
             const updateStats = async () => {
                 try {
-                    const year = document.getElementById('year-select')?.value || 'R7';
+                    const yearEl = document.getElementById('year-select');
+                    const year = yearEl ? yearEl.value : 'R7';
                     const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
@@ -160,7 +164,7 @@
                 setIsExplaining(false);
             };
 
-            if (!isLoggedIn) return null;
+            if (!isLoggedIn) return <div className="p-10 text-center font-bold">LINEログインを確認中...</div>;
 
             if (view === 'menu') {
                 const shokenRemaining = stats.shoken.total - stats.shoken.seen;
