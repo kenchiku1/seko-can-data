@@ -125,7 +125,7 @@
                 setScore(0);
                 try {
                    const year = document.getElementById('year-select').value;
-                   const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
+                    const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
                     const data = await res.json();
                     let all = Array.isArray(data) ? data : (data.questions || []);
 
