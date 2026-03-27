@@ -108,7 +108,8 @@
 
             const updateStats = async () => {
                 try {
-                    const res = await fetch('/H20-R7.json');
+                    const year = document.getElementById('year-select')?.value || 'R7';
+                    const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
                     setStats({
@@ -123,7 +124,8 @@
                 setView('loading');
                 setScore(0);
                 try {
-                    const res = await fetch('/H20-R7.json');
+                   const year = document.getElementById('year-select').value;
+                   const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
                     const data = await res.json();
                     let all = Array.isArray(data) ? data : (data.questions || []);
 
@@ -185,9 +187,23 @@
                     <div className="max-w-md mx-auto p-6 pt-12">
                         <div className="bg-white rounded-3xl shadow-2xl p-8 text-center border-t-8 border-blue-700">
                             <h1 className="text-4xl font-black mb-1 italic text-gray-800">seko-can</h1>
+                          
                             <p className="text-blue-700 font-bold mb-6 text-[10px] tracking-widest uppercase">Construction Management AI</p>
 
-                            {/* ショーケン版プログレス */}
+<div className="mb-6 px-4">
+    <select 
+        id="year-select"
+        className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-blue-500 transition-all text-lg"
+        defaultValue="R7"
+        onChange={() => updateStats()}
+    >
+        {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y => (
+            <option key={y} value={y}>{y}年度</option>
+        ))}
+    </select>
+</div>
+
+{/* ショーケン版プログレス */}
                             <div className="mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-inner text-left">
                                 <p className="text-[10px] font-bold text-blue-400 mb-1 tracking-widest">🔵 SHOKEN PROGRESS</p>
                                 <div className="flex justify-between text-xs font-black mb-1">
