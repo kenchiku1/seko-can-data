@@ -33,6 +33,7 @@
             const [score, setScore] = useState(0);
             const [quizInfo, setQuizInfo] = useState({ year: '', session: '' });
             const [history, setHistory] = useState([]);
+            const [weakCategories, setWeakCategories] = useState([]);
 
             const [selectedYear, setSelectedYear] = useState('R7');
             const [selectedSession, setSelectedSession] = useState('午前');
@@ -50,8 +51,27 @@
                 return { r: 'D', t: '新規入場者', c: 'text-gray-600', b: 'bg-gray-200' };
             };
 
+            const analyzeWeaknesses = (hist) => {
+                const stats = {};
+                const kenHistory = hist.filter(h => h.categoryStats).slice(0, 10);
+                if (kenHistory.length === 0) return [];
+                kenHistory.forEach(record => {
+                    Object.entries(record.categoryStats).forEach(([cat, data]) => {
+                        if (!stats[cat]) stats[cat] = { correct: 0, total: 0 };
+                        stats[cat].correct += data.correct;
+                        stats[cat].total += data.total;
+                    });
+                });
+                return Object.entries(stats)
+                    .filter(([cat, data]) => (data.correct / data.total) < 0.6)
+                    .map(([cat]) => cat);
+            };
+
             const startQuiz = async () => {
                 setView('loading');
+                if (mode === 'ken') {
+                    setWeakCategories(analyzeWeaknesses(history));
+                }
                 try {
                     const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${selectedYear}.json?t=${Date.now()}`);
                     const data = await res.json();
@@ -73,6 +93,7 @@
                 const isCorrect = String(k) === String(q.answer);
                 if (isCorrect) setScore(s => s + 1);
                 setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
+                questions[currentIdx].tempStats = isCorrect; 
                 setShowModal(true);
             };
 
@@ -86,6 +107,14 @@
             };
 
             const finishQuiz = () => {
+                const stats = {};
+                questions.forEach((q) => {
+                    const cat = q.category || "一般";
+                    if (!stats[cat]) stats[cat] = { correct: 0, total: 0 };
+                    stats[cat].total++;
+                    if (q.tempStats) stats[cat].correct++;
+                });
+
                 const p = Math.round((score / questions.length) * 100);
                 const r = getRankInfo(p);
                 const record = {
@@ -93,13 +122,16 @@
                     mode: mode === 'sho' ? 'ショーケン版' : '建龍版',
                     year: quizInfo.year, session: quizInfo.session,
                     score, total: questions.length, percentage: p,
-                    title: r.t, rank: r.r
+                    title: r.t, rank: r.r,
+                    categoryStats: mode === 'ken' ? stats : null
                 };
                 const newHistory = [record, ...history];
                 setHistory(newHistory);
                 localStorage.setItem('sekocan_history', JSON.stringify(newHistory));
                 setView('result');
             };
+
+            // --- UI 画面 ---
 
             if (view === 'menu') return (
                 <div className="max-w-md mx-auto p-8 text-center pt-12">
@@ -109,10 +141,20 @@
                             <div className="text-blue-600 font-black text-2xl">ショーケン版</div>
                             <div className="text-gray-500 text-sm font-bold">無料解説・基本演習</div>
                         </button>
-                        <button onClick={()=>{setMode('ken');setView('setup')}} className="w-full p-8 bg-gray-800 border-4 border-yellow-500 rounded-3xl shadow-xl active:scale-95 transition">
+                        
+                        {/* 🔥 建龍版にパスワード制限を追加 */}
+                        <button onClick={()=>{
+                            const pw = prompt("【建龍版 🔒】\n合言葉を入力してください");
+                            if(pw === 'KENRYU'){
+                                setMode('ken'); setView('setup');
+                            } else if (pw !== null) {
+                                alert("合言葉が違います。\n現場に出直してください。");
+                            }
+                        }} className="w-full p-8 bg-gray-800 border-4 border-yellow-500 rounded-3xl shadow-xl active:scale-95 transition">
                             <div className="text-yellow-500 font-black text-2xl">建龍版 🔒</div>
                             <div className="text-gray-400 text-sm font-bold">プレミアム解説・集中攻略</div>
                         </button>
+
                         <button onClick={()=>setView('history')} className="w-full py-4 text-gray-600 font-bold border-2 border-gray-300 rounded-2xl bg-white active:bg-gray-50">
                             📋 現場経歴書を確認
                         </button>
@@ -128,7 +170,6 @@
                     <div className="bg-white p-6 rounded-3xl shadow-xl text-left border border-gray-200">
                         <label className="block text-sm font-black text-gray-500 mb-2 ml-1">施工年度</label>
                         <select value={selectedYear} onChange={e=>setSelectedYear(e.target.value)} className="w-full p-4 mb-6 border-2 rounded-2xl font-bold text-lg bg-gray-50 outline-none focus:border-blue-500">
-                            {/* 【ここをH20まで拡張しました】 */}
                             {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y=><option key={y} value={y}>{y}年度</option>)}
                         </select>
                         <label className="block text-sm font-black text-gray-500 mb-2 ml-1">セッション</label>
@@ -146,6 +187,7 @@
             if (view === 'quiz') {
                 const q = questions[currentIdx];
                 const imageUrl = q.imageUrl ? `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/${q.imageUrl}` : null;
+                const isWeak = mode === 'ken' && weakCategories.includes(q.category);
 
                 return (
                     <div className="max-w-md mx-auto p-4 flex flex-col min-h-screen">
@@ -154,24 +196,18 @@
                             <div className="text-right">
                                 <span className="font-black text-blue-600 text-xl">
                                     No.{currentIdx + 1} <span className="text-gray-400 text-base ml-1">[{q.no}]</span>
+                                    {isWeak && <span className="ml-2 text-red-500 animate-pulse">⚠️</span>}
                                 </span>
                             </div>
                         </div>
                         {!showModal ? (
                             <div className="flex-grow overflow-y-auto pb-20">
-                                <p className="text-xl font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
-                                
+                                <p className={`text-xl font-bold mb-6 leading-relaxed whitespace-pre-wrap ${isWeak ? 'text-red-700' : 'text-gray-800'}`}>{q.question}</p>
                                 {imageUrl && (
                                     <div className="mb-6 bg-white p-2 rounded-xl shadow-inner border border-gray-200">
-                                        <img 
-                                            src={imageUrl} 
-                                            alt="問題用図面" 
-                                            className="w-full h-auto rounded-lg mx-auto"
-                                            onError={(e) => e.target.style.display = 'none'}
-                                        />
+                                        <img src={imageUrl} alt="問題用図面" className="w-full h-auto rounded-lg mx-auto" onError={(e) => e.target.style.display = 'none'} />
                                     </div>
                                 )}
-
                                 <div className="space-y-4">
                                     {q.choices && Object.entries(q.choices).map(([k, t]) => (
                                         <button key={k} onClick={() => handleAnswer(k)} className="w-full p-5 border-2 border-gray-300 rounded-2xl text-left font-bold text-gray-700 bg-white shadow-sm active:bg-blue-50 transition">
@@ -239,6 +275,15 @@
                                         <div className="font-black text-xl text-gray-800">{h.year} {h.session}</div>
                                         <div className={`font-black text-lg ${r.c}`}>{r.r}: {r.t}</div>
                                     </div>
+                                    {h.categoryStats && (
+                                        <div className="mt-2 flex flex-wrap gap-1">
+                                            {Object.entries(h.categoryStats).map(([cat, d]) => (
+                                                <span key={cat} className={`text-[9px] px-2 py-0.5 rounded-full ${(d.correct/d.total) < 0.6 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
+                                                    {cat}: {Math.round((d.correct/d.total)*100)}%
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             );
                         })}
