@@ -14,7 +14,6 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // 問題をシャッフルする工具
         function shuffle(array) {
             const arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -25,27 +24,34 @@
         }
 
         function App() {
-            // アプリの状態管理（現場の状況）
-            const [view, setView] = useState('menu'); // menu, loading, quiz, result, history
+            const [view, setView] = useState('menu');
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
             const [showModal, setShowModal] = useState(false);
             const [judge, setJudge] = useState('');
             
-            // 成績と履歴用の新しい状態
             const [score, setScore] = useState(0);
             const [quizInfo, setQuizInfo] = useState({ year: '', session: '' });
             const [history, setHistory] = useState([]);
 
-            // アプリ起動時にスマホの記憶（履歴）を読み込む
+            // 【防弾仕様1】選択状態をReactで安全に管理
+            const [selectedYear, setSelectedYear] = useState('R7');
+            const [selectedSession, setSelectedSession] = useState('午前');
+
+            // 【防弾仕様2】スマホの記憶（履歴）が壊れていても画面を真っ白にしない安全装置
             useEffect(() => {
-                const savedHistory = localStorage.getItem('sekocan_history');
-                if (savedHistory) {
-                    setHistory(JSON.parse(savedHistory));
+                try {
+                    const savedHistory = localStorage.getItem('sekocan_history');
+                    if (savedHistory) {
+                        setHistory(JSON.parse(savedHistory));
+                    }
+                } catch (e) {
+                    console.error("履歴データの読み込みに失敗しました。リセットします。");
+                    localStorage.removeItem('sekocan_history');
+                    setHistory([]);
                 }
             }, []);
 
-            // 職位（ランク）を判定するシステム
             const getRankInfo = (percentage) => {
                 if (percentage >= 90) return { rank: 'S', title: '施工管理技士', color: 'text-yellow-600', bg: 'bg-yellow-100' };
                 if (percentage >= 70) return { rank: 'A', title: '主任技術者', color: 'text-blue-600', bg: 'bg-blue-100' };
@@ -54,54 +60,54 @@
                 return { rank: 'D', title: '新規入場者（見習い）', color: 'text-gray-600', bg: 'bg-gray-200' };
             };
 
-            // クイズ開始処理（データ搬入と仕分け）
             const startQuiz = async () => {
                 setView('loading');
                 try {
-                    const year = document.getElementById('year-select').value;
-                    const session = document.getElementById('session-select').value;
+                    const year = selectedYear;
+                    const session = selectedSession;
                     
-                    // 倉庫からJSONを取り寄せる
-                    const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
+                    // 【防弾仕様3】古いキャッシュを無視して常に最新のJSONを倉庫から取り寄せる
+                    const fetchUrl = `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json?t=${new Date().getTime()}`;
+                    const res = await fetch(fetchUrl);
+                    
+                    if (!res.ok) throw new Error("データが見つかりません");
+                    
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
 
-                    // 午前・午後でデータを仕分ける（安全のため「AM/PM」と「午前/午後」両方に対応）
                     const filtered = all.filter(q => {
+                        if (!q.session) return false;
                         const s = String(q.session).trim();
-                        if (session === '午前') return s.includes('午前') || s.toUpperCase() === 'AM';
-                        if (session === '午後') return s.includes('午後') || s.toUpperCase() === 'PM';
+                        if (session === '午前') return s.includes('午前') || s.toUpperCase() === 'AM' || s === '1';
+                        if (session === '午後') return s.includes('午後') || s.toUpperCase() === 'PM' || s === '2';
                         return true;
                     });
 
                     if (filtered.length === 0) {
-                        alert(`【欠品エラー】${year}年度の「${session}」のデータが見つかりません。`);
+                        alert(`【データ不足】${year}年度の「${session}」の問題が見つかりません。`);
                         setView('menu');
                         return;
                     }
 
-                    // 現場セットアップ
                     setQuestions(shuffle(filtered));
                     setCurrentIdx(0);
                     setScore(0);
                     setQuizInfo({ year, session });
                     setView('quiz');
                 } catch (e) {
-                    alert("データ読込失敗。通信環境を確認してください。");
+                    alert(`通信エラー：${selectedYear}年度のデータを読み込めませんでした。`);
                     setView('menu');
                 }
             };
 
-            // 解答したときの処理
             const handleAnswer = (k) => {
                 const q = questions[currentIdx];
                 const isCorrect = String(k) === String(q.answer);
-                if (isCorrect) setScore(prev => prev + 1); // 正解ならスコア加算
+                if (isCorrect) setScore(prev => prev + 1);
                 setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
                 setShowModal(true);
             };
 
-            // 次の問題へ（最後なら結果発表へ）
             const nextQuestion = () => {
                 setShowModal(false);
                 if (currentIdx + 1 < questions.length) {
@@ -111,12 +117,10 @@
                 }
             };
 
-            // クイズ終了と成績記録処理
             const finishQuiz = () => {
                 const percentage = Math.round((score / questions.length) * 100);
                 const rankInfo = getRankInfo(percentage);
                 
-                // 履歴データを作成して保存
                 const newRecord = {
                     date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
                     year: quizInfo.year,
@@ -130,14 +134,11 @@
                 
                 const newHistory = [newRecord, ...history];
                 setHistory(newHistory);
-                localStorage.setItem('sekocan_history', JSON.stringify(newHistory)); // スマホに記憶させる
+                localStorage.setItem('sekocan_history', JSON.stringify(newHistory));
                 
                 setView('result');
             };
 
-            // ▼▼▼ 各画面のレイアウト（図面） ▼▼▼
-
-            // 1. トップメニュー画面
             if (view === 'menu') {
                 return (
                     <div className="max-w-md mx-auto p-8 text-center">
@@ -145,14 +146,14 @@
                         
                         <div className="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
                             <label className="block text-left text-sm font-bold text-gray-600 mb-2">年度を選択</label>
-                            <select id="year-select" className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
                                 {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y => (
                                     <option key={y} value={y}>{y}年度</option>
                                 ))}
                             </select>
 
                             <label className="block text-left text-sm font-bold text-gray-600 mb-2">セッションを選択</label>
-                            <select id="session-select" className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                            <select value={selectedSession} onChange={(e) => setSelectedSession(e.target.value)} className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
                                 <option value="午前">午前 (AM)</option>
                                 <option value="午後">午後 (PM)</option>
                             </select>
@@ -169,10 +170,8 @@
                 );
             }
 
-            // 2. 読込中画面
             if (view === 'loading') return <div className="text-center mt-32 text-2xl font-black text-gray-500 animate-pulse">資材搬入中...</div>;
 
-            // 3. クイズ画面
             if (view === 'quiz') {
                 const q = questions[currentIdx];
                 return (
@@ -205,7 +204,6 @@
                 );
             }
 
-            // 4. 結果発表（職位付与）画面
             if (view === 'result') {
                 const percentage = Math.round((score / questions.length) * 100);
                 const rankInfo = getRankInfo(percentage);
@@ -217,15 +215,4 @@
                         
                         <div className={`p-8 rounded-3xl mb-10 shadow-lg border-4 border-white ${rankInfo.bg}`}>
                             <p className="text-sm font-bold text-gray-600 mb-2">あなたの現在の職位</p>
-                            <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}<span className="text-3xl"> ランク</span></div>
-                            <div className={`text-3xl font-black ${rankInfo.color}`}>{rankInfo.title}</div>
-                        </div>
-
-                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-xl active:bg-blue-800 transition mb-4">
-                            現場事務所へ戻る
-                        </button>
-                    </div>
-                );
-            }
-
-            // 5.
+                            <div className={`text-7xl font-black mb-
