@@ -4,25 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>seko-can.com | 一級建築施工管理技士</title>
-    
-    <script>
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            var errHtml = '<div style="padding: 20px; background-color: #fee2e2; color: #991b1b; font-family: sans-serif; height: 100vh;">' +
-                '<h1 style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">🚨 システムエラー発生</h1>' +
-                '<p style="font-size: 16px; margin-bottom: 15px;">この画面のスクリーンショットを相馬所長に送ってください。</p>' +
-                '<div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #ef4444; word-break: break-all; font-size: 14px;">' +
-                '<b>【エラー内容】</b><br>' + msg + '<br><br>' +
-                '<b>【発生箇所】</b><br>' + lineNo + '行目<br><br>' +
-                '<b>【詳細スタック】</b><br>' + (error && error.stack ? error.stack : '詳細なし') +
-                '</div></div>';
-            document.body.innerHTML = errHtml;
-            return false;
-        };
-        window.onunhandledrejection = function(event) {
-            window.onerror(event.reason, window.location.href, 0, 0, event.reason);
-        };
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
@@ -63,7 +44,6 @@
                         setHistory(JSON.parse(savedHistory));
                     }
                 } catch (e) {
-                    console.error(e);
                     localStorage.removeItem('sekocan_history');
                 }
             }, []);
@@ -206,9 +186,31 @@
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex-grow flex flex-col justify-center items-center py-10">
-                                <div className={`text-6xl font-black mb-12 ${judge.includes('正解') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
-                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-xl shadow-xl active:bg-black">
+                            <div className="flex-grow flex flex-col pb-6">
+                                <div className={`text-4xl font-black mb-6 text-center ${judge.includes('正解') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
+                                
+                                {/* 📝 解説セクションの復活 */}
+                                <div className="bg-white p-5 rounded-2xl shadow-sm border-2 border-gray-200 mb-6 flex-grow">
+                                    {/* ショーケン版（通常解説） */}
+                                    <div className="mb-6">
+                                        <span className="inline-block bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full mb-3">ショーケン版解説</span>
+                                        <p className="text-gray-800 font-bold whitespace-pre-wrap leading-relaxed">{q.explanation_sho || "解説がありません。"}</p>
+                                    </div>
+                                    
+                                    {/* 建龍版（鍵付きプレミアム解説） */}
+                                    <div className="p-4 bg-gray-100 rounded-xl border border-gray-300 relative overflow-hidden">
+                                        <div className="flex items-center mb-2">
+                                            <span className="inline-block bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded-full">建龍版解説</span>
+                                            <span className="ml-2 text-xl">🔒</span>
+                                        </div>
+                                        <p className="text-gray-400 font-bold blur-[3px] select-none">ここは本番の建龍版アプリで解放される有料コンテンツです。詳細な図解や覚え方のコツが記載されています。資格取得への最短ルートはこちら！</p>
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <span className="bg-white/90 text-gray-800 font-black px-4 py-2 rounded-lg shadow-md border border-gray-300">完全版アプリで解放</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-xl shadow-xl active:bg-black mt-auto">
                                     {currentIdx + 1 < questions.length ? '次の問題へ' : '結果発表へ'}
                                 </button>
                             </div>
