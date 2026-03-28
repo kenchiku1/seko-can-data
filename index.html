@@ -24,9 +24,8 @@
         }
 
         function App() {
-            // --- 状態管理（現場の全状況） ---
-            const [view, setView] = useState('menu'); // menu, setup, loading, quiz, result, history
-            const [mode, setMode] = useState(''); // sho, ken
+            const [view, setView] = useState('menu');
+            const [mode, setMode] = useState('');
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
             const [showModal, setShowModal] = useState(false);
@@ -38,13 +37,11 @@
             const [selectedYear, setSelectedYear] = useState('R7');
             const [selectedSession, setSelectedSession] = useState('午前');
 
-            // 履歴の読み込み
             useEffect(() => {
                 const saved = localStorage.getItem('sekocan_history');
                 if (saved) setHistory(JSON.parse(saved));
             }, []);
 
-            // ランク判定
             const getRankInfo = (p) => {
                 if (p >= 90) return { r: 'S', t: '施工管理技士', c: 'text-yellow-600', b: 'bg-yellow-100' };
                 if (p >= 70) return { r: 'A', t: '主任技術者', c: 'text-blue-600', b: 'bg-blue-100' };
@@ -53,7 +50,6 @@
                 return { r: 'D', t: '新規入場者', c: 'text-gray-600', b: 'bg-gray-200' };
             };
 
-            // クイズ開始
             const startQuiz = async () => {
                 setView('loading');
                 try {
@@ -72,13 +68,12 @@
                 } catch (e) { alert("読込失敗"); setView('setup'); }
             };
 
-            // 【超重要：判定処理】
             const handleAnswer = (k) => {
                 const q = questions[currentIdx];
                 const isCorrect = String(k) === String(q.answer);
                 if (isCorrect) setScore(s => s + 1);
                 setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
-                setShowModal(true); // ここで画面を切り替える
+                setShowModal(true);
             };
 
             const nextQuestion = () => {
@@ -151,6 +146,9 @@
 
             if (view === 'quiz') {
                 const q = questions[currentIdx];
+                // 【画像URLの生成】
+                const imageUrl = q.imageUrl ? `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/${q.imageUrl}` : null;
+
                 return (
                     <div className="max-w-md mx-auto p-4 flex flex-col min-h-screen">
                         <div className="flex justify-between items-center mb-4 border-b-2 pb-2">
@@ -158,8 +156,21 @@
                             <span className="font-black text-blue-600 text-xl">No.{currentIdx + 1}</span>
                         </div>
                         {!showModal ? (
-                            <div className="flex-grow">
-                                <p className="text-xl font-bold mb-8 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
+                            <div className="flex-grow overflow-y-auto pb-20">
+                                <p className="text-xl font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
+                                
+                                {/* 🖼️ 【重要】画像表示エリア */}
+                                {imageUrl && (
+                                    <div className="mb-6 bg-white p-2 rounded-xl shadow-inner border border-gray-200">
+                                        <img 
+                                            src={imageUrl} 
+                                            alt="問題用図面" 
+                                            className="w-full h-auto rounded-lg mx-auto"
+                                            onError={(e) => e.target.style.display = 'none'}
+                                        />
+                                    </div>
+                                )}
+
                                 <div className="space-y-4">
                                     {q.choices && Object.entries(q.choices).map(([k, t]) => (
                                         <button key={k} onClick={() => handleAnswer(k)} className="w-full p-5 border-2 border-gray-300 rounded-2xl text-left font-bold text-gray-700 bg-white shadow-sm active:bg-blue-50 active:border-blue-500 transition">
