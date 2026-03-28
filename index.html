@@ -5,28 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>seko-can.com | 一級建築施工管理技士</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <style>
-        body { font-family: sans-serif; background-color: #f3f4f6; }
-        .blur-text { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.6; }
-        .fade-in { animation: fadeIn 0.2s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
 </head>
-<body>
+<body class="bg-gray-100">
     <div id="root"></div>
-
     <script type="text/babel">
         const { useState, useEffect } = React;
-        const liffId = "2009463648-LX7h6H1q";
-        const SECRET_PASSWORD = "KENRYU";
 
-        const HISTORY_KEY = (mode) => `seko_history_v4_${mode}`;
-        const LEGACY_KEYS = ['seko_history_v3', 'seko_history_v3_shoken', 'seko_history_v3_kenno'];
-
+        // 問題をシャッフルする工具
         function shuffle(array) {
             const arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -36,273 +24,208 @@
             return arr;
         }
 
-        function getQId(q) {
-            if (q.id) return q.id;
-            const year    = q.year    || '';
-            const session = q.session || '';
-            const no      = q.no      || '';
-            if (year || no) return `${year}_${session}_${no}`;
-            return (q.question || JSON.stringify(q)).substring(0, 60);
-        }
-
-        function loadHistory(mode) {
-            const key = HISTORY_KEY(mode);
-            const current = new Set(JSON.parse(localStorage.getItem(key) || '[]'));
-            let merged = false;
-            LEGACY_KEYS.forEach(lk => {
-                const old = JSON.parse(localStorage.getItem(lk) || '[]');
-                if (old.length > 0) {
-                    old.forEach(id => current.add(id));
-                    localStorage.removeItem(lk);
-                    merged = true;
-                }
-            });
-            if (merged) saveHistory(mode, current);
-            return current;
-        }
-
-        function saveHistory(mode, historySet) {
-            localStorage.setItem(HISTORY_KEY(mode), JSON.stringify([...historySet]));
-        }
-
-        function recordAnswered(mode, q) {
-            const history = loadHistory(mode);
-            history.add(getQId(q));
-            saveHistory(mode, history);
-            return history;
-        }
-
         function App() {
-            const [isLoggedIn, setIsLoggedIn] = useState(false);
-            const [view, setView] = useState('menu');
-            const [mode, setMode] = useState('shoken');
+            // アプリの状態管理（現場の状況）
+            const [view, setView] = useState('menu'); // menu, loading, quiz, result, history
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
-            const [score, setScore] = useState(0);
             const [showModal, setShowModal] = useState(false);
-            const [isExplaining, setIsExplaining] = useState(false);
             const [judge, setJudge] = useState('');
-            const [explanation1, setExplanation1] = useState('');
-            const [explanation2, setExplanation2] = useState('');
-            const [showPassword, setShowPassword] = useState(false);
-            const [inputPass, setInputPass] = useState('');
-            const [stats, setStats] = useState({ shoken: { seen: 0, total: 0 }, kenno: { seen: 0, total: 0 } });
+            
+            // 成績と履歴用の新しい状態
+            const [score, setScore] = useState(0);
+            const [quizInfo, setQuizInfo] = useState({ year: '', session: '' });
+            const [history, setHistory] = useState([]);
 
+            // アプリ起動時にスマホの記憶（履歴）を読み込む
             useEffect(() => {
-                liff.init({ liffId }).then(() => {
-                    if (liff.isLoggedIn()) {
-                        setIsLoggedIn(true);
-                        updateStats();
-                    } else { liff.login(); }
-                }).catch(err => {
-                    setIsLoggedIn(true); 
-                    updateStats();
-                });
+                const savedHistory = localStorage.getItem('sekocan_history');
+                if (savedHistory) {
+                    setHistory(JSON.parse(savedHistory));
+                }
             }, []);
 
-            const updateStats = async () => {
+            // 職位（ランク）を判定するシステム
+            const getRankInfo = (percentage) => {
+                if (percentage >= 90) return { rank: 'S', title: '施工管理技士', color: 'text-yellow-600', bg: 'bg-yellow-100' };
+                if (percentage >= 70) return { rank: 'A', title: '主任技術者', color: 'text-blue-600', bg: 'bg-blue-100' };
+                if (percentage >= 50) return { rank: 'B', title: '現場記録者', color: 'text-green-600', bg: 'bg-green-100' };
+                if (percentage >= 30) return { rank: 'C', title: '書類整理係', color: 'text-orange-600', bg: 'bg-orange-100' };
+                return { rank: 'D', title: '新規入場者（見習い）', color: 'text-gray-600', bg: 'bg-gray-200' };
+            };
+
+            // クイズ開始処理（データ搬入と仕分け）
+            const startQuiz = async () => {
+                setView('loading');
                 try {
-                    const yearEl = document.getElementById('year-select');
-                    const year = yearEl ? yearEl.value : 'R7';
+                    const year = document.getElementById('year-select').value;
+                    const session = document.getElementById('session-select').value;
+                    
+                    // 倉庫からJSONを取り寄せる
                     const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
-                    setStats({
-                        shoken: { seen: loadHistory('shoken').size, total: all.length },
-                        kenno:  { seen: loadHistory('kenno').size,  total: all.length },
+
+                    // 午前・午後でデータを仕分ける（安全のため「AM/PM」と「午前/午後」両方に対応）
+                    const filtered = all.filter(q => {
+                        const s = String(q.session).trim();
+                        if (session === '午前') return s.includes('午前') || s.toUpperCase() === 'AM';
+                        if (session === '午後') return s.includes('午後') || s.toUpperCase() === 'PM';
+                        return true;
                     });
-                } catch (e) { console.error(e); }
-            };
 
-            const startQuiz = async (m) => {
-                setMode(m);
-                setView('loading');
-                setScore(0);
-                try {
-                    const year = document.getElementById('year-select').value;
-                    const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json`);
-                    const data = await res.json();
-                    let all = Array.isArray(data) ? data : (data.questions || []);
-                    let history = loadHistory(m);
-                    let pool = all.filter(q => !history.has(getQId(q)));
-
-                    if (pool.length === 0) {
-                        alert("全ての問題を完工しました！履歴をリセットして再開します。");
-                        saveHistory(m, new Set());
-                        pool = all;
+                    if (filtered.length === 0) {
+                        alert(`【欠品エラー】${year}年度の「${session}」のデータが見つかりません。`);
+                        setView('menu');
+                        return;
                     }
 
-                    setQuestions(shuffle(pool));
+                    // 現場セットアップ
+                    setQuestions(shuffle(filtered));
                     setCurrentIdx(0);
+                    setScore(0);
+                    setQuizInfo({ year, session });
                     setView('quiz');
-                } catch (e) { alert("読込エラー"); setView('menu'); }
+                } catch (e) {
+                    alert("データ読込失敗。通信環境を確認してください。");
+                    setView('menu');
+                }
             };
 
-            const handleAnswer = async (key, text) => {
+            // 解答したときの処理
+            const handleAnswer = (k) => {
                 const q = questions[currentIdx];
-                const isCorrect = String(key) === String(q.answer);
-                if (isCorrect) setScore(score + 1);
-                recordAnswered(mode, q);
+                const isCorrect = String(k) === String(q.answer);
+                if (isCorrect) setScore(prev => prev + 1); // 正解ならスコア加算
                 setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
                 setShowModal(true);
-                setIsExplaining(true);
-
-                let persona = mode === 'shoken' ? "先輩監督" : "現場所長";
-                const prompt = persona + "として即答。前置き不要。\n問題:" + q.question + "\n正解:" + q.answer + "\n回答:" + text + "\n【1次】根拠(80字)\n【2次】実務のアドバイス(80字)";
-
-                try {
-                    const res = await fetch('/api/chat', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: prompt })
-                    });
-                    const data = await res.json();
-                    const parts = (data.result || "").split('【2次】');
-                    setExplanation1(parts[0].replace('【1次】', '').trim());
-                    setExplanation2(parts[1] ? parts[1].trim() : "品質管理の急所です。");
-                } catch (e) { setExplanation1("エラー"); }
-                setIsExplaining(false);
             };
 
-            if (!isLoggedIn) return <div className="p-10 text-center font-bold">LINEログインを確認中...</div>;
+            // 次の問題へ（最後なら結果発表へ）
+            const nextQuestion = () => {
+                setShowModal(false);
+                if (currentIdx + 1 < questions.length) {
+                    setCurrentIdx(currentIdx + 1);
+                } else {
+                    finishQuiz();
+                }
+            };
 
+            // クイズ終了と成績記録処理
+            const finishQuiz = () => {
+                const percentage = Math.round((score / questions.length) * 100);
+                const rankInfo = getRankInfo(percentage);
+                
+                // 履歴データを作成して保存
+                const newRecord = {
+                    date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                    year: quizInfo.year,
+                    session: quizInfo.session,
+                    score: score,
+                    total: questions.length,
+                    percentage: percentage,
+                    title: rankInfo.title,
+                    rank: rankInfo.rank
+                };
+                
+                const newHistory = [newRecord, ...history];
+                setHistory(newHistory);
+                localStorage.setItem('sekocan_history', JSON.stringify(newHistory)); // スマホに記憶させる
+                
+                setView('result');
+            };
+
+            // ▼▼▼ 各画面のレイアウト（図面） ▼▼▼
+
+            // 1. トップメニュー画面
             if (view === 'menu') {
-                const shokenRemaining = stats.shoken.total - stats.shoken.seen;
-                const kennoRemaining  = stats.kenno.total  - stats.kenno.seen;
                 return (
-                    <div className="max-w-md mx-auto p-6 pt-12">
-                        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center border-t-8 border-blue-700">
-                            <h1 className="text-4xl font-black mb-1 italic text-gray-800">seko-can</h1>
-                            <p className="text-blue-700 font-bold mb-6 text-[10px] tracking-widest uppercase">Construction Management AI</p>
-
-                            <div className="mb-6 px-4">
-                                <select 
-                                    id="year-select"
-                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-blue-500 transition-all text-lg"
-                                    defaultValue="R7"
-                                    onChange={() => updateStats()}
-                                >
-                                    {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y => (
-                                        <option key={y} value={y}>{y}年度</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-inner text-left">
-                                <p className="text-[10px] font-bold text-blue-400 mb-1 tracking-widest">🔵 SHOKEN PROGRESS</p>
-                                <div className="flex justify-between text-xs font-black mb-1">
-                                    <span className="text-blue-600">既習: {stats.shoken.seen}</span>
-                                    <span className="text-gray-400">未習: {shokenRemaining}</span>
-                                </div>
-                                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div className="bg-blue-600 h-full transition-all duration-700" style={{ width: `${stats.shoken.total ? (stats.shoken.seen / stats.shoken.total) * 100 : 0}%` }}></div>
-                                </div>
-                            </div>
-
-                            <div className="mb-8 bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-inner text-left">
-                                <p className="text-[10px] font-bold text-gray-500 mb-1 tracking-widest">🔒 KENRYU PROGRESS</p>
-                                <div className="flex justify-between text-xs font-black mb-1">
-                                    <span className="text-gray-600">既習: {stats.kenno.seen}</span>
-                                    <span className="text-gray-400">未習: {kennoRemaining}</span>
-                                </div>
-                                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div className="bg-gray-600 h-full transition-all duration-700" style={{ width: `${stats.kenno.total ? (stats.kenno.seen / stats.kenno.total) * 100 : 0}%` }}></div>
-                                </div>
-                                <p className="text-[10px] text-gray-400 mt-2 font-bold">全 {stats.kenno.total} 問 ／ 各モードで独立管理</p>
-                            </div>
-
-                            {!showPassword ? (
-                                <div className="space-y-4">
-                                    <button onClick={() => startQuiz('shoken')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition">🔵 ショーケン版を開始</button>
-                                    <button onClick={() => setShowPassword(true)} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition">🔒 建龍版を解除</button>
-                                    <div className="flex gap-3 mt-2 justify-center">
-                                        <button onClick={() => { if (confirm('ショーケン版の履歴を消去しますか？')) { saveHistory('shoken', new Set()); updateStats(); } }} className="text-[10px] text-blue-300 underline">🔵 履歴リセット</button>
-                                        <button onClick={() => { if (confirm('建龍版の履歴を消去しますか？')) { saveHistory('kenno', new Set()); updateStats(); } }} className="text-[10px] text-gray-300 underline">🔒 履歴リセット</button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="bg-gray-50 p-6 rounded-2xl border-2 border-dashed fade-in">
-                                    <input type="text" value={inputPass} onChange={(e) => setInputPass(e.target.value)} className="w-full p-4 border-2 rounded-xl mb-4 text-center font-black text-xl tracking-widest uppercase focus:border-blue-500 outline-none" placeholder="******" />
-                                    <div className="flex gap-2">
-                                        <button onClick={() => setShowPassword(false)} className="flex-1 py-3 bg-gray-300 rounded-xl font-bold">戻る</button>
-                                        <button onClick={() => { if (inputPass.toUpperCase() === SECRET_PASSWORD) startQuiz('kenno'); else alert("不一致"); }} className="flex-1 py-3 bg-blue-700 text-white rounded-xl font-bold">解除</button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                );
-            }
-
-            if (view === 'result') {
-                const rate = Math.round((score / questions.length) * 100);
-                return (
-                    <div className="max-w-md mx-auto p-6 pt-12 fade-in">
-                        <div className="bg-white rounded-3xl shadow-2xl p-10 text-center border-t-8 border-orange-500">
-                            <h2 className="text-sm font-bold mb-6 text-gray-400 tracking-widest uppercase">Mission Result</h2>
-                            <div className="mb-8 text-6xl font-black text-gray-800">{rate}%</div>
-                            <div className="bg-orange-50 p-6 rounded-2xl mb-8 border border-orange-100 italic font-black text-orange-600">
-                                {rate === 100 ? '伝説の監理技術者' : rate >= 80 ? '凄腕現場総監督' : rate >= 60 ? '一級施工管理技士' : '現場見習い'}
-                            </div>
-                            <button onClick={() => { setView('menu'); updateStats(); }} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow-lg">事務所へ戻る</button>
-                        </div>
-                    </div>
-                );
-            }
-
-            if (view === 'loading') return <div className="text-center mt-40 font-black text-gray-400 animate-pulse tracking-widest">未体験の問題を抽出中...</div>;
-
-            const q = questions[currentIdx];
-            return (
-                <div className="max-w-md mx-auto bg-white min-h-screen p-6 relative">
-                    {!showModal ? (
-                        <div className="fade-in">
-                            <div className="flex justify-between items-center mb-6 border-b-2 border-gray-50 pb-2">
-                                <p className="text-[10px] font-bold text-gray-400 uppercase italic">Step.{currentIdx + 1} / {questions.length}</p>
-                               <p className="text-[10px] font-bold text-blue-700 uppercase">{mode}</p>
-                            </div>
-                            <p className="font-bold text-gray-800 text-xl mb-6 leading-relaxed tracking-tight">{q.question}</p>
-                            {q.image_url && <img src={q.image_url} alt="問題図解" className="w-full h-auto mb-10 rounded-xl shadow-md border border-gray-200" />}
-                            <div className="space-y-4">
-                                {q.choices && Object.entries(q.choices).map(([k, t]) => (
-                                    <button key={k} onClick={() => handleAnswer(k, t)} className="w-full p-5 text-left border-2 border-gray-100 rounded-2xl flex items-start active:bg-blue-50 transition-all">
-                                        <span className="w-7 h-7 bg-gray-100 rounded-full text-center text-[10px] leading-7 mr-4 flex-shrink-0 font-black text-gray-400">{k}</span>
-                                        <span className="text-sm font-bold text-gray-700 leading-snug">{t}</span>
-                                    </button>
+                    <div className="max-w-md mx-auto p-8 text-center">
+                        <h1 className="text-4xl font-black mb-8 text-gray-800 tracking-tighter">一級建築施工管理技士<br/><span className="text-2xl text-blue-600">過去問道場</span></h1>
+                        
+                        <div className="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
+                            <label className="block text-left text-sm font-bold text-gray-600 mb-2">年度を選択</label>
+                            <select id="year-select" className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                                {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y => (
+                                    <option key={y} value={y}>{y}年度</option>
                                 ))}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="fade-in flex flex-col h-full">
-                            <div className={`text-6xl font-black text-center mb-10 py-4 rounded-3xl ${judge.includes('⭕️') ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}`}>{judge}</div>
-                            <div className="flex-1 space-y-8 overflow-y-auto">
-                                <div>
-                                    <h3 className="text-[10px] font-black text-blue-600 mb-2 uppercase tracking-widest">■ Examination</h3>
-                                    <div className="bg-blue-50 p-5 rounded-2xl text-sm font-bold text-gray-700 leading-relaxed border-l-4 border-blue-600">{isExplaining ? '解析中...' : explanation1}</div>
-                                </div>
-                                <div>
-                                    <h3 className="text-[10px] font-black text-red-600 mb-2 uppercase tracking-widest">■ Site Management</h3>
-                                    {mode === 'kenno' ? (
-                                        <div className="bg-red-50 p-5 rounded-2xl text-sm font-bold text-gray-700 leading-relaxed border-l-4 border-red-600">{isExplaining ? '分析中...' : explanation2}</div>
-                                    ) : (
-                                        <div className="relative rounded-2xl bg-gray-50 p-5 border-2 border-dashed border-gray-200 overflow-hidden">
-                                            <p className="text-sm blur-text font-bold leading-relaxed">（建龍版でアンロックすると、記述対策に繋がる実戦知識が表示されます）</p>
-                                            <button onClick={() => { setView('menu'); setShowModal(false); setShowPassword(true); }} className="absolute inset-0 m-auto h-12 w-48 bg-gray-900 text-white text-[10px] font-black rounded-full shadow-2xl active:scale-95 transition">🔒 建龍版で解除</button>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="mt-12 space-y-4 pb-12">
-                                {!isExplaining && <button onClick={() => { setShowModal(false); if (currentIdx + 1 < questions.length) setCurrentIdx(currentIdx + 1); else { setView('result'); updateStats(); } }} className="w-full py-5 bg-blue-700 text-white rounded-2xl font-black text-xl shadow-xl active:scale-95 transition">NEXT STEP</button>}
-                                <button onClick={() => { setView('menu'); setShowModal(false); updateStats(); }} className="text-gray-400 text-[10px] font-bold underline w-full text-center tracking-widest uppercase">事務所へ戻る</button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        }
+                            </select>
 
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
-</body>
-</html>
+                            <label className="block text-left text-sm font-bold text-gray-600 mb-2">セッションを選択</label>
+                            <select id="session-select" className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                                <option value="午前">午前 (AM)</option>
+                                <option value="午後">午後 (PM)</option>
+                            </select>
+
+                            <button onClick={startQuiz} className="w-full py-4 bg-blue-600 text-white rounded-xl font-black text-xl shadow-lg active:bg-blue-800 transition">
+                                現場へ入場（クイズ開始）
+                            </button>
+                        </div>
+
+                        <button onClick={() => setView('history')} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow active:bg-gray-900 transition">
+                            📋 現場経歴書（成績履歴）を見る
+                        </button>
+                    </div>
+                );
+            }
+
+            // 2. 読込中画面
+            if (view === 'loading') return <div className="text-center mt-32 text-2xl font-black text-gray-500 animate-pulse">資材搬入中...</div>;
+
+            // 3. クイズ画面
+            if (view === 'quiz') {
+                const q = questions[currentIdx];
+                return (
+                    <div className="max-w-md mx-auto p-4 min-h-screen flex flex-col">
+                        <div className="flex justify-between items-end mb-4 px-2 border-b-2 border-gray-300 pb-2">
+                            <span className="font-bold text-gray-500">{quizInfo.year} {quizInfo.session}</span>
+                            <span className="text-xl font-black text-blue-700">第 {currentIdx + 1} 問 <span className="text-sm text-gray-400">/ 全 {questions.length} 問</span></span>
+                        </div>
+                        
+                        {!showModal ? (
+                            <div className="flex-grow">
+                                <p className="text-lg font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
+                                <div className="space-y-3">
+                                    {q.choices && Object.entries(q.choices).map(([k, t]) => (
+                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold text-gray-700 active:bg-blue-100 active:border-blue-500 transition">
+                                            {k}. {t}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex-grow flex flex-col justify-center items-center py-10">
+                                <div className={`text-6xl font-black mb-12 ${judge.includes('正解') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
+                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-xl shadow-xl active:bg-black">
+                                    {currentIdx + 1 < questions.length ? '次の問題へ' : '結果発表へ'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            // 4. 結果発表（職位付与）画面
+            if (view === 'result') {
+                const percentage = Math.round((score / questions.length) * 100);
+                const rankInfo = getRankInfo(percentage);
+                
+                return (
+                    <div className="max-w-md mx-auto p-6 text-center pt-12">
+                        <h2 className="text-2xl font-bold text-gray-600 mb-2">最終結果</h2>
+                        <div className="text-5xl font-black mb-8 text-gray-800">{score} <span className="text-2xl text-gray-500">/ {questions.length}問 正解</span></div>
+                        
+                        <div className={`p-8 rounded-3xl mb-10 shadow-lg border-4 border-white ${rankInfo.bg}`}>
+                            <p className="text-sm font-bold text-gray-600 mb-2">あなたの現在の職位</p>
+                            <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}<span className="text-3xl"> ランク</span></div>
+                            <div className={`text-3xl font-black ${rankInfo.color}`}>{rankInfo.title}</div>
+                        </div>
+
+                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-xl active:bg-blue-800 transition mb-4">
+                            現場事務所へ戻る
+                        </button>
+                    </div>
+                );
+            }
+
+            // 5.
