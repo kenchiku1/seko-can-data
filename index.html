@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>seko-can.com | 一級建築施工管理技士</title>
+    
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            var errHtml = '<div style="padding: 20px; background-color: #fee2e2; color: #991b1b; font-family: sans-serif; height: 100vh;">' +
+                '<h1 style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">🚨 システムエラー発生</h1>' +
+                '<p style="font-size: 16px; margin-bottom: 15px;">この画面のスクリーンショットを相馬所長に送ってください。</p>' +
+                '<div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #ef4444; word-break: break-all; font-size: 14px;">' +
+                '<b>【エラー内容】</b><br>' + msg + '<br><br>' +
+                '<b>【発生箇所】</b><br>' + lineNo + '行目<br><br>' +
+                '<b>【詳細スタック】</b><br>' + (error && error.stack ? error.stack : '詳細なし') +
+                '</div></div>';
+            document.body.innerHTML = errHtml;
+            return false;
+        };
+        window.onunhandledrejection = function(event) {
+            window.onerror(event.reason, window.location.href, 0, 0, event.reason);
+        };
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
@@ -34,11 +53,9 @@
             const [quizInfo, setQuizInfo] = useState({ year: '', session: '' });
             const [history, setHistory] = useState([]);
 
-            // 【防弾仕様1】選択状態をReactで安全に管理
             const [selectedYear, setSelectedYear] = useState('R7');
             const [selectedSession, setSelectedSession] = useState('午前');
 
-            // 【防弾仕様2】スマホの記憶（履歴）が壊れていても画面を真っ白にしない安全装置
             useEffect(() => {
                 try {
                     const savedHistory = localStorage.getItem('sekocan_history');
@@ -46,9 +63,8 @@
                         setHistory(JSON.parse(savedHistory));
                     }
                 } catch (e) {
-                    console.error("履歴データの読み込みに失敗しました。リセットします。");
+                    console.error(e);
                     localStorage.removeItem('sekocan_history');
-                    setHistory([]);
                 }
             }, []);
 
@@ -66,10 +82,8 @@
                     const year = selectedYear;
                     const session = selectedSession;
                     
-                    // 【防弾仕様3】古いキャッシュを無視して常に最新のJSONを倉庫から取り寄せる
                     const fetchUrl = `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json?t=${new Date().getTime()}`;
                     const res = await fetch(fetchUrl);
-                    
                     if (!res.ok) throw new Error("データが見つかりません");
                     
                     const data = await res.json();
@@ -95,7 +109,7 @@
                     setQuizInfo({ year, session });
                     setView('quiz');
                 } catch (e) {
-                    alert(`通信エラー：${selectedYear}年度のデータを読み込めませんでした。`);
+                    alert(`通信エラー：データを読み込めませんでした。`);
                     setView('menu');
                 }
             };
@@ -135,7 +149,6 @@
                 const newHistory = [newRecord, ...history];
                 setHistory(newHistory);
                 localStorage.setItem('sekocan_history', JSON.stringify(newHistory));
-                
                 setView('result');
             };
 
@@ -215,4 +228,54 @@
                         
                         <div className={`p-8 rounded-3xl mb-10 shadow-lg border-4 border-white ${rankInfo.bg}`}>
                             <p className="text-sm font-bold text-gray-600 mb-2">あなたの現在の職位</p>
-                            <div className={`text-7xl font-black mb-
+                            <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}<span className="text-3xl"> ランク</span></div>
+                            <div className={`text-3xl font-black ${rankInfo.color}`}>{rankInfo.title}</div>
+                        </div>
+
+                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-xl active:bg-blue-800 transition mb-4">
+                            現場事務所へ戻る
+                        </button>
+                    </div>
+                );
+            }
+
+            if (view === 'history') {
+                return (
+                    <div className="max-w-md mx-auto p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-black text-gray-800">現場経歴書</h2>
+                            <button onClick={() => setView('menu')} className="px-4 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg active:bg-gray-400">戻る</button>
+                        </div>
+
+                        {history.length === 0 ? (
+                            <p className="text-center text-gray-500 font-bold mt-10">まだ経歴がありません。<br/>現場に入場して履歴を残しましょう。</p>
+                        ) : (
+                            <div className="space-y-4 overflow-y-auto max-h-[70vh] pb-10">
+                                {history.map((h, i) => {
+                                    const rankInfo = getRankInfo(h.percentage);
+                                    return (
+                                        <div key={i} className={`p-4 rounded-xl shadow-sm border-l-8 ${rankInfo.bg.replace('bg-', 'border-').replace('100', '400').replace('200', '400')} bg-white`}>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-xs font-bold text-gray-400">{h.date}</span>
+                                                <span className={`text-sm font-black px-2 py-1 rounded ${rankInfo.bg} ${rankInfo.color}`}>{h.rank}: {h.title}</span>
+                                            </div>
+                                            <div className="flex justify-between items-end">
+                                                <div className="font-black text-lg text-gray-800">{h.year} {h.session}</div>
+                                                <div className="font-bold text-gray-600">正答率 <span className="text-xl text-black">{h.percentage}%</span></div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
