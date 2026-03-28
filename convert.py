@@ -5,23 +5,21 @@ from collections import defaultdict
 
 try:
     split_data = defaultdict(list)
-    # フォルダ内のすべてのCSVファイルを自動で探す
     csv_files = glob.glob('*.csv')
 
-    if not csv_files:
-        print("エラー: CSVファイルが一つも見つかりません。")
-        exit()
-
-    print(f"{len(csv_files)}個のCSVファイルを発見しました。一括変換を開始します...")
+    print(f"{len(csv_files)}個のCSVファイルを処理します...")
 
     for input_csv in csv_files:
         with open(input_csv, mode='r', encoding='utf-8-sig') as f:
             reader = csv.DictReader(f)
+            # 列名の前後の余分なスペースを掃除
+            reader.fieldnames = [name.strip() for name in reader.fieldnames]
+            
             for row in reader:
                 year = row.get('year', '').strip()
-                if not year:
-                    continue
+                if not year: continue
 
+                # 【修正ポイント】CSVの列名「shoken」「kenryu」に完全に合わせました
                 q_obj = {
                     "id": row.get('id', ''),
                     "year": year,
@@ -37,20 +35,21 @@ try:
                         "4": row.get('choice4', '')
                     },
                     "answer": row.get('answer', ''),
-                    "explanation_sho": row.get('explanation_sho', ''),
-                    "explanation_ken": row.get('explanation_ken', ''),
+                    # ここでCSVの「shoken」「kenryu」をアプリ用の「sho」「ken」へ引き継ぎます
+                    "explanation_sho": row.get('explanation_shoken', ''),
+                    "explanation_ken": row.get('explanation_kenryu', ''),
                     "imageUrl": row.get('imageUrl', '')
                 }
                 split_data[year].append(q_obj)
 
-    # 年度ごとにまとめてJSONとして出力する
     for year, q_list in split_data.items():
         output_filename = f"{year}.json"
         with open(output_filename, 'w', encoding='utf-8') as f:
             json.dump(q_list, f, ensure_ascii=False, indent=2)
-        print(f"祝・完工！ {output_filename} を作成しました（収録数: {len(q_list)}問）")
-
-    print("すべての変換が完了しました！")
+        
+        # 完工チェック（解説が正しく入った数を集計）
+        count = sum(1 for q in q_list if q['explanation_sho'])
+        print(f"祝・完工！ {output_filename} を作成（収録数: {len(q_list)}問 / 解説あり: {count}問）")
 
 except Exception as e:
     print(f"エラー発生: {e}")
