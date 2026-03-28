@@ -24,12 +24,12 @@
         }
 
         function App() {
-            const [view, setView] = useState('menu');
+            const [view, setView] = useState('menu'); // menu, setup, loading, quiz, result, history
+            const [mode, setMode] = useState(''); // 'sho' or 'ken'
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
             const [showModal, setShowModal] = useState(false);
             const [judge, setJudge] = useState('');
-            
             const [score, setScore] = useState(0);
             const [quizInfo, setQuizInfo] = useState({ year: '', session: '' });
             const [history, setHistory] = useState([]);
@@ -40,12 +40,8 @@
             useEffect(() => {
                 try {
                     const savedHistory = localStorage.getItem('sekocan_history');
-                    if (savedHistory) {
-                        setHistory(JSON.parse(savedHistory));
-                    }
-                } catch (e) {
-                    localStorage.removeItem('sekocan_history');
-                }
+                    if (savedHistory) setHistory(JSON.parse(savedHistory));
+                } catch (e) { localStorage.removeItem('sekocan_history'); }
             }, []);
 
             const getRankInfo = (percentage) => {
@@ -59,224 +55,173 @@
             const startQuiz = async () => {
                 setView('loading');
                 try {
-                    const year = selectedYear;
-                    const session = selectedSession;
-                    
-                    const fetchUrl = `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json?t=${new Date().getTime()}`;
-                    const res = await fetch(fetchUrl);
-                    if (!res.ok) throw new Error("データが見つかりません");
-                    
+                    const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${selectedYear}.json?t=${Date.now()}`);
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
-
                     const filtered = all.filter(q => {
-                        if (!q.session) return false;
-                        const s = String(q.session).trim();
-                        if (session === '午前') return s.includes('午前') || s.toUpperCase() === 'AM' || s === '1';
-                        if (session === '午後') return s.includes('午後') || s.toUpperCase() === 'PM' || s === '2';
-                        return true;
+                        const s = String(q.session || "").trim();
+                        return selectedSession === '午前' ? (s.includes('午前') || s.toUpperCase()==='AM') : (s.includes('午後') || s.toUpperCase()==='PM');
                     });
-
-                    if (filtered.length === 0) {
-                        alert(`【データ不足】${year}年度の「${session}」の問題が見つかりません。`);
-                        setView('menu');
-                        return;
-                    }
-
+                    if (filtered.length === 0) { alert("データ不足"); setView('setup'); return; }
                     setQuestions(shuffle(filtered));
-                    setCurrentIdx(0);
-                    setScore(0);
-                    setQuizInfo({ year, session });
+                    setCurrentIdx(0); setScore(0);
+                    setQuizInfo({ year: selectedYear, session: selectedSession });
                     setView('quiz');
-                } catch (e) {
-                    alert(`通信エラー：データを読み込めませんでした。`);
-                    setView('menu');
-                }
-            };
-
-            const handleAnswer = (k) => {
-                const q = questions[currentIdx];
-                const isCorrect = String(k) === String(q.answer);
-                if (isCorrect) setScore(prev => prev + 1);
-                setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
-                setShowModal(true);
-            };
-
-            const nextQuestion = () => {
-                setShowModal(false);
-                if (currentIdx + 1 < questions.length) {
-                    setCurrentIdx(currentIdx + 1);
-                } else {
-                    finishQuiz();
-                }
+                } catch (e) { alert("読込失敗"); setView('setup'); }
             };
 
             const finishQuiz = () => {
                 const percentage = Math.round((score / questions.length) * 100);
                 const rankInfo = getRankInfo(percentage);
-                
                 const newRecord = {
                     date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                    year: quizInfo.year,
-                    session: quizInfo.session,
-                    score: score,
-                    total: questions.length,
-                    percentage: percentage,
-                    title: rankInfo.title,
-                    rank: rankInfo.rank
+                    mode: mode === 'sho' ? 'ショーケン版' : '建龍版',
+                    year: quizInfo.year, session: quizInfo.session,
+                    score, total: questions.length, percentage,
+                    title: rankInfo.title, rank: rankInfo.rank
                 };
-                
                 const newHistory = [newRecord, ...history];
                 setHistory(newHistory);
                 localStorage.setItem('sekocan_history', JSON.stringify(newHistory));
                 setView('result');
             };
 
+            // 1. TOPメニュー（モード選択）
             if (view === 'menu') {
                 return (
-                    <div className="max-w-md mx-auto p-8 text-center">
-                        <h1 className="text-4xl font-black mb-8 text-gray-800 tracking-tighter">一級建築施工管理技士<br/><span className="text-2xl text-blue-600">過去問道場</span></h1>
-                        
-                        <div className="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
-                            <label className="block text-left text-sm font-bold text-gray-600 mb-2">年度を選択</label>
-                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
-                                {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y => (
-                                    <option key={y} value={y}>{y}年度</option>
-                                ))}
-                            </select>
-
-                            <label className="block text-left text-sm font-bold text-gray-600 mb-2">セッションを選択</label>
-                            <select value={selectedSession} onChange={(e) => setSelectedSession(e.target.value)} className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
-                                <option value="午前">午前 (AM)</option>
-                                <option value="午後">午後 (PM)</option>
-                            </select>
-
-                            <button onClick={startQuiz} className="w-full py-4 bg-blue-600 text-white rounded-xl font-black text-xl shadow-lg active:bg-blue-800 transition">
-                                現場へ入場（クイズ開始）
+                    <div className="max-w-md mx-auto p-8 text-center pt-12">
+                        <h1 className="text-4xl font-black mb-12 text-gray-800 tracking-tighter italic">seko-can</h1>
+                        <div className="space-y-6">
+                            <button onClick={() => { setMode('sho'); setView('setup'); }} className="w-full p-8 bg-white border-4 border-blue-500 rounded-3xl shadow-xl hover:bg-blue-50 transition group">
+                                <div className="text-blue-600 font-black text-2xl mb-1 group-active:scale-95 transition">ショーケン版</div>
+                                <div className="text-gray-500 text-sm font-bold">無料解説・基本演習</div>
+                            </button>
+                            <button onClick={() => { setMode('ken'); setView('setup'); }} className="w-full p-8 bg-gray-800 border-4 border-yellow-500 rounded-3xl shadow-xl hover:bg-gray-700 transition relative overflow-hidden group">
+                                <div className="text-yellow-500 font-black text-2xl mb-1 group-active:scale-95 transition flex items-center justify-center">建龍版 <span className="ml-2 text-xl">🔒</span></div>
+                                <div className="text-gray-400 text-sm font-bold">プレミアム解説・集中攻略</div>
+                            </button>
+                            <button onClick={() => setView('history')} className="w-full py-4 text-gray-600 font-bold border-2 border-gray-300 rounded-2xl">
+                                📋 現場経歴書（成績履歴）を確認
                             </button>
                         </div>
-
-                        <button onClick={() => setView('history')} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow active:bg-gray-900 transition">
-                            📋 現場経歴書（成績履歴）を見る
-                        </button>
                     </div>
                 );
             }
 
-            if (view === 'loading') return <div className="text-center mt-32 text-2xl font-black text-gray-500 animate-pulse">資材搬入中...</div>;
+            // 2. 年度・午前午後 選択画面
+            if (view === 'setup') {
+                return (
+                    <div className="max-w-md mx-auto p-8 text-center">
+                        <div className={`inline-block px-4 py-1 rounded-full mb-6 font-bold ${mode === 'sho' ? 'bg-blue-100 text-blue-600' : 'bg-gray-800 text-yellow-500'}`}>
+                            {mode === 'sho' ? 'ショーケン版' : '建龍版 🔒'} 入場口
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mb-6 text-left">
+                            <label className="block text-sm font-bold text-gray-600 mb-2">施工年度</label>
+                            <select value={selectedYear} onChange={(e)=>setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 rounded-xl font-bold text-lg bg-gray-50">
+                                {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25"].map(y => <option key={y} value={y}>{y}年度</option>)}
+                            </select>
+                            <label className="block text-sm font-bold text-gray-600 mb-2">セッション</label>
+                            <select value={selectedSession} onChange={(e)=>setSelectedSession(e.target.value)} className="w-full p-4 mb-8 border-2 rounded-xl font-bold text-lg bg-gray-50">
+                                <option value="午前">午前 (AM)</option><option value="午後">午後 (PM)</option>
+                            </select>
+                            <button onClick={startQuiz} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-lg active:bg-blue-800 transition">入場（クイズ開始）</button>
+                        </div>
+                        <button onClick={() => setView('menu')} className="text-gray-500 font-bold">← モード選択に戻る</button>
+                    </div>
+                );
+            }
 
+            if (view === 'loading') return <div className="text-center mt-32 text-xl font-bold text-gray-400">資材搬入中...</div>;
+
+            // 3. クイズ画面
             if (view === 'quiz') {
                 const q = questions[currentIdx];
                 return (
-                    <div className="max-w-md mx-auto p-4 min-h-screen flex flex-col">
-                        <div className="flex justify-between items-end mb-4 px-2 border-b-2 border-gray-300 pb-2">
-                            <span className="font-bold text-gray-500">{quizInfo.year} {quizInfo.session}</span>
-                            <span className="text-xl font-black text-blue-700">第 {currentIdx + 1} 問 <span className="text-sm text-gray-400">/ 全 {questions.length} 問</span></span>
+                    <div className="max-w-md mx-auto p-4 flex flex-col min-h-screen">
+                        <div className="flex justify-between items-center mb-4 border-b pb-2">
+                            <span className="font-bold text-gray-400">{quizInfo.year} {quizInfo.session}</span>
+                            <span className="font-black text-blue-600">No.{currentIdx + 1}</span>
                         </div>
-                        
                         {!showModal ? (
-                            <div className="flex-grow">
-                                <p className="text-lg font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
+                            <div>
+                                <p className="text-lg font-bold mb-8 text-gray-800 leading-relaxed">{q.question}</p>
                                 <div className="space-y-3">
                                     {q.choices && Object.entries(q.choices).map(([k, t]) => (
-                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold text-gray-700 active:bg-blue-100 active:border-blue-500 transition">
+                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold active:bg-blue-50 transition">
                                             {k}. {t}
                                         </button>
                                     ))}
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex-grow flex flex-col pb-6">
-                                <div className={`text-4xl font-black mb-6 text-center ${judge.includes('正解') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
-                                
-                                {/* 📝 解説セクションの復活 */}
-                                <div className="bg-white p-5 rounded-2xl shadow-sm border-2 border-gray-200 mb-6 flex-grow">
-                                    {/* ショーケン版（通常解説） */}
+                            <div className="flex flex-col flex-grow">
+                                <div className={`text-5xl font-black text-center mb-8 ${judge.includes('⭕️') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
+                                <div className="bg-white p-5 rounded-2xl shadow-inner border border-gray-200 mb-6 flex-grow">
                                     <div className="mb-6">
-                                        <span className="inline-block bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full mb-3">ショーケン版解説</span>
-                                        <p className="text-gray-800 font-bold whitespace-pre-wrap leading-relaxed">{q.explanation_sho || "解説がありません。"}</p>
+                                        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded mb-2">ショーケン版解説</span>
+                                        <p className="text-gray-800 font-bold text-sm leading-relaxed">{q.explanation_sho || "解説準備中"}</p>
                                     </div>
-                                    
-                                    {/* 建龍版（鍵付きプレミアム解説） */}
-                                    <div className="p-4 bg-gray-100 rounded-xl border border-gray-300 relative overflow-hidden">
+                                    <div className={`p-4 rounded-xl border-2 ${mode==='sho' ? 'bg-gray-100 border-dashed border-gray-300' : 'bg-yellow-50 border-yellow-200'}`}>
                                         <div className="flex items-center mb-2">
-                                            <span className="inline-block bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded-full">建龍版解説</span>
-                                            <span className="ml-2 text-xl">🔒</span>
+                                            <span className={`text-xs font-bold px-2 py-1 rounded ${mode==='sho' ? 'bg-gray-400 text-white' : 'bg-yellow-500 text-white'}`}>建龍版解説</span>
+                                            {mode === 'sho' && <span className="ml-2">🔒</span>}
                                         </div>
-                                        <p className="text-gray-400 font-bold blur-[3px] select-none">ここは本番の建龍版アプリで解放される有料コンテンツです。詳細な図解や覚え方のコツが記載されています。資格取得への最短ルートはこちら！</p>
-                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                            <span className="bg-white/90 text-gray-800 font-black px-4 py-2 rounded-lg shadow-md border border-gray-300">完全版アプリで解放</span>
-                                        </div>
+                                        {mode === 'sho' ? (
+                                            <p className="text-gray-400 text-xs font-bold blur-[2px]">建龍版ではさらに踏み込んだ解説が閲覧可能です。</p>
+                                        ) : (
+                                            <p className="text-gray-800 font-bold text-sm leading-relaxed">{q.explanation_ken || "解説準備中"}</p>
+                                        )}
                                     </div>
                                 </div>
-
-                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-xl shadow-xl active:bg-black mt-auto">
-                                    {currentIdx + 1 < questions.length ? '次の問題へ' : '結果発表へ'}
-                                </button>
+                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-xl mb-6">次へ</button>
                             </div>
                         )}
                     </div>
                 );
             }
 
+            // 4. 結果画面
             if (view === 'result') {
                 const percentage = Math.round((score / questions.length) * 100);
                 const rankInfo = getRankInfo(percentage);
-                
                 return (
-                    <div className="max-w-md mx-auto p-6 text-center pt-12">
-                        <h2 className="text-2xl font-bold text-gray-600 mb-2">最終結果</h2>
-                        <div className="text-5xl font-black mb-8 text-gray-800">{score} <span className="text-2xl text-gray-500">/ {questions.length}問 正解</span></div>
-                        
-                        <div className={`p-8 rounded-3xl mb-10 shadow-lg border-4 border-white ${rankInfo.bg}`}>
-                            <p className="text-sm font-bold text-gray-600 mb-2">あなたの現在の職位</p>
-                            <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}<span className="text-3xl"> ランク</span></div>
+                    <div className="max-w-md mx-auto p-8 text-center pt-12">
+                        <div className={`p-8 rounded-3xl mb-10 shadow-xl border-4 border-white ${rankInfo.bg}`}>
+                            <p className="font-bold text-gray-500 mb-2">{mode==='sho'?'ショーケン版':'建龍版'} 判定結果</p>
+                            <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}</div>
                             <div className={`text-3xl font-black ${rankInfo.color}`}>{rankInfo.title}</div>
                         </div>
-
-                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-xl active:bg-blue-800 transition mb-4">
-                            現場事務所へ戻る
-                        </button>
+                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-lg">事務所（TOP）へ戻る</button>
                     </div>
                 );
             }
 
+            // 5. 履歴画面
             if (view === 'history') {
                 return (
                     <div className="max-w-md mx-auto p-6">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-black text-gray-800">現場経歴書</h2>
-                            <button onClick={() => setView('menu')} className="px-4 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg active:bg-gray-400">戻る</button>
-                        </div>
-
-                        {history.length === 0 ? (
-                            <p className="text-center text-gray-500 font-bold mt-10">まだ経歴がありません。<br/>現場に入場して履歴を残しましょう。</p>
-                        ) : (
-                            <div className="space-y-4 overflow-y-auto max-h-[70vh] pb-10">
-                                {history.map((h, i) => {
-                                    const rankInfo = getRankInfo(h.percentage);
-                                    return (
-                                        <div key={i} className={`p-4 rounded-xl shadow-sm border-l-8 ${rankInfo.bg.replace('bg-', 'border-').replace('100', '400').replace('200', '400')} bg-white`}>
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-xs font-bold text-gray-400">{h.date}</span>
-                                                <span className={`text-sm font-black px-2 py-1 rounded ${rankInfo.bg} ${rankInfo.color}`}>{h.rank}: {h.title}</span>
-                                            </div>
-                                            <div className="flex justify-between items-end">
-                                                <div className="font-black text-lg text-gray-800">{h.year} {h.session}</div>
-                                                <div className="font-bold text-gray-600">正答率 <span className="text-xl text-black">{h.percentage}%</span></div>
-                                            </div>
+                        <div className="flex justify-between items-center mb-8"><h2 className="text-2xl font-black">現場経歴書</h2><button onClick={() => setView('menu')} className="text-blue-600 font-bold">戻る</button></div>
+                        <div className="space-y-4">
+                            {history.map((h, i) => {
+                                const rankInfo = getRankInfo(h.percentage);
+                                return (
+                                    <div key={i} className={`p-4 rounded-2xl bg-white border-l-8 shadow-sm ${rankInfo.bg.replace('bg-', 'border-').replace('100', '400')}`}>
+                                        <div className="flex justify-between text-[10px] font-bold text-gray-400 mb-1"><span>{h.date}</span><span>{h.mode}</span></div>
+                                        <div className="flex justify-between items-center">
+                                            <div className="font-black text-gray-800">{h.year} {h.session}</div>
+                                            <div className={`font-black ${rankInfo.color}`}>{h.rank}: {h.title}</div>
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 );
             }
-
             return null;
         }
 
+        const handleAnswer = (k) => { /* 内部処理用なのでApp内に統合済 */ }; 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
