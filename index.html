@@ -24,8 +24,9 @@
         }
 
         function App() {
+            // --- 状態管理（現場の全状況） ---
             const [view, setView] = useState('menu'); // menu, setup, loading, quiz, result, history
-            const [mode, setMode] = useState(''); // 'sho' or 'ken'
+            const [mode, setMode] = useState(''); // sho, ken
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
             const [showModal, setShowModal] = useState(false);
@@ -37,21 +38,22 @@
             const [selectedYear, setSelectedYear] = useState('R7');
             const [selectedSession, setSelectedSession] = useState('午前');
 
+            // 履歴の読み込み
             useEffect(() => {
-                try {
-                    const savedHistory = localStorage.getItem('sekocan_history');
-                    if (savedHistory) setHistory(JSON.parse(savedHistory));
-                } catch (e) { localStorage.removeItem('sekocan_history'); }
+                const saved = localStorage.getItem('sekocan_history');
+                if (saved) setHistory(JSON.parse(saved));
             }, []);
 
-            const getRankInfo = (percentage) => {
-                if (percentage >= 90) return { rank: 'S', title: '施工管理技士', color: 'text-yellow-600', bg: 'bg-yellow-100' };
-                if (percentage >= 70) return { rank: 'A', title: '主任技術者', color: 'text-blue-600', bg: 'bg-blue-100' };
-                if (percentage >= 50) return { rank: 'B', title: '現場記録者', color: 'text-green-600', bg: 'bg-green-100' };
-                if (percentage >= 30) return { rank: 'C', title: '書類整理係', color: 'text-orange-600', bg: 'bg-orange-100' };
-                return { rank: 'D', title: '新規入場者（見習い）', color: 'text-gray-600', bg: 'bg-gray-200' };
+            // ランク判定
+            const getRankInfo = (p) => {
+                if (p >= 90) return { r: 'S', t: '施工管理技士', c: 'text-yellow-600', b: 'bg-yellow-100' };
+                if (p >= 70) return { r: 'A', t: '主任技術者', c: 'text-blue-600', b: 'bg-blue-100' };
+                if (p >= 50) return { r: 'B', t: '現場記録者', c: 'text-green-600', b: 'bg-green-100' };
+                if (p >= 30) return { r: 'C', t: '書類整理係', c: 'text-orange-600', b: 'bg-orange-100' };
+                return { r: 'D', t: '新規入場者', c: 'text-gray-600', b: 'bg-gray-200' };
             };
 
+            // クイズ開始
             const startQuiz = async () => {
                 setView('loading');
                 try {
@@ -62,92 +64,105 @@
                         const s = String(q.session || "").trim();
                         return selectedSession === '午前' ? (s.includes('午前') || s.toUpperCase()==='AM') : (s.includes('午後') || s.toUpperCase()==='PM');
                     });
-                    if (filtered.length === 0) { alert("データ不足"); setView('setup'); return; }
+                    if (filtered.length === 0) { alert("データがありません"); setView('setup'); return; }
                     setQuestions(shuffle(filtered));
-                    setCurrentIdx(0); setScore(0);
+                    setCurrentIdx(0); setScore(0); setShowModal(false);
                     setQuizInfo({ year: selectedYear, session: selectedSession });
                     setView('quiz');
                 } catch (e) { alert("読込失敗"); setView('setup'); }
             };
 
+            // 【超重要：判定処理】
+            const handleAnswer = (k) => {
+                const q = questions[currentIdx];
+                const isCorrect = String(k) === String(q.answer);
+                if (isCorrect) setScore(s => s + 1);
+                setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
+                setShowModal(true); // ここで画面を切り替える
+            };
+
+            const nextQuestion = () => {
+                if (currentIdx + 1 < questions.length) {
+                    setCurrentIdx(currentIdx + 1);
+                    setShowModal(false);
+                } else {
+                    finishQuiz();
+                }
+            };
+
             const finishQuiz = () => {
-                const percentage = Math.round((score / questions.length) * 100);
-                const rankInfo = getRankInfo(percentage);
-                const newRecord = {
+                const p = Math.round((score / questions.length) * 100);
+                const r = getRankInfo(p);
+                const record = {
                     date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
                     mode: mode === 'sho' ? 'ショーケン版' : '建龍版',
                     year: quizInfo.year, session: quizInfo.session,
-                    score, total: questions.length, percentage,
-                    title: rankInfo.title, rank: rankInfo.rank
+                    score, total: questions.length, percentage: p,
+                    title: r.t, rank: r.r
                 };
-                const newHistory = [newRecord, ...history];
+                const newHistory = [record, ...history];
                 setHistory(newHistory);
                 localStorage.setItem('sekocan_history', JSON.stringify(newHistory));
                 setView('result');
             };
 
-            // 1. TOPメニュー（モード選択）
-            if (view === 'menu') {
-                return (
-                    <div className="max-w-md mx-auto p-8 text-center pt-12">
-                        <h1 className="text-4xl font-black mb-12 text-gray-800 tracking-tighter italic">seko-can</h1>
-                        <div className="space-y-6">
-                            <button onClick={() => { setMode('sho'); setView('setup'); }} className="w-full p-8 bg-white border-4 border-blue-500 rounded-3xl shadow-xl hover:bg-blue-50 transition group">
-                                <div className="text-blue-600 font-black text-2xl mb-1 group-active:scale-95 transition">ショーケン版</div>
-                                <div className="text-gray-500 text-sm font-bold">無料解説・基本演習</div>
-                            </button>
-                            <button onClick={() => { setMode('ken'); setView('setup'); }} className="w-full p-8 bg-gray-800 border-4 border-yellow-500 rounded-3xl shadow-xl hover:bg-gray-700 transition relative overflow-hidden group">
-                                <div className="text-yellow-500 font-black text-2xl mb-1 group-active:scale-95 transition flex items-center justify-center">建龍版 <span className="ml-2 text-xl">🔒</span></div>
-                                <div className="text-gray-400 text-sm font-bold">プレミアム解説・集中攻略</div>
-                            </button>
-                            <button onClick={() => setView('history')} className="w-full py-4 text-gray-600 font-bold border-2 border-gray-300 rounded-2xl">
-                                📋 現場経歴書（成績履歴）を確認
-                            </button>
-                        </div>
+            // --- 各画面の出力 ---
+
+            if (view === 'menu') return (
+                <div className="max-w-md mx-auto p-8 text-center pt-12">
+                    <h1 className="text-5xl font-black mb-12 text-gray-800 tracking-tighter italic">seko-can</h1>
+                    <div className="space-y-6">
+                        <button onClick={()=>{setMode('sho');setView('setup')}} className="w-full p-8 bg-white border-4 border-blue-500 rounded-3xl shadow-xl active:scale-95 transition">
+                            <div className="text-blue-600 font-black text-2xl">ショーケン版</div>
+                            <div className="text-gray-500 text-sm font-bold">無料解説・基本演習</div>
+                        </button>
+                        <button onClick={()=>{setMode('ken');setView('setup')}} className="w-full p-8 bg-gray-800 border-4 border-yellow-500 rounded-3xl shadow-xl active:scale-95 transition">
+                            <div className="text-yellow-500 font-black text-2xl">建龍版 🔒</div>
+                            <div className="text-gray-400 text-sm font-bold">プレミアム解説・集中攻略</div>
+                        </button>
+                        <button onClick={()=>setView('history')} className="w-full py-4 text-gray-600 font-bold border-2 border-gray-300 rounded-2xl bg-white active:bg-gray-50">
+                            📋 現場経歴書を確認
+                        </button>
                     </div>
-                );
-            }
+                </div>
+            );
 
-            // 2. 年度・午前午後 選択画面
-            if (view === 'setup') {
-                return (
-                    <div className="max-w-md mx-auto p-8 text-center">
-                        <div className={`inline-block px-4 py-1 rounded-full mb-6 font-bold ${mode === 'sho' ? 'bg-blue-100 text-blue-600' : 'bg-gray-800 text-yellow-500'}`}>
-                            {mode === 'sho' ? 'ショーケン版' : '建龍版 🔒'} 入場口
-                        </div>
-                        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mb-6 text-left">
-                            <label className="block text-sm font-bold text-gray-600 mb-2">施工年度</label>
-                            <select value={selectedYear} onChange={(e)=>setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 rounded-xl font-bold text-lg bg-gray-50">
-                                {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25"].map(y => <option key={y} value={y}>{y}年度</option>)}
-                            </select>
-                            <label className="block text-sm font-bold text-gray-600 mb-2">セッション</label>
-                            <select value={selectedSession} onChange={(e)=>setSelectedSession(e.target.value)} className="w-full p-4 mb-8 border-2 rounded-xl font-bold text-lg bg-gray-50">
-                                <option value="午前">午前 (AM)</option><option value="午後">午後 (PM)</option>
-                            </select>
-                            <button onClick={startQuiz} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-lg active:bg-blue-800 transition">入場（クイズ開始）</button>
-                        </div>
-                        <button onClick={() => setView('menu')} className="text-gray-500 font-bold">← モード選択に戻る</button>
+            if (view === 'setup') return (
+                <div className="max-w-md mx-auto p-8 text-center pt-10">
+                    <div className={`inline-block px-6 py-2 rounded-full mb-8 font-black ${mode==='sho'?'bg-blue-100 text-blue-600':'bg-gray-800 text-yellow-500'}`}>
+                        {mode==='sho'?'ショーケン版':'建龍版 🔒'}
                     </div>
-                );
-            }
+                    <div className="bg-white p-6 rounded-3xl shadow-xl text-left border border-gray-200">
+                        <label className="block text-sm font-black text-gray-500 mb-2 ml-1">施工年度</label>
+                        <select value={selectedYear} onChange={e=>setSelectedYear(e.target.value)} className="w-full p-4 mb-6 border-2 rounded-2xl font-bold text-lg bg-gray-50 outline-none focus:border-blue-500">
+                            {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25"].map(y=><option key={y} value={y}>{y}年度</option>)}
+                        </select>
+                        <label className="block text-sm font-black text-gray-500 mb-2 ml-1">セッション</label>
+                        <select value={selectedSession} onChange={e=>setSelectedSession(e.target.value)} className="w-full p-4 mb-8 border-2 rounded-2xl font-bold text-lg bg-gray-50 outline-none focus:border-blue-500">
+                            <option value="午前">午前 (AM)</option><option value="午後">午後 (PM)</option>
+                        </select>
+                        <button onClick={startQuiz} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-lg active:bg-blue-800">現場入場（開始）</button>
+                    </div>
+                    <button onClick={()=>setView('menu')} className="mt-8 text-gray-400 font-bold">← モード選択に戻る</button>
+                </div>
+            );
 
-            if (view === 'loading') return <div className="text-center mt-32 text-xl font-bold text-gray-400">資材搬入中...</div>;
+            if (view === 'loading') return <div className="text-center mt-40 font-black text-gray-400 animate-pulse text-2xl">資材搬入中...</div>;
 
-            // 3. クイズ画面
             if (view === 'quiz') {
                 const q = questions[currentIdx];
                 return (
                     <div className="max-w-md mx-auto p-4 flex flex-col min-h-screen">
-                        <div className="flex justify-between items-center mb-4 border-b pb-2">
+                        <div className="flex justify-between items-center mb-4 border-b-2 pb-2">
                             <span className="font-bold text-gray-400">{quizInfo.year} {quizInfo.session}</span>
-                            <span className="font-black text-blue-600">No.{currentIdx + 1}</span>
+                            <span className="font-black text-blue-600 text-xl">No.{currentIdx + 1}</span>
                         </div>
                         {!showModal ? (
-                            <div>
-                                <p className="text-lg font-bold mb-8 text-gray-800 leading-relaxed">{q.question}</p>
-                                <div className="space-y-3">
+                            <div className="flex-grow">
+                                <p className="text-xl font-bold mb-8 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
+                                <div className="space-y-4">
                                     {q.choices && Object.entries(q.choices).map(([k, t]) => (
-                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold active:bg-blue-50 transition">
+                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-5 border-2 border-gray-300 rounded-2xl text-left font-bold text-gray-700 bg-white shadow-sm active:bg-blue-50 active:border-blue-500 transition">
                                             {k}. {t}
                                         </button>
                                     ))}
@@ -155,73 +170,72 @@
                             </div>
                         ) : (
                             <div className="flex flex-col flex-grow">
-                                <div className={`text-5xl font-black text-center mb-8 ${judge.includes('⭕️') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
-                                <div className="bg-white p-5 rounded-2xl shadow-inner border border-gray-200 mb-6 flex-grow">
-                                    <div className="mb-6">
-                                        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded mb-2">ショーケン版解説</span>
-                                        <p className="text-gray-800 font-bold text-sm leading-relaxed">{q.explanation_sho || "解説準備中"}</p>
+                                <div className={`text-6xl font-black text-center mb-8 py-4 ${judge.includes('⭕️') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
+                                <div className="bg-white p-6 rounded-3xl shadow-inner border border-gray-200 mb-8 flex-grow overflow-y-auto">
+                                    <div className="mb-8">
+                                        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-black px-3 py-1 rounded-full mb-3">ショーケン版解説</span>
+                                        <p className="text-gray-800 font-bold leading-relaxed">{q.explanation_sho || "解説準備中です。"}</p>
                                     </div>
-                                    <div className={`p-4 rounded-xl border-2 ${mode==='sho' ? 'bg-gray-100 border-dashed border-gray-300' : 'bg-yellow-50 border-yellow-200'}`}>
-                                        <div className="flex items-center mb-2">
-                                            <span className={`text-xs font-bold px-2 py-1 rounded ${mode==='sho' ? 'bg-gray-400 text-white' : 'bg-yellow-500 text-white'}`}>建龍版解説</span>
-                                            {mode === 'sho' && <span className="ml-2">🔒</span>}
+                                    <div className={`p-5 rounded-2xl border-2 ${mode==='sho'?'bg-gray-100 border-dashed border-gray-300':'bg-yellow-50 border-yellow-200'}`}>
+                                        <div className="flex items-center mb-3">
+                                            <span className={`text-xs font-black px-3 py-1 rounded-full ${mode==='sho'?'bg-gray-400 text-white':'bg-yellow-500 text-white'}`}>建龍版解説</span>
+                                            {mode==='sho' && <span className="ml-2">🔒</span>}
                                         </div>
-                                        {mode === 'sho' ? (
-                                            <p className="text-gray-400 text-xs font-bold blur-[2px]">建龍版ではさらに踏み込んだ解説が閲覧可能です。</p>
+                                        {mode==='sho' ? (
+                                            <p className="text-gray-400 font-bold blur-[2px] select-none text-sm">プレミアム解説は建龍版で解放されます。</p>
                                         ) : (
-                                            <p className="text-gray-800 font-bold text-sm leading-relaxed">{q.explanation_ken || "解説準備中"}</p>
+                                            <p className="text-gray-800 font-bold leading-relaxed text-sm">{q.explanation_ken || "プレミアム解説準備中。"}</p>
                                         )}
                                     </div>
                                 </div>
-                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-xl mb-6">次へ</button>
+                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-2xl shadow-xl active:bg-black mb-8">
+                                    {currentIdx + 1 < questions.length ? '次の問題へ' : '結果発表へ'}
+                                </button>
                             </div>
                         )}
                     </div>
                 );
             }
 
-            // 4. 結果画面
             if (view === 'result') {
-                const percentage = Math.round((score / questions.length) * 100);
-                const rankInfo = getRankInfo(percentage);
+                const p = Math.round((score/questions.length)*100);
+                const r = getRankInfo(p);
                 return (
-                    <div className="max-w-md mx-auto p-8 text-center pt-12">
-                        <div className={`p-8 rounded-3xl mb-10 shadow-xl border-4 border-white ${rankInfo.bg}`}>
-                            <p className="font-bold text-gray-500 mb-2">{mode==='sho'?'ショーケン版':'建龍版'} 判定結果</p>
-                            <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}</div>
-                            <div className={`text-3xl font-black ${rankInfo.color}`}>{rankInfo.title}</div>
+                    <div className="max-w-md mx-auto p-8 text-center pt-16">
+                        <div className={`p-10 rounded-[40px] mb-12 shadow-2xl border-8 border-white ${r.b}`}>
+                            <p className="font-black text-gray-500 mb-2">判定結果</p>
+                            <div className={`text-8xl font-black mb-4 ${r.c}`}>{r.r}</div>
+                            <div className={`text-3xl font-black ${r.c}`}>{r.t}</div>
+                            <p className="mt-4 font-bold text-gray-600">正答率 {p}%</p>
                         </div>
-                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-lg">事務所（TOP）へ戻る</button>
+                        <button onClick={()=>setView('menu')} className="w-full py-6 bg-blue-600 text-white rounded-3xl font-black text-2xl shadow-xl active:bg-blue-800">現場事務所へ戻る</button>
                     </div>
                 );
             }
 
-            // 5. 履歴画面
-            if (view === 'history') {
-                return (
-                    <div className="max-w-md mx-auto p-6">
-                        <div className="flex justify-between items-center mb-8"><h2 className="text-2xl font-black">現場経歴書</h2><button onClick={() => setView('menu')} className="text-blue-600 font-bold">戻る</button></div>
-                        <div className="space-y-4">
-                            {history.map((h, i) => {
-                                const rankInfo = getRankInfo(h.percentage);
-                                return (
-                                    <div key={i} className={`p-4 rounded-2xl bg-white border-l-8 shadow-sm ${rankInfo.bg.replace('bg-', 'border-').replace('100', '400')}`}>
-                                        <div className="flex justify-between text-[10px] font-bold text-gray-400 mb-1"><span>{h.date}</span><span>{h.mode}</span></div>
-                                        <div className="flex justify-between items-center">
-                                            <div className="font-black text-gray-800">{h.year} {h.session}</div>
-                                            <div className={`font-black ${rankInfo.color}`}>{h.rank}: {h.title}</div>
-                                        </div>
+            if (view === 'history') return (
+                <div className="max-w-md mx-auto p-6">
+                    <div className="flex justify-between items-center mb-8"><h2 className="text-3xl font-black text-gray-800">現場経歴書</h2><button onClick={()=>setView('menu')} className="text-blue-600 font-black text-lg">戻る</button></div>
+                    <div className="space-y-4">
+                        {history.length === 0 ? <p className="text-center py-20 font-black text-gray-300 text-xl">経歴なし</p> : 
+                         history.map((h, i) => {
+                            const r = getRankInfo(h.percentage);
+                            return (
+                                <div key={i} className={`p-5 rounded-3xl bg-white border-l-[12px] shadow-md ${r.b.replace('bg-', 'border-').replace('100', '400')}`}>
+                                    <div className="flex justify-between text-[10px] font-black text-gray-400 mb-2 uppercase tracking-widest"><span>{h.date}</span><span>{h.mode}</span></div>
+                                    <div className="flex justify-between items-center">
+                                        <div className="font-black text-xl text-gray-800">{h.year} {h.session}</div>
+                                        <div className={`font-black text-lg ${r.c}`}>{r.r}: {r.t}</div>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                </div>
+                            );
+                        })}
                     </div>
-                );
-            }
+                </div>
+            );
             return null;
         }
 
-        const handleAnswer = (k) => { /* 内部処理用なのでApp内に統合済 */ }; 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
