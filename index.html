@@ -53,6 +53,7 @@
             const startQuiz = async () => {
                 setView('loading');
                 try {
+                    // 【点検用】ローカルプレビュー時はここを `./${selectedYear}.json` に書き換え
                     const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${selectedYear}.json?t=${Date.now()}`);
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
@@ -101,7 +102,7 @@
                 setView('result');
             };
 
-            // --- 各画面の出力 ---
+            // --- UI出力 ---
 
             if (view === 'menu') return (
                 <div className="max-w-md mx-auto p-8 text-center pt-12">
@@ -146,20 +147,24 @@
 
             if (view === 'quiz') {
                 const q = questions[currentIdx];
-                // 【画像URLの生成】
+                // 【画像URL】※点検用は `./images/${q.imageUrl}`
                 const imageUrl = q.imageUrl ? `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/${q.imageUrl}` : null;
 
                 return (
                     <div className="max-w-md mx-auto p-4 flex flex-col min-h-screen">
                         <div className="flex justify-between items-center mb-4 border-b-2 pb-2">
                             <span className="font-bold text-gray-400">{quizInfo.year} {quizInfo.session}</span>
-                            <span className="font-black text-blue-600 text-xl">No.{currentIdx + 1}</span>
+                            {/* 【修正：No.1 [12] 形式】 */}
+                            <div className="text-right">
+                                <span className="font-black text-blue-600 text-xl">
+                                    No.{currentIdx + 1} <span className="text-gray-400 text-base ml-1">[{q.no}]</span>
+                                </span>
+                            </div>
                         </div>
                         {!showModal ? (
                             <div className="flex-grow overflow-y-auto pb-20">
                                 <p className="text-xl font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
                                 
-                                {/* 🖼️ 【重要】画像表示エリア */}
                                 {imageUrl && (
                                     <div className="mb-6 bg-white p-2 rounded-xl shadow-inner border border-gray-200">
                                         <img 
@@ -173,7 +178,7 @@
 
                                 <div className="space-y-4">
                                     {q.choices && Object.entries(q.choices).map(([k, t]) => (
-                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-5 border-2 border-gray-300 rounded-2xl text-left font-bold text-gray-700 bg-white shadow-sm active:bg-blue-50 active:border-blue-500 transition">
+                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-5 border-2 border-gray-300 rounded-2xl text-left font-bold text-gray-700 bg-white shadow-sm active:bg-blue-50 transition">
                                             {k}. {t}
                                         </button>
                                     ))}
