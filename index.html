@@ -53,7 +53,6 @@
             const startQuiz = async () => {
                 setView('loading');
                 try {
-                    // 【点検用】ローカルプレビュー時はここを `./${selectedYear}.json` に書き換え
                     const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${selectedYear}.json?t=${Date.now()}`);
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
@@ -102,8 +101,6 @@
                 setView('result');
             };
 
-            // --- UI出力 ---
-
             if (view === 'menu') return (
                 <div className="max-w-md mx-auto p-8 text-center pt-12">
                     <h1 className="text-5xl font-black mb-12 text-gray-800 tracking-tighter italic">seko-can</h1>
@@ -131,7 +128,8 @@
                     <div className="bg-white p-6 rounded-3xl shadow-xl text-left border border-gray-200">
                         <label className="block text-sm font-black text-gray-500 mb-2 ml-1">施工年度</label>
                         <select value={selectedYear} onChange={e=>setSelectedYear(e.target.value)} className="w-full p-4 mb-6 border-2 rounded-2xl font-bold text-lg bg-gray-50 outline-none focus:border-blue-500">
-                            {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25"].map(y=><option key={y} value={y}>{y}年度</option>)}
+                            {/* 【ここをH20まで拡張しました】 */}
+                            {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y=><option key={y} value={y}>{y}年度</option>)}
                         </select>
                         <label className="block text-sm font-black text-gray-500 mb-2 ml-1">セッション</label>
                         <select value={selectedSession} onChange={e=>setSelectedSession(e.target.value)} className="w-full p-4 mb-8 border-2 rounded-2xl font-bold text-lg bg-gray-50 outline-none focus:border-blue-500">
@@ -147,14 +145,12 @@
 
             if (view === 'quiz') {
                 const q = questions[currentIdx];
-                // 【画像URL】※点検用は `./images/${q.imageUrl}`
                 const imageUrl = q.imageUrl ? `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/${q.imageUrl}` : null;
 
                 return (
                     <div className="max-w-md mx-auto p-4 flex flex-col min-h-screen">
                         <div className="flex justify-between items-center mb-4 border-b-2 pb-2">
                             <span className="font-bold text-gray-400">{quizInfo.year} {quizInfo.session}</span>
-                            {/* 【修正：No.1 [12] 形式】 */}
                             <div className="text-right">
                                 <span className="font-black text-blue-600 text-xl">
                                     No.{currentIdx + 1} <span className="text-gray-400 text-base ml-1">[{q.no}]</span>
