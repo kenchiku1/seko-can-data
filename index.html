@@ -133,7 +133,16 @@
                 <div className="max-w-md mx-auto p-8 text-center pt-12">
                     <h1 className="text-5xl font-black mb-12 text-gray-800 tracking-tighter italic">seko-can</h1>
                     <div className="space-y-6">
-                        <button onClick={()=>{setMode('sho');setView('setup')}} className="w-full p-8 bg-white border-4 border-blue-500 rounded-3xl shadow-xl active:scale-95 transition">
+                        <button onClick={()=>{
+  const now = new Date();
+  const deadline = new Date('2026-04-30T23:59:59');
+  if (now > deadline) {
+    alert('ショーケン版αの提供期間は終了しました。');
+    return;
+  }
+  setMode('sho');
+  setView('setup');
+}} className="w-full p-8 bg-white border-4 border-blue-500 rounded-3xl shadow-xl active:scale-95 transition">
                             <div className="text-blue-600 font-black text-2xl">ショーケン版</div>
                             <div className="text-gray-500 text-sm font-bold">無料解説・基本演習</div>
                         </button>
