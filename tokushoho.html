@@ -4,63 +4,235 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>特定商取引法に基づく表記 | セコカン金太朗塾</title>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Meiryo, sans-serif; background: #f5f5f0; color: #1a1a1a; line-height: 1.8; }
-    header { background: #1a1a2e; color: #fff; padding: 20px 0; text-align: center; }
-    header a { color: #f0c040; text-decoration: none; font-size: 1.4rem; font-weight: bold; letter-spacing: 0.05em; }
-    .page-title { background: #fff; border-bottom: 3px solid #f0c040; padding: 40px 20px; text-align: center; }
-    .page-title h1 { font-size: 1.6rem; color: #1a1a2e; letter-spacing: 0.1em; }
-    .container { max-width: 800px; margin: 40px auto; padding: 0 20px 60px; }
-    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; }
-    tr { border-bottom: 1px solid #eee; }
-    tr:last-child { border-bottom: none; }
-    th { background: #f8f8f4; color: #1a1a2e; font-weight: bold; padding: 18px 24px; text-align: left; width: 30%; vertical-align: top; font-size: 0.9rem; letter-spacing: 0.05em; border-right: 2px solid #f0c040; }
-    td { padding: 18px 24px; font-size: 0.95rem; vertical-align: top; }
-    .address-image { background: #f8f8f4; border: 1px solid #ddd; border-radius: 6px; padding: 16px 20px; display: inline-block; font-family: monospace; font-size: 0.95rem; color: #1a1a2e; letter-spacing: 0.05em; user-select: none; pointer-events: none; }
-    .note { font-size: 0.85rem; color: #666; margin-top: 6px; }
-    .highlight { color: #c0392b; font-weight: bold; }
-    footer { text-align: center; padding: 30px; font-size: 0.8rem; background: #1a1a2e; color: #aaa; }
-    @media (max-width: 600px) { th { width: 38%; padding: 14px 12px; font-size: 0.82rem; } td { padding: 14px 12px; font-size: 0.88rem; } .address-image { font-size: 0.82rem; padding: 12px; } }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background: #f5f5f0;
+      color: #1a1a1a;
+      line-height: 1.8;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header a {
+      color: #f0c040;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
+
+    .page-title {
+      background: #fff;
+      border-bottom: 3px solid #f0c040;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .page-title h1 {
+      font-size: 1.6rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px 60px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f8f8f4;
+      padding: 16px;
+      width: 30%;
+      text-align: left;
+      border-right: 2px solid #f0c040;
+      font-size: 0.9rem;
+    }
+
+    td {
+      padding: 16px;
+      font-size: 0.95rem;
+    }
+
+    tr {
+      border-bottom: 1px solid #eee;
+    }
+
+    .img-box {
+      margin-top: 10px;
+    }
+
+    .img-box img {
+      max-width: 260px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .note {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .highlight {
+      color: #c0392b;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: #1a1a2e;
+      color: #aaa;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 600px) {
+      th, td {
+        padding: 12px;
+        font-size: 0.85rem;
+      }
+    }
   </style>
 </head>
+
 <body>
-<header><a href="https://seko-can.com">セコカン金太朗塾</a></header>
-<div class="page-title"><h1>特定商取引法に基づく表記</h1></div>
+
+<header>
+  <a href="https://seko-can.com">セコカン金太朗塾</a>
+</header>
+
+<div class="page-title">
+  <h1>特定商取引法に基づく表記</h1>
+</div>
+
 <div class="container">
   <div class="card">
     <table>
-      <tr><th>販売者名</th><td>セコカン金太朗塾　相馬 朗宏</td></tr>
-      <tr><th>所在地</th><td><div class="address-image">〒060-0051<br>北海道札幌市中央区<br>南一条東3丁目12番地</div><p class="note">※お問い合わせはメールにてお願いいたします。</p></td></tr>
-      <tr><th>電話番号</th><td><div class="address-image">090-3860-2234</div><p class="note">※電話でのお問い合わせはご遠慮ください。メールにてご連絡ください。</p></td></tr>
+
       <tr>
-  <th>電話受付時間</th>
-  <td>
-    平日 19:00〜21:00 ／ 土日祝 10:00〜18:00<br>
-    ※上記時間帯でも対応中などによりお電話に出られない場合があります。<br>
-    ※営業時間外は留守番電話にお名前・ご用件・ご連絡先をお願いいたします。確認後、順次折り返しいたします（1〜2営業日以内）。<br>
-    ※お問い合わせはメール（kenchiku1@seko-can.com）またはLINEもご利用いただけます。
-  </td>
-</tr>
-<tr>
-  <th>LINE公式アカウント</th>
-  <td>
-    @643ybhob（24時間受付可能）<br>
-    ※LINEからのお問い合わせを推奨しております。
-  </td>
-</tr>
-      <tr><th>メールアドレス</th><td>kenchiku1@seko-can.com</td></tr>
-      <tr><th>販売URL</th><td>https://seko-can.com</td></tr>
-      <tr><th>販売価格</th><td>各商品ページに記載の価格をご確認ください。<br><span class="note">表示価格は消費税込みです。</span></td></tr>
-      <tr><th>支払方法</th><td>クレジットカード（VISA・Mastercard・JCB等）<br>銀行振込<br><span class="note">※決済はStripeを利用しています。</span><br><span class="note">※カード会社の分割払いサービスもご利用いただけます。詳しくはご利用のカード会社にお問い合わせください。</span></td></tr>
-      <tr><th>支払時期</th><td>お申し込み時にお支払いいただきます。</td></tr>
-      <tr><th>サービス提供時期</th><td>決済確認後、3日以内にご案内をお送りします。<br><span class="note">※一部サービス（2次試験対策・経験記述個別指導等）は2026年7月末より順次提供開始予定です。</span></td></tr>
-      <tr><th>返品・キャンセル</th><td><span class="highlight">決済完了後の返金は原則お受けできません。</span><br><span class="note">サービスの性質上、お申し込み後のキャンセル・返金はお断りしております。ご不明な点はお申し込み前にメールにてお問い合わせください。</span></td></tr>
-      <tr><th>動作環境</th><td>インターネット接続環境が必要です。<br><span class="note">推奨ブラウザ：Google Chrome / Safari 最新版</span></td></tr>
+        <th>販売者名</th>
+        <td>
+          セコカン金太朗塾　相馬 朗宏
+        </td>
+      </tr>
+
+      <tr>
+        <th>所在地</th>
+        <td>
+          〒060-0051<br>
+          北海道札幌市中央区南1条東3丁目12-2F
+          
+          <div class="img-box">
+            <img src="images/address.png" alt="所在地画像">
+          </div>
+
+          <p class="note">※お問い合わせはメールまたはLINEにてお願いいたします。</p>
+        </td>
+      </tr>
+
+      <tr>
+        <th>電話番号</th>
+        <td>
+          090-3860-2234
+
+          <div class="img-box">
+            <img src="images/phone.png" alt="電話番号画像">
+          </div>
+
+          <p class="note">※営業電話はご遠慮ください。</p>
+        </td>
+      </tr>
+
+      <tr>
+        <th>メールアドレス</th>
+        <td>kenchiku1@seko-can.com</td>
+      </tr>
+
+      <tr>
+        <th>LINE公式アカウント</th>
+        <td>
+          @643ybhob（24時間受付）
+        </td>
+      </tr>
+
+      <tr>
+        <th>販売URL</th>
+        <td>https://seko-can.com</td>
+      </tr>
+
+      <tr>
+        <th>販売価格</th>
+        <td>
+          各商品ページに記載<br>
+          <span class="note">※表示価格は税込です</span>
+        </td>
+      </tr>
+
+      <tr>
+        <th>支払方法</th>
+        <td>
+          クレジットカード（VISA / Master / JCB）<br>
+          銀行振込<br>
+          <span class="note">※決済はStripeを利用しています</span>
+        </td>
+      </tr>
+
+      <tr>
+        <th>支払時期</th>
+        <td>お申し込み時に決済</td>
+      </tr>
+
+      <tr>
+        <th>サービス提供時期</th>
+        <td>
+          決済確認後3日以内に案内<br>
+          <span class="note">※一部サービスは2026年7月より提供予定</span>
+        </td>
+      </tr>
+
+      <tr>
+        <th>返品・キャンセル</th>
+        <td>
+          原則として返金はお受けしておりませんが、<br>
+          サービスに重大な不備があった場合は個別に対応いたします。<br>
+          <span class="note">※お申し込み前に内容をご確認ください</span>
+        </td>
+      </tr>
+
+      <tr>
+        <th>動作環境</th>
+        <td>
+          インターネット環境必須<br>
+          <span class="note">推奨ブラウザ：Chrome / Safari</span>
+        </td>
+      </tr>
+
     </table>
   </div>
 </div>
-<footer>&copy; 2026 セコカン金太朗塾　All Rights Reserved.</footer>
+
+<footer>
+  &copy; 2026 セコカン金太朗塾 All Rights Reserved.
+</footer>
+
 </body>
 </html>
