@@ -113,6 +113,7 @@
     border-radius: 12px; overflow: hidden;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1); background: #fff;
     border: 2px solid #eee; transition: transform 0.2s;
+    display: flex; flex-direction: column;
   }
   .plan-card:hover { transform: translateY(-4px); }
   .plan-card.featured { border-color: var(--gold); }
@@ -129,7 +130,8 @@
     font-family: 'Oswald', sans-serif; line-height: 1;
   }
   .plan-price span { font-size: 14px; font-weight: 400; }
-  .plan-body { padding: 20px; }
+  .plan-body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+  .plan-body .btn-gold { margin-top: auto; display: block; text-align: center; }
   .plan-items { list-style: none; margin-bottom: 20px; }
   .plan-items li {
     font-size: 12px; color: #555; padding: 6px 0;
