@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>料金プラン｜セコカン金太朗塾</title>
+<meta name="description" content="セコカン金太朗塾の料金プラン一覧。まず無料のショーケン版AIアプリを体験。AIアプリ単体¥14,800〜Zoomコース¥150,800〜フルパッケージ¥369,400。LINE登録で無料アプリ受け取り。">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0D1B3E;
+    --gold: #FFD700;
+    --orange: #FF6B35;
+    --white: #FFFFFF;
+    --light-gray: #F5F5F5;
+    --text: #1a1a1a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans JP', sans-serif; color: var(--text); background: #fff; }
+
+  header {
+    background: var(--navy); padding: 14px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-emblem {
+    width: 40px; height: 40px; background: var(--gold);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy);
+  }
+  .logo-text { color: #fff; font-size: 13px; font-weight: 700; line-height: 1.3; }
+  .logo-text span { display: block; color: var(--gold); font-size: 10px; font-weight: 400; }
+  nav a {
+    color: var(--gold); text-decoration: none; font-size: 12px; font-weight: 700;
+    margin-left: 16px; transition: opacity 0.2s;
+  }
+  nav a:hover { opacity: 0.7; }
+
+  .hero {
+    background: linear-gradient(135deg, #0D1B3E 0%, #1a2f5e 60%, #0a1428 100%);
+    padding: 56px 24px 64px; text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 70% 40%, rgba(255,215,0,0.07) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-label {
+    display: inline-block; background: var(--gold); color: var(--navy);
+    font-size: 11px; font-weight: 900; padding: 5px 14px;
+    border-radius: 20px; margin-bottom: 16px; letter-spacing: 0.05em;
+  }
+  .hero h1 { color: #fff; font-size: clamp(20px, 5vw, 32px); font-weight: 900; line-height: 1.4; margin-bottom: 16px; }
+  .hero h1 em { color: var(--gold); font-style: normal; }
+  .hero-sub { color: rgba(255,255,255,0.75); font-size: 14px; line-height: 1.8; max-width: 560px; margin: 0 auto 32px; }
+  .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .btn-gold {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), #ffb800);
+    color: var(--navy); font-size: 15px; font-weight: 900;
+    padding: 14px 28px; border-radius: 50px; text-decoration: none;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.4); transition: transform 0.2s;
+  }
+  .btn-gold:hover { transform: translateY(-2px); }
+  .btn-outline {
+    display: inline-block; background: transparent;
+    color: var(--gold); font-size: 14px; font-weight: 700;
+    padding: 14px 24px; border-radius: 50px; text-decoration: none;
+    border: 2px solid var(--gold); transition: background 0.2s, color 0.2s;
+  }
+  .btn-outline:hover { background: var(--gold); color: var(--navy); }
+
+  section { padding: 52px 24px; }
+  .inner { max-width: 900px; margin: 0 auto; }
+  .sec-label {
+    display: inline-block; background: var(--navy); color: var(--gold);
+    font-size: 10px; font-weight: 700; padding: 4px 12px;
+    border-radius: 4px; margin-bottom: 10px; letter-spacing: 0.1em;
+  }
+  .sec-title { font-size: clamp(20px, 4vw, 26px); font-weight: 900; color: var(--navy); line-height: 1.4; margin-bottom: 8px; }
+  .sec-title em { color: var(--orange); font-style: normal; }
+  .sec-desc { font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 36px; }
+  .divider { width: 48px; height: 4px; background: var(--gold); border-radius: 2px; margin: 0 0 32px; }
+
+  /* FREE APP */
+  .free-app-box {
+    background: linear-gradient(135deg, var(--navy), #1a2f5e);
+    border: 2px solid var(--gold); border-radius: 16px; padding: 32px;
+    text-align: center; margin-bottom: 40px;
+  }
+  .free-app-box .badge {
+    display: inline-block; background: var(--gold); color: var(--navy);
+    font-size: 11px; font-weight: 900; padding: 5px 16px; border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .free-app-box h3 { color: #fff; font-size: 22px; font-weight: 900; margin-bottom: 10px; }
+  .free-app-box p { color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.8; margin-bottom: 20px; }
+  .free-app-features {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 24px;
+  }
+  .free-app-features span {
+    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9);
+    font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
+  }
+  .free-app-note { color: rgba(255,200,0,0.85); font-size: 11px; line-height: 1.6; margin-top: 12px; }
+
+  /* PLANS */
+  .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .plan-card {
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1); background: #fff;
+    border: 2px solid #eee; transition: transform 0.2s;
+  }
+  .plan-card:hover { transform: translateY(-4px); }
+  .plan-card.featured { border-color: var(--gold); }
+  .plan-header { background: var(--navy); padding: 20px; text-align: center; }
+  .plan-header.featured-bg { background: linear-gradient(135deg, #1a2f5e, var(--navy)); }
+  .plan-badge {
+    display: inline-block; background: var(--orange); color: #fff;
+    font-size: 10px; font-weight: 900; padding: 3px 10px; border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .plan-name { color: var(--gold); font-size: 15px; font-weight: 900; margin-bottom: 4px; }
+  .plan-price {
+    color: #fff; font-size: 28px; font-weight: 900;
+    font-family: 'Oswald', sans-serif; line-height: 1;
+  }
+  .plan-price span { font-size: 14px; font-weight: 400; }
+  .plan-body { padding: 20px; }
+  .plan-items { list-style: none; margin-bottom: 20px; }
+  .plan-items li {
+    font-size: 12px; color: #555; padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+  }
+  .plan-items li::before { content: '✅'; flex-shrink: 0; }
+  .plan-items li.disabled { color: #ccc; }
+  .plan-items li.disabled::before { content: '—'; color: #ccc; }
+  .plan-note { font-size: 11px; color: #999; line-height: 1.6; margin-bottom: 16px; }
+  .plan-detail-link {
+    display: block; text-align: center; font-size: 12px;
+    color: var(--orange); text-decoration: none; margin-top: 10px; font-weight: 700;
+  }
+
+  /* APP COMPARISON */
+  .app-compare {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;
+  }
+  .app-compare-card {
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .app-compare-header { padding: 20px 24px 16px; }
+  .app-compare-header.free { background: linear-gradient(135deg, #1a2f5e, var(--navy)); border: 2px solid var(--gold); border-bottom: none; border-radius: 12px 12px 0 0; }
+  .app-compare-header.paid { background: linear-gradient(135deg, #3d1a0a, #5c2510); border: 2px solid var(--orange); border-bottom: none; border-radius: 12px 12px 0 0; }
+  .app-badge-sm { display: inline-block; font-size: 10px; font-weight: 900; padding: 3px 10px; border-radius: 10px; margin-bottom: 8px; }
+  .app-badge-sm.gold { background: var(--gold); color: var(--navy); }
+  .app-badge-sm.orange { background: var(--orange); color: #fff; }
+  .app-compare-header h3 { color: #fff; font-size: 17px; font-weight: 900; }
+  .app-compare-body { padding: 20px 24px 24px; background: #fff; border: 2px solid #eee; border-top: none; border-radius: 0 0 12px 12px; }
+  .app-compare-body.free-border { border-color: var(--gold); }
+  .app-compare-body.paid-border { border-color: var(--orange); }
+  .app-compare-list { list-style: none; margin-bottom: 16px; }
+  .app-compare-list li { font-size: 13px; color: #444; padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; gap: 8px; line-height: 1.5; }
+  .app-compare-list li:last-child { border-bottom: none; }
+
+  /* FLOW */
+  .flow-steps { display: flex; flex-direction: column; gap: 0; }
+  .flow-step { display: flex; gap: 20px; align-items: flex-start; padding: 20px 0; border-bottom: 1px dashed #ddd; }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-num {
+    width: 44px; height: 44px; background: var(--navy); color: var(--gold);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700; flex-shrink: 0;
+  }
+  .flow-content h3 { font-size: 15px; font-weight: 900; color: var(--navy); margin-bottom: 6px; }
+  .flow-content p { font-size: 13px; color: #666; line-height: 1.7; }
+  .flow-badge { display: inline-block; background: var(--gold); color: var(--navy); font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 10px; margin-bottom: 6px; }
+
+  /* CTA */
+  .cta-band {
+    background: linear-gradient(135deg, var(--navy), #1a2f5e);
+    text-align: center; padding: 52px 24px;
+  }
+  .cta-band h2 { color: #fff; font-size: clamp(20px, 4vw, 26px); font-weight: 900; margin-bottom: 12px; line-height: 1.5; }
+  .cta-band h2 em { color: var(--gold); font-style: normal; }
+  .cta-band p { color: rgba(255,255,255,0.75); font-size: 14px; margin-bottom: 28px; line-height: 1.8; }
+  .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  footer { background: #0a1020; padding: 28px 24px; text-align: center; }
+  .footer-links { margin-bottom: 12px; display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; }
+  .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 12px; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold); }
+  footer p { color: rgba(255,255,255,0.4); font-size: 11px; line-height: 1.8; }
+
+  @media (max-width: 600px) {
+    nav { display: none; }
+    .hero { padding: 44px 20px 52px; }
+    .cta-buttons, .hero-buttons { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-emblem">金</div>
+    <div class="logo-text">
+      セコカン金太朗塾
+      <span>施工管理技士 合格支援スクール</span>
+    </div>
+  </a>
+  <nav>
+    <a href="/">トップ</a>
+    <a href="/kensetsu1.html">コース一覧</a>
+    <a href="https://lin.ee/643ybhob" target="_blank">LINE登録</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">💰 料金プラン一覧</div>
+  <h1>まず<em>無料</em>で体験してから<br>プランを選んでください</h1>
+  <p class="hero-sub">
+    無料の「ショーケン版」AIアプリから始めて、<br>
+    自分に合ったプランへ進んでください。<br>
+    全プランにAIアプリ（建龍版）が付属します。
+  </p>
+  <div class="hero-buttons">
+    <a href="https://lin.ee/643ybhob" class="btn-gold" target="_blank">📱 まず無料アプリを受け取る（LINE登録）</a>
+  </div>
+</div>
+
+<!-- FREE APP -->
+<section style="background: var(--light-gray);">
+  <div class="inner">
+    <span class="sec-label">STEP 0 — 無料</span>
+    <h2 class="sec-title">まず<em>ショーケン版を無料で試す</em></h2>
+    <div class="divider"></div>
+    <div class="free-app-box">
+      <div class="badge">🎁 ショーケン版AIアプリ｜無料・期間限定</div>
+      <h3>AIアプリ（ショーケン版）を無料で受け取れます</h3>
+      <p>
+        LINE登録→Googleフォーム→BAND参加→アプリ受け取りまですべて無料。<br>
+        まずこのアプリを試して「使える！」と感じてから有料コースを選んでください。
+      </p>
+      <div class="free-app-features">
+        <span>✅ 1次試験対策の過去問演習</span>
+        <span>✅ 弱点分野を絞り込む分析機能</span>
+        <span>✅ 利用者の意見でバージョンアップ予定</span>
+        <span>✅ LINE登録→BAND参加で無償受け取り</span>
+      </div>
+      <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:inline-block;" target="_blank">📱 LINE登録して無料で受け取る</a>
+      <p class="free-app-note">⚠️ 申込期間・使用期間限定。ショーケン版は期間限定のため、早めにお受け取りください。</p>
+    </div>
+  </div>
+</section>
+
+<!-- AIアプリ2種類の違い -->
+<section style="background: var(--navy);">
+  <div class="inner">
+    <span class="sec-label" style="background: var(--gold); color: var(--navy);">AI APP 比較</span>
+    <h2 class="sec-title" style="color: #fff;">ショーケン版と建龍版の<em style="color: var(--gold);">違い</em></h2>
+    <p class="sec-desc" style="color: rgba(255,255,255,0.65);">無料で始めて、有料コースで機能アップ。</p>
+    <div class="divider"></div>
+    <div class="app-compare">
+      <!-- ショーケン版 -->
+      <div class="app-compare-card">
+        <div class="app-compare-header free">
+          <span class="app-badge-sm gold">ショーケン版｜無料・期間限定</span>
+          <h3>無料で使えるアプリ</h3>
+        </div>
+        <div class="app-compare-body free-border">
+          <ul class="app-compare-list">
+            <li>✅ 1次試験対策の過去問演習アプリ</li>
+            <li>✅ 弱点分野を絞り込める分析機能付き</li>
+            <li>✅ 利用者の意見を反映してバージョンアップ予定</li>
+            <li>✅ LINE登録→BAND参加で無償受け取り</li>
+            <li style="color: #e07000;">⚠️ 申込期間・使用期間限定</li>
+          </ul>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px;" target="_blank">📱 無料で受け取る</a>
+        </div>
+      </div>
+      <!-- 建龍版 -->
+      <div class="app-compare-card">
+        <div class="app-compare-header paid">
+          <span class="app-badge-sm orange">建龍版｜有料コース付属</span>
+          <h3>本格的に合格を狙うアプリ</h3>
+        </div>
+        <div class="app-compare-body paid-border">
+          <ul class="app-compare-list">
+            <li>✅ ショーケン版の全機能を含む</li>
+            <li>✅ 2次試験の記述まで見込んだ詳細解説が特徴</li>
+            <li>✅ 18年分過去問データ完全収録</li>
+            <li>✅ 苦手分野の自動絞り込み分析</li>
+            <li>✅ コース申し込み後すぐ受け取り可能</li>
+          </ul>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px; background: linear-gradient(135deg, var(--orange), #e63900); box-shadow: 0 4px 20px rgba(255,107,53,0.4);" target="_blank">📋 有料コースを見る（BAND内）</a>
+        </div>
+      </div>
+    </div>
+    <p style="color: rgba(255,255,255,0.55); font-size: 12px; text-align: center; margin-top: 20px; line-height: 1.8;">
+      💡 すべての有料コースにAIアプリ（建龍版）が付属します。
+    </p>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section>
+  <div class="inner">
+    <span class="sec-label">PLANS & PRICE</span>
+    <h2 class="sec-title">有料コース<em>プラン比較</em></h2>
+    <p class="sec-desc">※すべてのプランにAIアプリ（建龍版）が付属します。クレジットカード払い・分割払い対応。</p>
+    <div class="divider"></div>
+    <div class="plans-grid">
+      <!-- フロント -->
+      <div class="plan-card">
+        <div class="plan-header">
+          <div class="plan-name">AIアプリコース</div>
+          <div class="plan-price">¥14,800<span>（税込）</span></div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-items">
+            <li>1次試験対策AIアプリ（建龍版）</li>
+            <li>18年分過去問データ</li>
+            <li>苦手分野自動分析機能</li>
+            <li>2次試験の記述まで対応した詳細解説</li>
+            <li class="disabled">週1グループZoom講座</li>
+            <li class="disabled">2次試験対策</li>
+            <li class="disabled">経験記述指導</li>
+          </ul>
+          <p class="plan-note">※まずアプリだけ試したい方向け</p>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px;" target="_blank">📱 LINE登録して詳細を確認する</a>
+          <a href="/kensetsu1_front.html" class="plan-detail-link">▶ このコースの詳細を見る</a>
+        </div>
+      </div>
+      <!-- ミドル -->
+      <div class="plan-card featured">
+        <div class="plan-header featured-bg">
+          <div class="plan-badge">🔥 人気No.1</div>
+          <div class="plan-name">AIアプリ＋Zoomコース</div>
+          <div class="plan-price">¥150,800<span>（税込）</span></div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-items">
+            <li>1次試験対策AIアプリ（建龍版）</li>
+            <li>18年分過去問データ</li>
+            <li>苦手分野自動分析機能</li>
+            <li>2次試験の記述まで対応した詳細解説</li>
+            <li>週1グループZoom講座（1次試験まで）</li>
+            <li>個別合格ロードマップ作成</li>
+            <li class="disabled">2次試験対策</li>
+            <li class="disabled">経験記述指導</li>
+          </ul>
+          <p class="plan-note">※1次試験合格を最短で目指す方向け</p>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px;" target="_blank">📱 LINE登録して詳細を確認する</a>
+          <a href="/kensetsu1_middle.html" class="plan-detail-link">▶ このコースの詳細を見る</a>
+        </div>
+      </div>
+      <!-- バック -->
+      <div class="plan-card">
+        <div class="plan-header">
+          <div class="plan-name">フルパッケージ</div>
+          <div class="plan-price">¥369,400<span>（税込）</span></div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-items">
+            <li>1次試験対策AIアプリ（建龍版）</li>
+            <li>18年分過去問データ</li>
+            <li>苦手分野自動分析機能</li>
+            <li>2次試験の記述まで対応した詳細解説</li>
+            <li>週1グループZoom講座（1次試験まで）</li>
+            <li>週1グループZoom講座（2次試験まで）</li>
+            <li>2次試験対策AIアプリ</li>
+            <li>経験記述 個別指導プログラム</li>
+          </ul>
+          <p class="plan-note">※2次試験まで一気に合格したい方向け<br>※2次試験対策は2026年7月末より開始予定</p>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px;" target="_blank">📱 LINE登録して詳細を確認する</a>
+          <a href="/kensetsu1_full.html" class="plan-detail-link">▶ このコースの詳細を見る</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO START -->
+<section style="background: var(--light-gray);">
+  <div class="inner">
+    <span class="sec-label">HOW TO START</span>
+    <h2 class="sec-title">始めるまでの<em>流れ</em></h2>
+    <div class="divider"></div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <div class="flow-badge">無料</div>
+          <h3>LINE登録してショーケン版アプリを受け取る</h3>
+          <p>LINE公式アカウント（@643ybhob）を友達登録後、Googleフォームに入力するとBAND招待リンクが届きます。BANDにてショーケン版AIアプリ（期間限定無料）を受け取れます。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <div class="flow-badge">無料</div>
+          <h3>ショーケン版を使ってみる・BANDで情報収集</h3>
+          <p>過去問演習・弱点絞り込み機能を無料で体験。BAND内で各コースの詳細・受講生の声も確認できます。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <h3>プランを選んでBAND内で申し込む</h3>
+          <p>上記3プランから自分に合ったものを選択。BAND内の申し込みページからお手続き。クレジットカード決済（分割払い対応）。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-content">
+          <h3>建龍版AIアプリ受け取り→講座スタート</h3>
+          <p>決済完了後、建龍版AIアプリをすぐに受け取れます。Zoomコース・フルパッケージは翌週からZoom講座が始まります。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band">
+  <div class="inner">
+    <h2>まずは<em>無料</em>のショーケン版から<br>始めてください</h2>
+    <p>
+      LINE登録→BAND参加→ショーケン版アプリ受け取りまですべて無料。<br>
+      試してから、自分に合ったプランをお選びください。
+    </p>
+    <div class="cta-buttons">
+      <a href="https://lin.ee/643ybhob" class="btn-gold" target="_blank">📱 LINE登録して無料アプリを受け取る</a>
+      <a href="/kensetsu1.html" class="btn-outline">コース詳細を見る</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="/">トップページ</a>
+    <a href="/kensetsu1.html">コース一覧</a>
+    <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+    <a href="/privacy.html">プライバシーポリシー</a>
+    <a href="/riyokiyaku.html">利用規約</a>
+  </div>
+  <p>
+    運営：セコカン金太朗塾｜お問い合わせ：kenchiku1@seko-can.com<br>
+    <a href="/tokushoho.html" style="color:rgba(255,255,255,0.4); font-size:11px;">特定商取引法に基づく表記</a>
+  </p>
+  <p style="margin-top:12px;">© 2026 セコカン金太朗塾 All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
