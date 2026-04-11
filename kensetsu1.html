@@ -234,6 +234,34 @@
     .cta-buttons { flex-direction: column; align-items: center; }
     .hero-buttons { flex-direction: column; align-items: center; }
   }
+
+  /* COUNTDOWN TIMER */
+  .countdown-wrap {
+    margin: 0 auto 28px;
+    max-width: 480px;
+  }
+  .countdown-label {
+    color: var(--gold); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.12em; margin-bottom: 10px; text-align: center;
+  }
+  .countdown {
+    display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+  }
+  .countdown-box {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,215,0,0.4);
+    border-radius: 10px; padding: 10px 14px; min-width: 70px; text-align: center;
+  }
+  .countdown-num {
+    font-family: 'Oswald', sans-serif; font-size: 36px; font-weight: 700;
+    color: var(--gold); line-height: 1; display: block;
+  }
+  .countdown-unit {
+    font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 4px;
+    display: block; letter-spacing: 0.08em;
+  }
+  .countdown-expired {
+    color: var(--orange); font-size: 14px; font-weight: 900; text-align: center;
+  }
 </style>
 </head>
 <body>
@@ -515,11 +543,61 @@
       Googleフォームで申し込み→BAND参加→アプリ受け取り<br>
       すべて無料。まずはアプリを試してから決めてください。
     </p>
+
+    <!-- カウントダウンタイマー -->
+    <div class="countdown-wrap">
+      <div class="countdown-label">⏰ 無料配布の申込期限まで</div>
+      <div class="countdown" id="countdown-k1">
+        <div class="countdown-box">
+          <span class="countdown-num" id="k1-days">--</span>
+          <span class="countdown-unit">日</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="k1-hours">--</span>
+          <span class="countdown-unit">時間</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="k1-mins">--</span>
+          <span class="countdown-unit">分</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="k1-secs">--</span>
+          <span class="countdown-unit">秒</span>
+        </div>
+      </div>
+    </div>
+
     <div class="cta-buttons">
       <a href="https://docs.google.com/forms/d/1cxE4puiyHcWP2Q6YnWWjrrlWb3KApD34uFZ1DFQspyU/viewform" class="btn-gold" target="_blank">📋 Googleフォームで申し込む（無料）</a>
     </div>
   </div>
 </section>
+
+<script>
+(function() {
+  var deadline = new Date('2026-04-30T23:59:59+09:00').getTime();
+  function pad(n) { return n < 10 ? '0' + n : n; }
+  function updateTimer() {
+    var now = Date.now();
+    var diff = deadline - now;
+    if (diff <= 0) {
+      document.getElementById('countdown-k1').innerHTML =
+        '<p class="countdown-expired">⚠️ 申込期間は終了しました</p>';
+      return;
+    }
+    var days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    var secs  = Math.floor((diff % (1000 * 60)) / 1000);
+    document.getElementById('k1-days').textContent  = days;
+    document.getElementById('k1-hours').textContent = pad(hours);
+    document.getElementById('k1-mins').textContent  = pad(mins);
+    document.getElementById('k1-secs').textContent  = pad(secs);
+  }
+  updateTimer();
+  setInterval(updateTimer, 1000);
+})();
+</script>
 
 <footer>
   <div class="footer-links">
