@@ -154,13 +154,24 @@
     border-radius: 12px; overflow: hidden;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   }
-  .app-compare-header { padding: 20px 24px 16px; }
+  .app-compare-header { padding: 20px 24px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .app-compare-header.free { background: linear-gradient(135deg, #1a2f5e, var(--navy)); border: 2px solid var(--gold); border-bottom: none; border-radius: 12px 12px 0 0; }
   .app-compare-header.paid { background: linear-gradient(135deg, #3d1a0a, #5c2510); border: 2px solid var(--orange); border-bottom: none; border-radius: 12px 12px 0 0; }
   .app-badge-sm { display: inline-block; font-size: 10px; font-weight: 900; padding: 3px 10px; border-radius: 10px; margin-bottom: 8px; }
   .app-badge-sm.gold { background: var(--gold); color: var(--navy); }
   .app-badge-sm.orange { background: var(--orange); color: #fff; }
   .app-compare-header h3 { color: #fff; font-size: 17px; font-weight: 900; }
+  .app-header-left { flex: 1; }
+  .app-header-big-text {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .app-header-big-text.gold-text { color: var(--gold); }
+  .app-header-big-text.orange-text { color: var(--orange); }
   .app-compare-body { padding: 20px 24px 24px; background: #fff; border: 2px solid #eee; border-top: none; border-radius: 0 0 12px 12px; }
   .app-compare-body.free-border { border-color: var(--gold); }
   .app-compare-body.paid-border { border-color: var(--orange); }
@@ -270,8 +281,11 @@
       <!-- ショーケン版 -->
       <div class="app-compare-card">
         <div class="app-compare-header free">
-          <span class="app-badge-sm gold">ショーケン版｜無料・期間限定</span>
-          <h3>無料で使えるアプリ</h3>
+          <div class="app-header-left">
+            <span class="app-badge-sm gold">ショーケン版｜無料・期間限定</span>
+            <h3>無料で使えるアプリ</h3>
+          </div>
+          <div class="app-header-big-text gold-text">ショーケン</div>
         </div>
         <div class="app-compare-body free-border">
           <ul class="app-compare-list">
@@ -287,8 +301,11 @@
       <!-- 建龍版 -->
       <div class="app-compare-card">
         <div class="app-compare-header paid">
-          <span class="app-badge-sm orange">建龍版｜有料コース付属</span>
-          <h3>本格的に合格を狙うアプリ</h3>
+          <div class="app-header-left">
+            <span class="app-badge-sm orange">建龍版｜有料コース付属</span>
+            <h3>本格的に合格を狙うアプリ</h3>
+          </div>
+          <div class="app-header-big-text orange-text">建龍</div>
         </div>
         <div class="app-compare-body paid-border">
           <ul class="app-compare-list">
