@@ -3,334 +3,589 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>セコカン金太朗塾｜施工管理技士 国家資格 合格支援</title>
-<meta name="description" content="施工管理技士の国家資格取得を現役プロがAIと共にサポート。1級建築施工管理技士をはじめ、各種施工管理技士の合格を目指す方のためのオンライン講座です。">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+<title>セコカン金太朗塾｜7年落ちた私が、最後に気づいたこと。</title>
+<meta name="description" content="7年間落ち続けた現役現場監督が気づいた合格の法則。18年分の過去問AIアプリ×週1Zoom伴走で1級建築施工管理技士に合格する方法。無料・個別Zoom合格ロードマップ作成会受付中。">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
 <style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
   :root {
     --navy: #0D1B3E;
+    --navy-light: #1a2f5e;
+    --teal: #1B6B6B;
+    --teal-light: #e8f4f4;
     --gold: #FFD700;
     --orange: #FF6B35;
     --white: #FFFFFF;
-    --light-gray: #F5F5F5;
     --text: #1a1a1a;
+    --text-light: #555;
+    --border: #ddd;
+    --bg-light: #f9f8f5;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Noto Sans JP', sans-serif; color: var(--text); background: #fff; }
-  header {
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    background: #fff;
+    line-height: 1.9;
+    font-size: 15px;
+  }
+
+  /* ===== NAV ===== */
+  .lp-nav {
     background: var(--navy);
-    padding: 16px 24px;
+    padding: 14px 24px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
   }
-  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-  .logo-emblem {
-    width: 44px; height: 44px; background: var(--gold);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700;
-    color: var(--navy); flex-shrink: 0;
+  .lp-nav .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
   }
-  .logo-text { color: var(--white); font-size: 15px; font-weight: 700; line-height: 1.3; }
-  .logo-text span { display: block; color: var(--gold); font-size: 11px; font-weight: 400; margin-top: 2px; }
-  nav a { color: var(--gold); text-decoration: none; font-size: 13px; font-weight: 700; margin-left: 20px; transition: opacity 0.2s; }
-  nav a:hover { opacity: 0.7; }
-  .hero {
-    background: linear-gradient(135deg, #0D1B3E 0%, #1a2f5e 50%, #0a1428 100%);
-    padding: 60px 24px 70px; text-align: center; position: relative; overflow: hidden;
+  .lp-nav .nav-emblem {
+    width: 34px;
+    height: 34px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    flex-shrink: 0;
   }
-  .hero::before {
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle at 70% 40%, rgba(255,215,0,0.06) 0%, transparent 50%);
-    pointer-events: none;
+  .lp-nav .nav-title {
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
   }
-  .hero-badge {
-    display: inline-block; background: var(--gold); color: var(--navy);
-    font-size: 12px; font-weight: 900; padding: 6px 16px; border-radius: 20px;
-    margin-bottom: 20px; letter-spacing: 0.05em;
+  .lp-nav .nav-title span {
+    display: block;
+    font-size: 10px;
+    color: var(--gold);
+    font-weight: 400;
   }
-  .hero h1 { color: var(--white); font-size: clamp(22px, 5vw, 36px); font-weight: 900; line-height: 1.4; margin-bottom: 16px; }
-  .hero h1 em { color: var(--gold); font-style: normal; }
-  .hero p { color: rgba(255,255,255,0.8); font-size: 15px; line-height: 1.8; max-width: 600px; margin: 0 auto 32px; }
-  .hero-cta {
-    display: inline-block; background: linear-gradient(135deg, var(--gold), #ffb800);
-    color: var(--navy); font-size: 16px; font-weight: 900; padding: 16px 36px;
-    border-radius: 50px; text-decoration: none; box-shadow: 0 4px 20px rgba(255,215,0,0.4);
-    transition: transform 0.2s, box-shadow 0.2s;
+  .lp-nav nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
   }
-  .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,215,0,0.5); }
-  section { padding: 56px 24px; }
-  .section-inner { max-width: 900px; margin: 0 auto; }
-  .section-title { text-align: center; margin-bottom: 40px; }
-  .section-title h2 { font-size: clamp(20px, 4vw, 28px); font-weight: 900; color: var(--navy); line-height: 1.4; }
-  .section-title p { color: #666; margin-top: 10px; font-size: 14px; line-height: 1.7; }
-  .section-label {
-    display: inline-block; background: var(--navy); color: var(--gold);
-    font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 4px;
-    margin-bottom: 12px; letter-spacing: 0.1em;
+  .lp-nav nav a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    transition: color 0.2s;
   }
-  .courses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-  .course-card {
-    border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    text-decoration: none; color: var(--text); transition: transform 0.2s, box-shadow 0.2s;
-    display: block; background: #fff; border: 2px solid transparent;
+  .lp-nav nav a:hover { color: var(--gold); }
+  .lp-nav nav .nav-btn {
+    background: var(--gold);
+    color: var(--navy) !important;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 11px;
   }
-  .course-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.15); border-color: var(--gold); }
-  .course-card-header { background: var(--navy); padding: 20px; text-align: center; }
-  .course-card-header .icon { font-size: 36px; display: block; margin-bottom: 8px; }
-  .course-card-header h3 { color: var(--gold); font-size: 16px; font-weight: 900; line-height: 1.4; }
-  .course-card-header .sub { color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 4px; }
-  .course-card-body { padding: 20px; }
-  .course-card-body p { font-size: 13px; color: #555; line-height: 1.7; margin-bottom: 12px; }
-  .course-badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; }
-  .badge-open { background: #e8f5e9; color: #2e7d32; }
-  .badge-soon { background: #fff3e0; color: #e65100; }
-  .badge-plan { background: #f3f3f3; color: #999; }
-  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-  .feature-item { background: var(--light-gray); border-radius: 10px; padding: 24px; border-left: 4px solid var(--gold); }
-  .feature-item .num { font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 700; color: var(--navy); line-height: 1; margin-bottom: 8px; }
-  .feature-item h3 { font-size: 15px; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
-  .feature-item p { font-size: 13px; color: #666; line-height: 1.7; }
-  .cta-section { background: linear-gradient(135deg, var(--navy), #1a2f5e); text-align: center; }
-  .cta-section h2 { color: var(--white); font-size: clamp(20px, 4vw, 28px); font-weight: 900; margin-bottom: 16px; line-height: 1.5; }
-  .cta-section h2 em { color: var(--gold); font-style: normal; }
-  .cta-section p { color: rgba(255,255,255,0.75); font-size: 14px; margin-bottom: 24px; line-height: 1.8; }
-
-  /* COUNTDOWN TIMER */
-  .countdown-wrap {
-    margin: 0 auto 28px;
-    max-width: 480px;
-  }
-  .countdown-label {
-    color: var(--gold); font-size: 12px; font-weight: 700;
-    letter-spacing: 0.12em; margin-bottom: 10px; text-align: center;
-  }
-  .countdown {
-    display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
-  }
-  .countdown-box {
-    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,215,0,0.4);
-    border-radius: 10px; padding: 10px 14px; min-width: 70px; text-align: center;
-  }
-  .countdown-num {
-    font-family: 'Oswald', sans-serif; font-size: 36px; font-weight: 700;
-    color: var(--gold); line-height: 1; display: block;
-  }
-  .countdown-unit {
-    font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 4px;
-    display: block; letter-spacing: 0.08em;
-  }
-  .countdown-expired {
-    color: var(--orange); font-size: 14px; font-weight: 900; text-align: center;
-  }
-  .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .btn-primary {
-    display: inline-block; background: linear-gradient(135deg, var(--gold), #ffb800);
-    color: var(--navy); font-size: 15px; font-weight: 900; padding: 14px 32px;
-    border-radius: 50px; text-decoration: none; box-shadow: 0 4px 20px rgba(255,215,0,0.35); transition: transform 0.2s;
-  }
-  .btn-primary:hover { transform: translateY(-2px); }
-  .btn-secondary {
-    display: inline-block; background: transparent; color: var(--gold);
-    font-size: 15px; font-weight: 700; padding: 14px 32px; border-radius: 50px;
-    text-decoration: none; border: 2px solid var(--gold); transition: background 0.2s, color 0.2s;
-  }
-  .btn-secondary:hover { background: var(--gold); color: var(--navy); }
-  footer { background: #0a1020; padding: 32px 24px; text-align: center; }
-  .footer-links { margin-bottom: 16px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
-  .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; transition: color 0.2s; }
-  .footer-links a:hover { color: var(--gold); }
-  footer p { color: rgba(255,255,255,0.4); font-size: 12px; line-height: 1.8; }
-  .divider { width: 60px; height: 4px; background: var(--gold); margin: 0 auto 32px; border-radius: 2px; }
   @media (max-width: 600px) {
-    nav { display: none; }
-    .hero { padding: 48px 20px 56px; }
-    .cta-buttons { flex-direction: column; align-items: center; }
+    .lp-nav nav { gap: 10px; }
+    .lp-nav nav a { font-size: 11px; }
+    .nav-title span { display: none; }
+  }
+
+  /* ===== HEADER ===== */
+  .lp-header {
+    background: var(--navy);
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.12em;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(180deg, #f9f8f5 0%, #fff 100%);
+    text-align: center;
+    padding: 60px 24px 48px;
+    border-bottom: 1px solid #e8e4dc;
+  }
+  .hero-label {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--teal);
+    border: 1px solid var(--teal);
+    padding: 4px 16px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    font-weight: 700;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(26px, 5.5vw, 42px);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.5;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+  .hero-sub {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(13px, 2.5vw, 16px);
+    color: var(--teal);
+    font-style: italic;
+    letter-spacing: 0.08em;
+  }
+  .hero-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--teal);
+    margin: 24px auto;
+    opacity: 0.4;
+  }
+
+  /* ===== SECTION BASE ===== */
+  .lp-section {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+  .lp-section + .lp-section {
+    border-top: 1px solid #e8e4dc;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--navy);
+    border-left: 3px solid var(--teal);
+    padding: 2px 12px;
+    margin-bottom: 20px;
+    background: var(--teal-light);
+  }
+
+  .section-tag.gold {
+    color: var(--navy);
+    border-left-color: var(--gold);
+    background: #fffbea;
+  }
+
+  .section-tag.navy {
+    color: #fff;
+    border-left-color: var(--gold);
+    background: var(--navy);
+    padding: 4px 16px;
+  }
+
+  /* ===== BODY TEXT ===== */
+  .lp-section p {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 15px;
+    line-height: 2.0;
+  }
+  .lp-section p:last-child { margin-bottom: 0; }
+
+  .bold { font-weight: 700; }
+  .gold-text { color: #c8860a; font-weight: 700; }
+  .teal-text { color: var(--teal); font-weight: 700; }
+
+  /* ===== QUOTE BOX ===== */
+  .quote-box {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    padding: 18px 22px;
+    margin: 28px 0;
+    font-size: 14px;
+    line-height: 1.9;
+    color: #2a4a4a;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .quote-box.navy-box {
+    background: var(--navy);
+    border-left: 4px solid var(--gold);
+    color: rgba(255,255,255,0.9);
+  }
+
+  /* ===== WEAPON CARDS ===== */
+  .weapon-card {
+    background: var(--teal-light);
+    border: 1px solid rgba(27,107,107,0.2);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+  .weapon-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .weapon-card p {
+    font-size: 14px;
+    color: #3a3a3a;
+    line-height: 1.9;
+    margin-bottom: 0 !important;
+  }
+  .weapon-num {
+    display: inline-block;
+    background: var(--teal);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 2px;
+    margin-right: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ===== DANGER SECTION ===== */
+  .danger-section {
+    background: var(--navy);
+    padding: 52px 24px;
+  }
+  .danger-inner {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .danger-section .section-tag {
+    color: var(--gold);
+    border-left-color: var(--gold);
+    background: rgba(255,215,0,0.1);
+    margin-bottom: 24px;
+  }
+  .danger-section p {
+    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+    line-height: 2.0;
+    margin-bottom: 20px;
+  }
+
+  /* ===== INVITATION SECTION ===== */
+  .invite-section {
+    background: var(--bg-light);
+    padding: 52px 24px;
+  }
+  .invite-inner {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .invite-section p {
+    color: #333;
+    font-size: 15px;
+    line-height: 2.0;
+    margin-bottom: 20px;
+  }
+
+  /* ===== CTA SECTION ===== */
+  .cta-section {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    padding: 60px 24px;
+    text-align: center;
+  }
+  .cta-inner {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  .cta-section h2 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(16px, 3.5vw, 22px);
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  .cta-section .cta-sub {
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    margin-bottom: 32px;
+    line-height: 1.8;
+  }
+  .cta-benefit {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    text-align: left;
+  }
+  .cta-benefit p {
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+    line-height: 1.9;
+    margin-bottom: 0;
+  }
+  .cta-benefit p + p { margin-top: 10px; }
+  .cta-benefit strong { color: var(--gold); }
+  .cta-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 16px;
+  }
+
+  .btn-cta {
+    display: block;
+    background: var(--teal);
+    color: #fff;
+    font-size: clamp(14px, 3vw, 18px);
+    font-weight: 700;
+    padding: 20px 32px;
+    border-radius: 4px;
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    transition: opacity 0.2s;
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+  .btn-cta:hover { opacity: 0.85; }
+  .btn-cta .btn-sub {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.75;
+    margin-top: 5px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ===== CLOSING ===== */
+  .closing {
+    text-align: center;
+    padding: 52px 24px;
+    background: #fff;
+    border-top: 1px solid #e8e4dc;
+  }
+  .closing p {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(13px, 2.5vw, 16px);
+    color: var(--navy);
+    line-height: 2.0;
+    margin-bottom: 8px;
+  }
+  .closing .closing-sub {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(12px, 2vw, 14px);
+    color: var(--teal);
+    font-style: italic;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--navy);
+    text-align: center;
+    padding: 28px 24px;
+    color: rgba(255,255,255,0.4);
+    font-size: 11px;
+    line-height: 2.0;
+  }
+  footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+  footer a:hover { color: rgba(255,255,255,0.7); }
+  .footer-links { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .hero { padding: 48px 20px 36px; }
+    .lp-section { padding: 40px 20px; }
+    .weapon-card { padding: 18px 18px; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <a href="/" class="logo">
-    <div class="logo-emblem">金</div>
-    <div class="logo-text">
+<!-- ナビバー -->
+<div class="lp-nav">
+  <a href="/" class="nav-logo">
+    <div class="nav-emblem">金</div>
+    <div class="nav-title">
       セコカン金太朗塾
       <span>施工管理技士 合格支援スクール</span>
     </div>
   </a>
   <nav>
-    <a href="/kensetsu1.html">1級建築</a>
-    <a href="/tokushoho.html">特定商取引法</a>
-    <a href="https://docs.google.com/forms/d/1cxE4puiyHcWP2Q6YnWWjrrlWb3KApD34uFZ1DFQspyU/viewform" target="_blank">無料申し込み</a>
+    <a href="/kensetsu1.html">📋 商品紹介</a>
+    <a href="/plans.html">💰 料金プラン</a>
+    <a href="https://docs.google.com/forms/d/1cxE4puiyHcWP2Q6YnWWjrrlWb3KApD34uFZ1DFQspyU/viewform" class="nav-btn" target="_blank">無料申し込み</a>
   </nav>
-</header>
-
-<div class="hero">
-  <div class="hero-badge">🏗️ 現役20年プロが直接指導</div>
-  <h1>施工管理技士の<br><em>国家資格合格</em>を<br>AIと一緒に目指す</h1>
-  <p>現場20年超の経験とAI技術を組み合わせた、<br>全く新しい合格支援スクールです。<br>あなたの合格を全力でサポートします。</p>
-  <a href="https://docs.google.com/forms/d/1cxE4puiyHcWP2Q6YnWWjrrlWb3KApD34uFZ1DFQspyU/viewform" class="hero-cta" target="_blank">▶ Googleフォームで申し込む（無料）</a>
 </div>
 
-<section style="background: var(--light-gray);">
-  <div class="section-inner">
-    <div class="section-title">
-      <span class="section-label">COURSES</span>
-      <h2>対応している資格講座</h2>
-      <p>現在開講中の講座と、今後展開予定の講座一覧です。</p>
-    </div>
-    <div class="divider"></div>
-    <div class="courses-grid">
-      <a href="/kensetsu1.html" class="course-card">
-        <div class="course-card-header">
-          <span class="icon">🏢</span>
-          <h3>1級建築施工管理技士</h3>
-          <div class="sub">1st Grade Architecture</div>
-        </div>
-        <div class="course-card-body">
-          <p>現役プロによる直接指導＋AIアプリで18年分の過去問を徹底攻略。1次試験・2次試験どちらもサポート。</p>
-          <span class="course-badge badge-open">✅ 受講受付中</span>
-        </div>
-      </a>
-      <div class="course-card" style="cursor: default;">
-        <div class="course-card-header">
-          <span class="icon">🛣️</span>
-          <h3>2級土木施工管理技士</h3>
-          <div class="sub">2nd Grade Civil Engineering</div>
-        </div>
-        <div class="course-card-body">
-          <p>土木分野のプロフェッショナルを目指す方向け。AIアプリと指導を組み合わせた新しい合格プログラム。</p>
-          <span class="course-badge badge-soon">🔜 近日公開予定</span>
-        </div>
-      </div>
-      <div class="course-card" style="cursor: default;">
-        <div class="course-card-header">
-          <span class="icon">📋</span>
-          <h3>その他の施工管理技士</h3>
-          <div class="sub">Other Licenses</div>
-        </div>
-        <div class="course-card-body">
-          <p>2級建築・1級土木・電気工事・管工事など、各種施工管理技士への展開を計画しています。</p>
-          <span class="course-badge badge-plan">📅 展開計画中</span>
-        </div>
-      </div>
-    </div>
+<!-- ヘッダー -->
+<div class="lp-header">1級建築施工管理技士検定　1次・2次対策</div>
+
+<!-- ヒーロー -->
+<div class="hero">
+  <div class="hero-label">セコカン金太朗塾</div>
+  <h1>７年落ちた私が、<br>最後に気づいたこと。</h1>
+  <div class="hero-divider"></div>
+  <p class="hero-sub">気力だけで戦っていた、あの頃の自分へ。</p>
+</div>
+
+<!-- 共感と痛みのえぐり -->
+<div class="lp-section">
+  <div class="section-tag">【共感と痛みのえぐり】</div>
+
+  <p>家族との食事と風呂をなんとか済ませ、重い体でテキストを開いた数分後には、もう意識が飛んでいる毎日。</p>
+
+  <p>同じ現場にいるのに、俺だけハンコが押せない。後輩が先に合格し、出世していくのを眺めながら、妻には「また受けるの？」と呆れられ、子供の前で小さくなった夜。</p>
+
+  <p>私もまさにそうでした。無資格のまま現場監督を続けていた私は、<span class="bold">7年間必死に勉強しました。各種講習にも通いました。でも7回、落ちました。</span></p>
+
+  <p>会社からも「受験代出してるんだから今年こそは頼むよ」と、半分諦めた目で言われました。自分が一番、惨めでした。</p>
+</div>
+
+<!-- 覚醒の瞬間 -->
+<div class="lp-section">
+  <div class="section-tag">【覚醒の瞬間】</div>
+
+  <p>しかし7年目の夏。遠方まで足を運んだ受験対策講習の休憩中、隣の受験生と答案を見せ合ったんです。</p>
+
+  <p>相手の答案を見た瞬間、愕然としました。同じ問題なのに、書いている内容が根本的に違う。その答案は講師から真っ先に「これが理想の答案です」と取り上げられました。</p>
+
+  <p>自分の答案と見比べた瞬間、7年間ずっとズレていたものが見えたんです。</p>
+
+  <div class="quote-box">
+    「採点者が求めているのは現場の経験談ではなく、管理者としての判断プロセスだった。」
   </div>
-</section>
 
-<section>
-  <div class="section-inner">
-    <div class="section-title">
-      <span class="section-label">WHY US</span>
-      <h2>セコカン金太朗塾が<br>選ばれる3つの理由</h2>
-    </div>
-    <div class="divider"></div>
-    <div class="features-grid">
-      <div class="feature-item">
-        <div class="num">01</div>
-        <h3>現場20年超のリアル指導</h3>
-        <p>ラグビーW杯・東京五輪など大型プロジェクトを手掛けた現役プロが、試験に出る「本物の知識」を直接伝えます。</p>
-      </div>
-      <div class="feature-item">
-        <div class="num">02</div>
-        <h3>AIアプリで18年分を攻略</h3>
-        <p>独自開発のAIアプリで過去18年分の問題を分析。苦手分野を自動抽出し、効率よく得点力を上げます。</p>
-      </div>
-      <div class="feature-item">
-        <div class="num">03</div>
-        <h3>何度も落ちた経験を活かす</h3>
-        <p>講師自身が複数回の挑戦を経て合格。「なぜ落ちるのか」を知り尽くした指導だから、失敗パターンを事前に潰せます。</p>
-      </div>
-    </div>
+  <p>その瞬間、7年分の霧が一気に晴れました。</p>
+</div>
+
+<!-- 合格後、景色が変わった -->
+<div class="lp-section">
+  <div class="section-tag">【合格後、景色が変わった】</div>
+
+  <p><span class="bold">8年目、ついに合格。</span></p>
+
+  <p>合格通知が届いた翌朝、いつもより少し早く起きて、台所に立つ妻に「受かったよ」と伝えました。あの呆れ顔が、7年ぶりに笑顔に変わった瞬間。</p>
+
+  <p>それだけじゃありません。現場での景色が、完全に変わりました。それまで「また落ちたあいつ」という目で見ていた同僚が、「現場のことは<span class="gold-text">金太朗</span>さんに聞け」と言うようになった。若手の指導と評価を任されるようになった。「資格を持っている人間」と「持っていない人間」の間に、これほど明確な壁があるとは思っていませんでした。</p>
+
+  <p>遊び半分で登録した転職サイトには、年収1,000万円超のオファーが毎月届くようになりました。今の会社に縛られる必要が、なくなったんです。</p>
+
+  <p>そして何より。翌年の試験シーズン、後輩から「どうやって合格したんですか？」と聞かれた時、初めて胸を張って答えられました。その瞬間、7年間の遠回りが、全部意味を持ちました。</p>
+
+  <p>この体験を基に、18年分の過去問をAIで徹底分析しました。出題頻度の高いパターンを洗い出し、採点者が本当に求めているものを体系化する。それを凝縮したのが、受講者に提供している「18年分の過去問AI解析アプリ」です。</p>
+</div>
+
+<!-- 3つの武器 -->
+<div class="lp-section">
+  <div class="section-tag gold">【手段の提示：３つの武器】</div>
+
+  <p>そのすべての分析データと、私の7年分の失敗経験を凝縮して作ったのが、「7年落ちた現場監督が教える Zoom 伴走型合格プログラム」です。</p>
+
+  <div class="quote-box navy-box">
+    大手資格学校は、一発で合格した人間が教えます。私は、7年落ち続けた人間が教えます。あなたの「なぜ受からないのか」という痛みを、本当の意味で知っているのはどちらですか。
   </div>
-</section>
 
-<section class="cta-section">
-  <div class="section-inner">
-    <h2>まずは<em>無料</em>でAIアプリを<br>体験してみてください</h2>
-    <p>Googleフォームで申し込み→BAND参加の2ステップで、<br>過去問AI分析アプリ（ショーケン版・期間限定）を無償でお受け取りいただけます。</p>
+  <p>このプログラムには、３つの武器があります。</p>
 
-    <!-- カウントダウンタイマー -->
-    <div class="countdown-wrap">
-      <div class="countdown-label">⏰ 無料配布の申込期限まで</div>
-      <div class="countdown" id="countdown">
-        <div class="countdown-box">
-          <span class="countdown-num" id="cd-days">--</span>
-          <span class="countdown-unit">日</span>
-        </div>
-        <div class="countdown-box">
-          <span class="countdown-num" id="cd-hours">--</span>
-          <span class="countdown-unit">時間</span>
-        </div>
-        <div class="countdown-box">
-          <span class="countdown-num" id="cd-mins">--</span>
-          <span class="countdown-unit">分</span>
-        </div>
-        <div class="countdown-box">
-          <span class="countdown-num" id="cd-secs">--</span>
-          <span class="countdown-unit">秒</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="cta-buttons">
-      <a href="https://docs.google.com/forms/d/1cxE4puiyHcWP2Q6YnWWjrrlWb3KApD34uFZ1DFQspyU/viewform" class="btn-primary" target="_blank">📋 Googleフォームで申し込む（無料）</a>
-      <a href="/kensetsu1.html" class="btn-secondary">1級建築の講座詳細を見る</a>
-    </div>
+  <div class="weapon-card">
+    <h3><span class="weapon-num">武器①</span>18年分の過去問AI解析アプリ</h3>
+    <p>18年分の出題傾向を徹底分析した専用AIアプリ。通勤の車中、現場の待ち時間、トイレの3分。隙間時間だけで合格ラインを突破できる設計です。机に向かう必要はありません。</p>
   </div>
-</section>
 
-<script>
-(function() {
-  // 申込期限：2026年4月30日 23:59:59（日本時間）
-  var deadline = new Date('2026-04-30T23:59:59+09:00').getTime();
+  <div class="weapon-card">
+    <h3><span class="weapon-num">武器②</span>毎週1回の「少人数・公開伴走」Zoomセッション</h3>
+    <p>少人数のグループZoomで、毎週あなた個人の学習進捗をリアルタイムでチェックし、苦手分野を現場目線で解説します。「今週どこまで進んだか」を毎週必ず確認される環境が、あなたの継続力を支えます。他の仲間の指導を聞くことで自分の盲点にも気づける「グループ環境の強み」と、「自分専用のカスタム指導」を融合。孤独にならず、絶対にサボれない環境が手に入ります。</p>
+  </div>
 
-  function pad(n) { return n < 10 ? '0' + n : n; }
+  <div class="weapon-card">
+    <h3><span class="weapon-num">武器③</span>最大の鬼門 2次試験・経験記述の徹底添削</h3>
+    <p>多くの受験生は、自分がどれだけ現場で苦労したかを語る「ただの現場日記」を書いて自滅します。7年間不合格答案を書き続け、最後に「採点者が本当に求めている絶対法則」に気づいた私なら、あなたの書いた文章の「何がズレているのか」を一瞬で見抜けます。あなたの泥臭い現場経験を、採点者が唸る「管理者としての判断プロセス」へと昇華させる、妥協なき添削指導を行います。</p>
+  </div>
 
-  function updateTimer() {
-    var now = Date.now();
-    var diff = deadline - now;
+  <div class="quote-box">
+    「本気で合格させることに、私は全力を尽くします。それが7年間失敗し続けた私の、受講者への誓いです。」
+  </div>
+</div>
 
-    if (diff <= 0) {
-      document.getElementById('countdown').innerHTML =
-        '<p class="countdown-expired">⚠️ 申込期間は終了しました</p>';
-      return;
-    }
+<!-- 危機感セクション -->
+<div class="danger-section">
+  <div class="danger-inner">
+    <div class="section-tag">【なぜ、今すぐ資格を取らなければ危険なのか】</div>
 
-    var days  = Math.floor(diff / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    var secs  = Math.floor((diff % (1000 * 60)) / 1000);
+    <p>現実を直視してください。</p>
 
-    document.getElementById('cd-days').textContent  = days;
-    document.getElementById('cd-hours').textContent = pad(hours);
-    document.getElementById('cd-mins').textContent  = pad(mins);
-    document.getElementById('cd-secs').textContent  = pad(secs);
-  }
+    <p>あなたの職場の若手は、すでにタブレットでAIに施工計画の下書きをさせています。その計画書に「承認印」を押せる有資格者が、あなたの会社に今、何人いますか。</p>
 
-  updateTimer();
-  setInterval(updateTimer, 1000);
-})();
-</script>
+    <div class="quote-box navy-box" style="border-left-color: var(--gold);">
+      2030年。資格を持たない現場監督は「AIの指示を実行するだけの人間」として扱われます。これは倒産件数の話でも、業界全体の話でもありません。あなた自身の、3〜4年後の話です。
+    </div>
 
+    <p>しかし逆に言えば、資格を取った瞬間に景色は一変します。</p>
+
+    <p>「また受けるの？」という冷ややかな目が、「ウチの若手を頼むぞ」という言葉に変わる。AIがいくら進化しても、国が定める「法的責任を負える監理技術者」の配置義務は絶対になくなりません。1級を取り、あなたが「承認印を押せる人間」になった瞬間、AIはただの優秀な部下に変わります。</p>
+  </div>
+</div>
+
+<!-- あなたへの招待状 -->
+<div class="invite-section">
+  <div class="invite-inner">
+    <div class="section-tag">【あなたへの招待状】</div>
+
+    <p>1次試験は、あなたの現場人生における「ただの通過点」に過ぎません。</p>
+
+    <p>今、このページを読んでいるあなたにも、必ず同じ瞬間が来ます。</p>
+
+    <p>合格通知を受け取った翌朝、あなたは誰に最初に伝えますか。子供ですか、妻ですか、それとも現場で一番お世話になった先輩ですか。その瞬間のために、今日の一歩を踏み出してください。</p>
+
+    <p>私が7年かけて検証した「不合格回避プログラム」は、あなたのためにあります。7年分の失敗を全部持っている私が、あなたの隣で伴走します。</p>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-inner">
+    <h2>【無料・個別Zoom<br>合格ロードマップ作成会へのエントリー】</h2>
+    <p class="cta-sub">
+      あなたの現在の学習状況を診断し、<br>最短で合格するための完全カスタムプランをお伝えします。
+    </p>
+
+    <div class="cta-benefit">
+      <p>✅ <strong>参加者全員に「18年分頻出テーマ一覧」をプレゼント</strong></p>
+      <p>✅ あなた専用の合格ロードマップを一緒に作ります</p>
+      <p>✅ 申込みフォームの入力だけ。<strong>所要1分</strong></p>
+    </div>
+
+    <a href="https://docs.google.com/forms/d/1cxE4puiyHcWP2Q6YnWWjrrlWb3KApD34uFZ1DFQspyU/viewform" class="btn-cta" target="_blank">
+      ▼ 無料ロードマップ作成会に申し込む ▼
+      <span class="btn-sub">（申込みフォームに入力するだけ。所要1分）</span>
+    </a>
+
+    <p class="cta-note">※定員になり次第、受付を終了します。</p>
+  </div>
+</div>
+
+<!-- クロージング -->
+<div class="closing">
+  <p>建築施工管理技士という称号は、ゴールではありません。</p>
+  <p class="closing-sub">あなたが思い描く理想の未来への、スタートラインです。</p>
+</div>
+
+<!-- フッター -->
 <footer>
   <div class="footer-links">
-    <a href="/kensetsu1.html">1級建築施工管理技士</a>
+    <a href="/">トップページ</a>
+    <a href="/kensetsu1.html">講座詳細</a>
     <a href="/tokushoho.html">特定商取引法に基づく表記</a>
     <a href="/privacy.html">プライバシーポリシー</a>
-    <a href="/riyokiyaku.html">利用規約</a>
   </div>
-  <p>
-    運営：セコカン金太朗塾<br>
-    お問い合わせ：kenchiku1@seko-can.com<br>
-    <a href="/tokushoho.html" style="color:rgba(255,255,255,0.4); font-size:12px;">特定商取引法に基づく表記</a>
-  </p>
-  <p style="margin-top:16px;">© 2026 セコカン金太朗塾 All Rights Reserved.</p>
+  <p>運営：セコカン金太朗塾｜お問い合わせ：kenchiku1@seko-can.com</p>
+  <p style="margin-top:8px;">© 2026 セコカン金太朗塾 All Rights Reserved.</p>
 </footer>
 
 </body>
