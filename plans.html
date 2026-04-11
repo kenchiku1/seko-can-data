@@ -148,33 +148,48 @@
 
   /* APP COMPARISON */
   .app-compare {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    align-items: stretch;
   }
   .app-compare-card {
     border-radius: 12px; overflow: hidden;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    display: flex; flex-direction: column;
   }
-  .app-compare-header { padding: 20px 24px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .app-compare-header {
+    padding: 20px 24px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    min-height: 90px;
+  }
   .app-compare-header.free { background: linear-gradient(135deg, #1a2f5e, var(--navy)); border: 2px solid var(--gold); border-bottom: none; border-radius: 12px 12px 0 0; }
   .app-compare-header.paid { background: linear-gradient(135deg, #3d1a0a, #5c2510); border: 2px solid var(--orange); border-bottom: none; border-radius: 12px 12px 0 0; }
   .app-badge-sm { display: inline-block; font-size: 10px; font-weight: 900; padding: 3px 10px; border-radius: 10px; margin-bottom: 8px; }
   .app-badge-sm.gold { background: var(--gold); color: var(--navy); }
   .app-badge-sm.orange { background: var(--orange); color: #fff; }
-  .app-compare-header h3 { color: #fff; font-size: 17px; font-weight: 900; }
-  .app-header-left { flex: 1; }
+  .app-compare-header h3 { color: #fff; font-size: 17px; font-weight: 900; line-height: 1.4; }
+  .app-header-left { flex: 1; min-width: 0; }
   .app-header-big-text {
     font-family: 'Oswald', sans-serif;
-    font-size: clamp(36px, 6vw, 56px);
+    font-size: clamp(28px, 4.5vw, 44px);
     font-weight: 700;
     line-height: 1;
     letter-spacing: 0.04em;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .app-header-big-text.gold-text { color: var(--gold); }
   .app-header-big-text.orange-text { color: var(--orange); }
-  .app-compare-body { padding: 20px 24px 24px; background: #fff; border: 2px solid #eee; border-top: none; border-radius: 0 0 12px 12px; }
+  .app-compare-body {
+    padding: 20px 24px 24px; background: #fff;
+    border: 2px solid #eee; border-top: none; border-radius: 0 0 12px 12px;
+    display: flex; flex-direction: column; flex: 1;
+  }
   .app-compare-body.free-border { border-color: var(--gold); }
   .app-compare-body.paid-border { border-color: var(--orange); }
+  .app-compare-body .btn-gold,
+  .app-compare-body .btn-orange { margin-top: auto; }
   .app-compare-list { list-style: none; margin-bottom: 16px; }
   .app-compare-list li { font-size: 13px; color: #444; padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; gap: 8px; line-height: 1.5; }
   .app-compare-list li:last-child { border-bottom: none; }
