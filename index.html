@@ -98,7 +98,35 @@
   .cta-section { background: linear-gradient(135deg, var(--navy), #1a2f5e); text-align: center; }
   .cta-section h2 { color: var(--white); font-size: clamp(20px, 4vw, 28px); font-weight: 900; margin-bottom: 16px; line-height: 1.5; }
   .cta-section h2 em { color: var(--gold); font-style: normal; }
-  .cta-section p { color: rgba(255,255,255,0.75); font-size: 14px; margin-bottom: 32px; line-height: 1.8; }
+  .cta-section p { color: rgba(255,255,255,0.75); font-size: 14px; margin-bottom: 24px; line-height: 1.8; }
+
+  /* COUNTDOWN TIMER */
+  .countdown-wrap {
+    margin: 0 auto 28px;
+    max-width: 480px;
+  }
+  .countdown-label {
+    color: var(--gold); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.12em; margin-bottom: 10px; text-align: center;
+  }
+  .countdown {
+    display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+  }
+  .countdown-box {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,215,0,0.4);
+    border-radius: 10px; padding: 10px 14px; min-width: 70px; text-align: center;
+  }
+  .countdown-num {
+    font-family: 'Oswald', sans-serif; font-size: 36px; font-weight: 700;
+    color: var(--gold); line-height: 1; display: block;
+  }
+  .countdown-unit {
+    font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 4px;
+    display: block; letter-spacing: 0.08em;
+  }
+  .countdown-expired {
+    color: var(--orange); font-size: 14px; font-weight: 900; text-align: center;
+  }
   .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
   .btn-primary {
     display: inline-block; background: linear-gradient(135deg, var(--gold), #ffb800);
@@ -226,12 +254,69 @@
   <div class="section-inner">
     <h2>まずは<em>無料</em>でAIアプリを<br>体験してみてください</h2>
     <p>LINE登録するだけで、過去問AI分析アプリ（期間限定）を<br>無償でお受け取りいただけます。</p>
+
+    <!-- カウントダウンタイマー -->
+    <div class="countdown-wrap">
+      <div class="countdown-label">⏰ 無料配布の申込期限まで</div>
+      <div class="countdown" id="countdown">
+        <div class="countdown-box">
+          <span class="countdown-num" id="cd-days">--</span>
+          <span class="countdown-unit">日</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="cd-hours">--</span>
+          <span class="countdown-unit">時間</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="cd-mins">--</span>
+          <span class="countdown-unit">分</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="cd-secs">--</span>
+          <span class="countdown-unit">秒</span>
+        </div>
+      </div>
+    </div>
+
     <div class="cta-buttons">
       <a href="https://lin.ee/643ybhob" class="btn-primary" target="_blank">📱 LINE登録してアプリを受け取る</a>
       <a href="/kensetsu1.html" class="btn-secondary">1級建築の講座詳細を見る</a>
     </div>
   </div>
 </section>
+
+<script>
+(function() {
+  // 申込期限：2026年4月30日 23:59:59（日本時間）
+  var deadline = new Date('2026-04-30T23:59:59+09:00').getTime();
+
+  function pad(n) { return n < 10 ? '0' + n : n; }
+
+  function updateTimer() {
+    var now = Date.now();
+    var diff = deadline - now;
+
+    if (diff <= 0) {
+      document.getElementById('countdown').innerHTML =
+        '<p class="countdown-expired">⚠️ 申込期間は終了しました</p>';
+      return;
+    }
+
+    var days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    var secs  = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('cd-days').textContent  = days;
+    document.getElementById('cd-hours').textContent = pad(hours);
+    document.getElementById('cd-mins').textContent  = pad(mins);
+    document.getElementById('cd-secs').textContent  = pad(secs);
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
+})();
+</script>
 
 <footer>
   <div class="footer-links">
