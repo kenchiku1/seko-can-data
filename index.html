@@ -397,6 +397,54 @@
   footer a:hover { color: rgba(255,255,255,0.7); }
   .footer-links { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
 
+  /* ===== COUNTDOWN TIMER ===== */
+  .countdown-wrap {
+    margin: 0 auto 28px;
+    max-width: 480px;
+    text-align: center;
+  }
+  .countdown-label {
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+  }
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .countdown-box {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,215,0,0.5);
+    border-radius: 10px;
+    padding: 12px 16px;
+    min-width: 72px;
+    text-align: center;
+  }
+  .countdown-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+  }
+  .countdown-unit {
+    font-size: 10px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 5px;
+    display: block;
+    letter-spacing: 0.1em;
+  }
+  .countdown-expired {
+    color: var(--orange);
+    font-size: 15px;
+    font-weight: 700;
+  }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 600px) {
     .hero { padding: 48px 20px 36px; }
@@ -558,12 +606,35 @@
     <div class="cta-benefit">
       <p>✅ <strong>参加者全員に「18年分頻出テーマ一覧」をプレゼント</strong></p>
       <p>✅ あなた専用の合格ロードマップを一緒に作ります</p>
-      <p>✅ 申込みフォームの入力だけ。<strong>所要1分</strong></p>
+      <p>✅ お名前・メールアドレスを入力するだけ。<strong>所要1分</strong></p>
     </div>
 
-    <a href="https://docs.google.com/forms/d/1cxE4puiyHcWP2Q6YnWWjrrlWb3KApD34uFZ1DFQspyU/viewform" class="btn-cta" target="_blank">
+    <!-- カウントダウンタイマー -->
+    <div class="countdown-wrap">
+      <div class="countdown-label">⏰ 無料作成会の受付期限まで</div>
+      <div class="countdown" id="cd-lp">
+        <div class="countdown-box">
+          <span class="countdown-num" id="lp-days">--</span>
+          <span class="countdown-unit">日</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="lp-hours">--</span>
+          <span class="countdown-unit">時間</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="lp-mins">--</span>
+          <span class="countdown-unit">分</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-num" id="lp-secs">--</span>
+          <span class="countdown-unit">秒</span>
+        </div>
+      </div>
+    </div>
+
+    <a href="ROADMAP_FORM_URL" class="btn-cta" target="_blank">
       ▼ 無料ロードマップ作成会に申し込む ▼
-      <span class="btn-sub">（申込みフォームに入力するだけ。所要1分）</span>
+      <span class="btn-sub">（お名前・メールアドレスを入力するだけ。所要1分）</span>
     </a>
 
     <p class="cta-note">※定員になり次第、受付を終了します。</p>
@@ -575,6 +646,32 @@
   <p>建築施工管理技士という称号は、ゴールではありません。</p>
   <p class="closing-sub">あなたが思い描く理想の未来への、スタートラインです。</p>
 </div>
+
+<script>
+(function() {
+  var deadline = new Date('2026-04-30T23:59:59+09:00').getTime();
+  function pad(n) { return n < 10 ? '0' + n : n; }
+  function updateTimer() {
+    var now = Date.now();
+    var diff = deadline - now;
+    if (diff <= 0) {
+      document.getElementById('cd-lp').innerHTML =
+        '<p class="countdown-expired">⚠️ 受付期間は終了しました</p>';
+      return;
+    }
+    var days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    var secs  = Math.floor((diff % (1000 * 60)) / 1000);
+    document.getElementById('lp-days').textContent  = days;
+    document.getElementById('lp-hours').textContent = pad(hours);
+    document.getElementById('lp-mins').textContent  = pad(mins);
+    document.getElementById('lp-secs').textContent  = pad(secs);
+  }
+  updateTimer();
+  setInterval(updateTimer, 1000);
+})();
+</script>
 
 <!-- フッター -->
 <footer>
