@@ -1,289 +1,499 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>seko-can.com | 一級建築施工管理技士</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-</head>
-<body class="bg-gray-100">
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-
-        function shuffle(array) {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        function App() {
-            const [view, setView] = useState('menu');
-            const [mode, setMode] = useState('');
-            const [questions, setQuestions] = useState([]);
-            const [currentIdx, setCurrentIdx] = useState(0);
-            const [showModal, setShowModal] = useState(false);
-            const [judge, setJudge] = useState('');
-            const [score, setScore] = useState(0);
-            const [quizInfo, setQuizInfo] = useState({ year: '', session: '' });
-            const [history, setHistory] = useState([]);
-            const [weakCategories, setWeakCategories] = useState([]);
-
-            const [selectedYear, setSelectedYear] = useState('R7');
-            const [selectedSession, setSelectedSession] = useState('午前');
-
-            useEffect(() => {
-                const saved = localStorage.getItem('sekocan_history');
-                if (saved) setHistory(JSON.parse(saved));
-            }, []);
-
-            const getRankInfo = (p) => {
-                if (p >= 90) return { r: 'S', t: '施工管理技士', c: 'text-yellow-600', b: 'bg-yellow-100' };
-                if (p >= 70) return { r: 'A', t: '主任技術者', c: 'text-blue-600', b: 'bg-blue-100' };
-                if (p >= 50) return { r: 'B', t: '現場記録者', c: 'text-green-600', b: 'bg-green-100' };
-                if (p >= 30) return { r: 'C', t: '書類整理係', c: 'text-orange-600', b: 'bg-orange-100' };
-                return { r: 'D', t: '新規入場者', c: 'text-gray-600', b: 'bg-gray-200' };
-            };
-
-            const analyzeWeaknesses = (hist) => {
-                const stats = {};
-                const kenHistory = hist.filter(h => h.categoryStats).slice(0, 10);
-                if (kenHistory.length === 0) return [];
-                kenHistory.forEach(record => {
-                    Object.entries(record.categoryStats).forEach(([cat, data]) => {
-                        if (!stats[cat]) stats[cat] = { correct: 0, total: 0 };
-                        stats[cat].correct += data.correct;
-                        stats[cat].total += data.total;
-                    });
-                });
-                return Object.entries(stats)
-                    .filter(([cat, data]) => (data.correct / data.total) < 0.6)
-                    .map(([cat]) => cat);
-            };
-
-            const startQuiz = async () => {
-                setView('loading');
-                if (mode === 'ken') setWeakCategories(analyzeWeaknesses(history));
-                try {
-                    const res = await fetch(`https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${selectedYear}.json?t=${Date.now()}`);
-                    const data = await res.json();
-                    const all = Array.isArray(data) ? data : (data.questions || []);
-                    const filtered = all.filter(q => {
-                        const s = String(q.session || "").trim();
-                        return selectedSession === '午前' ? (s.includes('午前') || s.toUpperCase()==='AM') : (s.includes('午後') || s.toUpperCase()==='PM');
-                    });
-                    if (filtered.length === 0) { alert("データがありません"); setView('setup'); return; }
-                    setQuestions(shuffle(filtered));
-                    setCurrentIdx(0); setScore(0); setShowModal(false);
-                    setQuizInfo({ year: selectedYear, session: selectedSession });
-                    setView('quiz');
-                } catch (e) { alert("読込失敗"); setView('setup'); }
-            };
-
-            const handleAnswer = (k) => {
-                const q = questions[currentIdx];
-                const isCorrect = String(k) === String(q.answer);
-                if (isCorrect) setScore(s => s + 1);
-                setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
-                questions[currentIdx].tempStats = isCorrect; 
-                setShowModal(true);
-            };
-
-            const nextQuestion = () => {
-                if (currentIdx + 1 < questions.length) {
-                    setCurrentIdx(currentIdx + 1);
-                    setShowModal(false);
-                } else {
-                    finishQuiz();
-                }
-            };
-
-            const finishQuiz = () => {
-                const stats = {};
-                questions.forEach((q) => {
-                    const cat = q.category || "一般";
-                    if (!stats[cat]) stats[cat] = { correct: 0, total: 0 };
-                    stats[cat].total++;
-                    if (q.tempStats) stats[cat].correct++;
-                });
-
-                const p = Math.round((score / questions.length) * 100);
-                const r = getRankInfo(p);
-                const record = {
-                    date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                    mode: mode === 'sho' ? 'ショーケン版' : '建龍版',
-                    year: quizInfo.year, session: quizInfo.session,
-                    score, total: questions.length, percentage: p,
-                    title: r.t, rank: r.r,
-                    categoryStats: mode === 'ken' ? stats : null
-                };
-                const newHistory = [record, ...history];
-                setHistory(newHistory);
-                localStorage.setItem('sekocan_history', JSON.stringify(newHistory));
-                setView('result');
-            };
-
-            if (view === 'menu') return (
-                <div className="max-w-md mx-auto p-8 text-center pt-12">
-                    <h1 className="text-5xl font-black mb-12 text-gray-800 tracking-tighter italic">seko-can</h1>
-                    <div className="space-y-6">
-                        <button onClick={()=>{
-  const now = new Date();
-  const deadline = new Date('2026-04-30T23:59:59');
-  if (now > deadline) {
-    alert('ショーケン版αの提供期間は終了しました。');
-    return;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1級建築施工管理技士 合格講座｜セコカン金太朗塾</title>
+<meta name="description" content="現役現場所長・20年超のプロが直接指導。AIアプリ×週1Zoom伴走で1級建築施工管理技士に合格する。フロント¥14,800〜バック¥369,400。LINE登録で無料アプリ受け取り。">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0D1B3E;
+    --gold: #FFD700;
+    --orange: #FF6B35;
+    --white: #FFFFFF;
+    --light-gray: #F5F5F5;
+    --text: #1a1a1a;
   }
-  setMode('sho');
-  setView('setup');
-}} className="w-full p-8 bg-white border-4 border-blue-500 rounded-3xl shadow-xl active:scale-95 transition">
-                            <div className="text-blue-600 font-black text-2xl">ショーケン版</div>
-                            <div className="text-gray-500 text-sm font-bold">無料解説・基本演習</div>
-                        </button>
-                        <button onClick={()=>{
-                            const pw = prompt("【建龍版 🔒】\n合言葉を入力してください");
-                            if(pw === 'KENRYU'){ setMode('ken'); setView('setup'); }
-                            else if (pw !== null) { alert("合言葉が違います。"); }
-                        }} className="w-full p-8 bg-gray-800 border-4 border-yellow-500 rounded-3xl shadow-xl active:scale-95 transition">
-                            <div className="text-yellow-500 font-black text-2xl">建龍版 🔒</div>
-                            <div className="text-gray-400 text-sm font-bold">プレミアム解説・集中攻略</div>
-                        </button>
-                        <button onClick={()=>setView('history')} className="w-full py-4 text-gray-600 font-bold border-2 border-gray-300 rounded-2xl bg-white active:bg-gray-50">📋 現場経歴書を確認</button>
-                    </div>
-                </div>
-            );
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans JP', sans-serif; color: var(--text); background: #fff; }
 
-            if (view === 'setup') return (
-                <div className="max-w-md mx-auto p-8 text-center pt-10">
-                    <div className={`inline-block px-6 py-2 rounded-full mb-8 font-black ${mode==='sho'?'bg-blue-100 text-blue-600':'bg-gray-800 text-yellow-500'}`}>{mode==='sho'?'ショーケン版':'建龍版 🔒'}</div>
-                    <div className="bg-white p-6 rounded-3xl shadow-xl text-left border border-gray-200">
-                        <label className="block text-sm font-black text-gray-500 mb-2 ml-1">施工年度</label>
-                        <select value={selectedYear} onChange={e=>setSelectedYear(e.target.value)} className="w-full p-4 mb-6 border-2 rounded-2xl font-bold text-lg bg-gray-50 outline-none focus:border-blue-500">
-                            {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y=><option key={y} value={y}>{y}年度</option>)}
-                        </select>
-                        <label className="block text-sm font-black text-gray-500 mb-2 ml-1">セッション</label>
-                        <select value={selectedSession} onChange={e=>setSelectedSession(e.target.value)} className="w-full p-4 mb-8 border-2 rounded-2xl font-bold text-lg bg-gray-50 outline-none focus:border-blue-500"><option value="午前">午前 (AM)</option><option value="午後">午後 (PM)</option></select>
-                        <button onClick={startQuiz} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-lg active:bg-blue-800">現場入場</button>
-                    </div>
-                    <button onClick={()=>setView('menu')} className="mt-8 text-gray-400 font-bold">← 戻る</button>
-                </div>
-            );
+  /* HEADER */
+  header {
+    background: var(--navy);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-emblem {
+    width: 40px; height: 40px; background: var(--gold);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy);
+  }
+  .logo-text { color: #fff; font-size: 13px; font-weight: 700; line-height: 1.3; }
+  .logo-text span { display: block; color: var(--gold); font-size: 10px; font-weight: 400; }
+  nav a {
+    color: var(--gold); text-decoration: none; font-size: 12px; font-weight: 700;
+    margin-left: 16px; transition: opacity 0.2s;
+  }
+  nav a:hover { opacity: 0.7; }
 
-            if (view === 'loading') return <div className="text-center mt-40 font-black text-gray-400 animate-pulse text-2xl">資材搬入中...</div>;
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0D1B3E 0%, #1a2f5e 60%, #0a1428 100%);
+    padding: 56px 24px 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 70% 40%, rgba(255,215,0,0.07) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-label {
+    display: inline-block;
+    background: var(--gold); color: var(--navy);
+    font-size: 11px; font-weight: 900; padding: 5px 14px;
+    border-radius: 20px; margin-bottom: 16px; letter-spacing: 0.05em;
+  }
+  .hero h1 {
+    color: #fff; font-size: clamp(20px, 5vw, 34px);
+    font-weight: 900; line-height: 1.4; margin-bottom: 16px;
+  }
+  .hero h1 em { color: var(--gold); font-style: normal; }
+  .hero-sub {
+    color: rgba(255,255,255,0.75); font-size: 14px;
+    line-height: 1.8; max-width: 560px; margin: 0 auto 32px;
+  }
+  .hero-buttons {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  }
 
-            if (view === 'quiz') {
-                const q = questions[currentIdx];
-                const imageUrl = q.imageUrl ? `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/images/${q.imageUrl}` : null;
-                const isWeak = mode === 'ken' && weakCategories.includes(q.category);
+  /* 開講記念バナー */
+  .campaign-bar {
+    background: linear-gradient(135deg, var(--orange), #e63900);
+    padding: 14px 24px; text-align: center;
+  }
+  .campaign-bar p {
+    color: #fff; font-size: 14px; font-weight: 900; line-height: 1.6;
+  }
+  .campaign-bar span { color: var(--gold); }
+  .campaign-bar .small { font-size: 11px; font-weight: 400; opacity: 0.85; margin-top: 4px; display: block; }
 
-                // 🔥 【ここがポイント！】解説の自動仕分けロジック
-                const getExplanations = (q) => {
-                    const full = q.explanation || "";
-                    let sho = q.explanation_sho || "解説準備中です。";
-                    let ken = q.explanation_ken || "プレミアム解説準備中。";
-                    if (full.includes("【ショーケン版】")) {
-                        sho = full.split("【建龍版】")[0].replace("【ショーケン版】", "").trim();
-                        if (full.includes("【建龍版】")) ken = full.split("【建龍版】")[1].trim();
-                    } else if (full !== "" && !q.explanation_sho) {
-                        sho = full; // タグがない場合は全文をショーケン版へ
-                    }
-                    return { sho, ken };
-                };
-                const exps = getExplanations(q);
+  .btn-gold {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), #ffb800);
+    color: var(--navy); font-size: 15px; font-weight: 900;
+    padding: 14px 28px; border-radius: 50px; text-decoration: none;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.4); transition: transform 0.2s;
+  }
+  .btn-gold:hover { transform: translateY(-2px); }
+  .btn-outline {
+    display: inline-block; background: transparent;
+    color: var(--gold); font-size: 14px; font-weight: 700;
+    padding: 14px 24px; border-radius: 50px; text-decoration: none;
+    border: 2px solid var(--gold); transition: background 0.2s, color 0.2s;
+  }
+  .btn-outline:hover { background: var(--gold); color: var(--navy); }
 
-                return (
-                    <div className="max-w-md mx-auto p-4 flex flex-col min-h-screen">
-                        <div className="flex justify-between items-center mb-4 border-b-2 pb-2">
-                            <span className="font-bold text-gray-400">{quizInfo.year} {quizInfo.session}</span>
-                            <div className="text-right"><span className="font-black text-blue-600 text-xl">No.{currentIdx + 1} <span className="text-gray-400 text-base ml-1">[{q.no}]</span>{isWeak && <span className="ml-2 text-red-500 animate-pulse">⚠️</span>}</span></div>
-                        </div>
-                        {!showModal ? (
-                            <div className="flex-grow overflow-y-auto pb-20">
-                                <p className={`text-xl font-bold mb-6 leading-relaxed whitespace-pre-wrap ${isWeak ? 'text-red-700' : 'text-gray-800'}`}>{q.question}</p>
-                                {imageUrl && (
-                                    <div className="mb-6 bg-white p-2 rounded-xl shadow-inner border border-gray-200">
-                                        <img src={imageUrl} className="w-full h-auto rounded-lg mx-auto" />
-                                    </div>
-                                )}
-                                <div className="space-y-4">
-                                    {q.choices && Object.entries(q.choices).map(([k, t]) => (
-                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-5 border-2 border-gray-300 rounded-2xl text-left font-bold text-gray-700 bg-white shadow-sm active:bg-blue-50">{k}. {t}</button>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex flex-col flex-grow">
-                                <div className={`text-6xl font-black text-center mb-8 py-4 ${judge.includes('⭕️') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
-                                <div className="bg-white p-6 rounded-3xl shadow-inner border border-gray-200 mb-8 flex-grow overflow-y-auto">
-                                    <div className="mb-8">
-                                        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-black px-3 py-1 rounded-full mb-3">ショーケン版解説</span>
-                                        <p className="text-gray-800 font-bold leading-relaxed">{exps.sho}</p>
-                                    </div>
-                                    <div className={`p-5 rounded-2xl border-2 ${mode==='sho'?'bg-gray-100 border-dashed border-gray-300':'bg-yellow-50 border-yellow-200'}`}>
-                                        <div className="flex items-center mb-3"><span className={`text-xs font-black px-3 py-1 rounded-full ${mode==='sho'?'bg-gray-400 text-white':'bg-yellow-500 text-white'}`}>建龍版解説</span>{mode==='sho' && <span className="ml-2">🔒</span>}</div>
-                                        {mode==='sho' ? <p className="text-gray-400 font-bold blur-[2px] select-none text-sm">プレミアム解説は建龍版で解放されます。</p> : <p className="text-gray-800 font-bold leading-relaxed text-sm">{exps.ken}</p>}
-                                    </div>
-                                </div>
-                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-2xl shadow-xl active:bg-black mb-8">{currentIdx + 1 < questions.length ? '次の問題へ' : '結果発表へ'}</button>
-                            </div>
-                        )}
-                    </div>
-                );
-            }
+  /* SECTION共通 */
+  section { padding: 52px 24px; }
+  .inner { max-width: 860px; margin: 0 auto; }
+  .sec-label {
+    display: inline-block; background: var(--navy); color: var(--gold);
+    font-size: 10px; font-weight: 700; padding: 4px 12px;
+    border-radius: 4px; margin-bottom: 10px; letter-spacing: 0.1em;
+  }
+  .sec-title {
+    font-size: clamp(20px, 4vw, 26px); font-weight: 900;
+    color: var(--navy); line-height: 1.4; margin-bottom: 8px;
+  }
+  .sec-title em { color: var(--orange); font-style: normal; }
+  .sec-desc { font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 36px; }
+  .divider { width: 48px; height: 4px; background: var(--gold); border-radius: 2px; margin: 0 0 32px; }
 
-            if (view === 'result') {
-                const p = Math.round((score/questions.length)*100);
-                const r = getRankInfo(p);
-                return (
-                    <div className="max-w-md mx-auto p-8 text-center pt-16">
-                        <div className={`p-10 rounded-[40px] mb-12 shadow-2xl border-8 border-white ${r.b}`}>
-                            <p className="font-black text-gray-500 mb-2">判定結果</p>
-                            <div className={`text-8xl font-black mb-4 ${r.c}`}>{r.r}</div>
-                            <div className={`text-3xl font-black ${r.c}`}>{r.t}</div>
-                            <p className="mt-4 font-bold text-gray-600">正答率 {p}%</p>
-                        </div>
-                        <button onClick={()=>setView('menu')} className="w-full py-6 bg-blue-600 text-white rounded-3xl font-black text-2xl shadow-xl">現場事務所へ戻る</button>
-                    </div>
-                );
-            }
+  /* PROBLEM */
+  .problem-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;
+  }
+  .problem-card {
+    background: #fff3f0; border-radius: 10px; padding: 20px;
+    border-left: 4px solid var(--orange);
+  }
+  .problem-card .emoji { font-size: 28px; margin-bottom: 8px; display: block; }
+  .problem-card p { font-size: 13px; color: #555; line-height: 1.7; font-weight: 700; }
 
-            if (view === 'history') return (
-                <div className="max-w-md mx-auto p-6">
-                    <div className="flex justify-between items-center mb-8"><h2 className="text-3xl font-black text-gray-800">現場経歴書</h2><button onClick={()=>setView('menu')} className="text-blue-600 font-black text-lg">戻る</button></div>
-                    <div className="space-y-4">
-                        {history.length === 0 ? <p className="text-center py-20 font-black text-gray-300 text-xl">経歴なし</p> : 
-                         history.map((h, i) => {
-                            const r = getRankInfo(h.percentage);
-                            return (
-                                <div key={i} className={`p-5 rounded-3xl bg-white border-l-[12px] shadow-md ${r.b.replace('bg-', 'border-').replace('100', '400')}`}>
-                                    <div className="flex justify-between text-[10px] font-black text-gray-400 mb-2 uppercase tracking-widest"><span>{h.date}</span><span>{h.mode}</span></div>
-                                    <div className="flex justify-between items-center"><div className="font-black text-xl text-gray-800">{h.year} {h.session}</div><div className={`font-black text-lg ${r.c}`}>{r.r}: {r.t}</div></div>
-                                    {h.categoryStats && (
-                                        <div className="mt-2 flex flex-wrap gap-1">
-                                            {Object.entries(h.categoryStats).map(([cat, d]) => (
-                                                <span key={cat} className={`text-[9px] px-2 py-0.5 rounded-full ${(d.correct/d.total) < 0.6 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>{cat}: {Math.round((d.correct/d.total)*100)}%</span>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            );
-            return null;
-        }
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
-    <footer style="text-align:center; padding:20px; font-size:12px; color:#888;">
-  運営：セコカン金太朗塾<br>
-  <a href="/tokushoho.html" style="color:#888;">特定商取引法に基づく表記</a>
+  /* FEATURES */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;
+  }
+  .feature-card {
+    background: var(--light-gray); border-radius: 10px; padding: 24px;
+    border-left: 4px solid var(--gold);
+  }
+  .feature-card .num {
+    font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700;
+    color: var(--navy); line-height: 1; margin-bottom: 8px;
+  }
+  .feature-card h3 { font-size: 14px; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
+  .feature-card p { font-size: 13px; color: #666; line-height: 1.7; }
+
+  /* FLOW */
+  .flow-steps { display: flex; flex-direction: column; gap: 0; }
+  .flow-step {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 20px 0; border-bottom: 1px dashed #ddd;
+  }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-num {
+    width: 44px; height: 44px; background: var(--navy); color: var(--gold);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .flow-content h3 { font-size: 15px; font-weight: 900; color: var(--navy); margin-bottom: 6px; }
+  .flow-content p { font-size: 13px; color: #666; line-height: 1.7; }
+  .flow-badge {
+    display: inline-block; background: var(--gold); color: var(--navy);
+    font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 10px;
+    margin-bottom: 6px;
+  }
+
+  /* PLANS */
+  .plans-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;
+  }
+  .plan-card {
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1); background: #fff;
+    border: 2px solid #eee; transition: transform 0.2s;
+  }
+  .plan-card:hover { transform: translateY(-4px); }
+  .plan-card.featured { border-color: var(--gold); }
+  .plan-header { background: var(--navy); padding: 20px; text-align: center; }
+  .plan-header.featured-bg { background: linear-gradient(135deg, #1a2f5e, var(--navy)); }
+  .plan-badge {
+    display: inline-block; background: var(--orange); color: #fff;
+    font-size: 10px; font-weight: 900; padding: 3px 10px; border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .plan-name { color: var(--gold); font-size: 16px; font-weight: 900; margin-bottom: 4px; }
+  .plan-price {
+    color: #fff; font-size: 28px; font-weight: 900;
+    font-family: 'Oswald', sans-serif; line-height: 1;
+  }
+  .plan-price span { font-size: 14px; font-weight: 400; }
+  .plan-body { padding: 20px; }
+  .plan-items { list-style: none; margin-bottom: 20px; }
+  .plan-items li {
+    font-size: 13px; color: #555; padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 8px;
+  }
+  .plan-items li::before { content: '✅'; flex-shrink: 0; }
+  .plan-items li.disabled { color: #ccc; }
+  .plan-items li.disabled::before { content: '—'; color: #ccc; }
+  .plan-note { font-size: 11px; color: #999; line-height: 1.6; margin-bottom: 16px; }
+
+  /* CTA BAND */
+  .cta-band {
+    background: linear-gradient(135deg, var(--navy), #1a2f5e);
+    text-align: center; padding: 52px 24px;
+  }
+  .cta-band h2 { color: #fff; font-size: clamp(20px, 4vw, 26px); font-weight: 900; margin-bottom: 12px; line-height: 1.5; }
+  .cta-band h2 em { color: var(--gold); font-style: normal; }
+  .cta-band p { color: rgba(255,255,255,0.75); font-size: 14px; margin-bottom: 28px; line-height: 1.8; }
+  .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ZOOM CTA */
+  .zoom-cta {
+    background: #fff9e6; border: 2px solid var(--gold);
+    border-radius: 12px; padding: 28px; text-align: center; margin-top: 32px;
+  }
+  .zoom-cta h3 { font-size: 18px; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
+  .zoom-cta p { font-size: 13px; color: #666; line-height: 1.7; margin-bottom: 16px; }
+  .zoom-cta .pw { font-size: 12px; color: #999; margin-top: 8px; }
+
+  /* FOOTER */
+  footer { background: #0a1020; padding: 28px 24px; text-align: center; }
+  .footer-links { margin-bottom: 12px; display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; }
+  .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 12px; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold); }
+  footer p { color: rgba(255,255,255,0.4); font-size: 11px; line-height: 1.8; }
+
+  @media (max-width: 600px) {
+    nav { display: none; }
+    .hero { padding: 44px 20px 52px; }
+    .cta-buttons { flex-direction: column; align-items: center; }
+    .hero-buttons { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-emblem">金</div>
+    <div class="logo-text">
+      セコカン金太朗塾
+      <span>施工管理技士 合格支援スクール</span>
+    </div>
+  </a>
+  <nav>
+    <a href="/">トップ</a>
+    <a href="/tokushoho.html">特定商取引法</a>
+    <a href="https://lin.ee/643ybhob" target="_blank">LINE登録</a>
+  </nav>
+</header>
+
+<!-- 開講記念バナー -->
+<div class="campaign-bar">
+  <p>🎉 開講記念｜<span>AIアプリを期間限定・無料配布中！</span></p>
+  <span class="small">※申込期間・使用期間限定。LINE登録後にBAND経由でお受け取りいただけます。</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">🏗️ 1級建築施工管理技士 合格講座</div>
+  <h1>何度落ちても<em>合格できる</em><br>理由がある</h1>
+  <p class="hero-sub">
+    現役現場所長・20年超のプロが<br>
+    AIアプリ×週1Zoom伴走であなたの合格を全力サポート。<br>
+    まずは無料でアプリを体験してください。
+  </p>
+  <div class="hero-buttons">
+    <a href="https://lin.ee/643ybhob" class="btn-gold" target="_blank">📱 LINE登録してアプリを受け取る（無料）</a>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section style="background: var(--light-gray);">
+  <div class="inner">
+    <span class="sec-label">PROBLEM</span>
+    <h2 class="sec-title">こんなことで<em>悩んでいませんか？</em></h2>
+    <div class="divider"></div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <span class="emoji">📚</span>
+        <p>テキストを読んでも何が重要かわからない。結局、試験範囲を全部やろうとして時間が足りない。</p>
+      </div>
+      <div class="problem-card">
+        <span class="emoji">😓</span>
+        <p>独学で勉強しているが、正解しているのか判断できない。モチベーションが続かない。</p>
+      </div>
+      <div class="problem-card">
+        <span class="emoji">🔄</span>
+        <p>去年も受けたのに不合格。どこが足りないかわからないまま、また同じ勉強をしている。</p>
+      </div>
+      <div class="problem-card">
+        <span class="emoji">⏰</span>
+        <p>仕事が忙しく勉強時間が確保できない。現場から帰ると疲れてしまい手がつかない。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="inner">
+    <span class="sec-label">SOLUTION</span>
+    <h2 class="sec-title">セコカン金太朗塾が<em>解決します</em></h2>
+    <div class="divider"></div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="num">01</div>
+        <h3>AIアプリで18年分を効率攻略</h3>
+        <p>独自開発のAIアプリで過去18年分の問題を分析。苦手分野を自動抽出し、やるべき問題だけを集中演習できます。</p>
+      </div>
+      <div class="feature-card">
+        <div class="num">02</div>
+        <h3>週1Zoom伴走でサボらせない</h3>
+        <p>毎週のグループZoomで進捗確認。「継続の強制力」があるから、忙しい現場監督でも合格まで走り切れます。</p>
+      </div>
+      <div class="feature-card">
+        <div class="num">03</div>
+        <h3>何度も落ちた経験が指導に活きる</h3>
+        <p>講師自身が複数回の挑戦を経て合格。「なぜ落ちるのか」を知り尽くしているから、失敗パターンを事前に潰せます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOW -->
+<section style="background: var(--light-gray);">
+  <div class="inner">
+    <span class="sec-label">HOW TO START</span>
+    <h2 class="sec-title">始めるまでの<em>流れ</em></h2>
+    <div class="divider"></div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <div class="flow-badge">無料</div>
+          <h3>LINE登録してアプリを受け取る</h3>
+          <p>LINE公式アカウント（@643ybhob）を友達登録後、Googleフォームに入力するとBAND招待リンクが届きます。BANDにてAIアプリ（ショーケン版・期間限定無料）を受け取れます。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <div class="flow-badge">無料</div>
+          <h3>BANDコミュニティで情報収集・質問</h3>
+          <p>BANDに入るとアプリの使い方や講座の詳細情報をいち早く入手できます。講師への質問もBAND内で受け付けています。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <h3>BAND内で詳細確認→申し込む</h3>
+          <p>BAND内で講座の詳細・プランをご確認いただき、申し込みへ進めます。クレジットカード決済（分割払い対応）。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-content">
+          <h3>週1Zoom＋AIアプリで合格へ</h3>
+          <p>毎週のグループZoomと建龍版AIアプリで、試験日まで伴走します。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section>
+  <div class="inner">
+    <span class="sec-label">PLANS & PRICE</span>
+    <h2 class="sec-title">プランと<em>料金</em></h2>
+    <p class="sec-desc">※お支払いはクレジットカード（VISA・Mastercard・JCB等）。カード会社の分割払いサービスもご利用いただけます。</p>
+    <div class="divider"></div>
+    <div class="plans-grid">
+      <!-- フロント -->
+      <div class="plan-card">
+        <div class="plan-header">
+          <div class="plan-name">1次試験対策AIアプリ</div>
+          <div class="plan-price">¥14,800<span>（税込）</span></div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-items">
+            <li>1次試験対策AIアプリ（建龍版）</li>
+            <li>18年分過去問データ</li>
+            <li>苦手分野自動分析機能</li>
+            <li class="disabled">週1グループZoom講座</li>
+            <li class="disabled">2次試験対策</li>
+            <li class="disabled">経験記述指導</li>
+          </ul>
+          <p class="plan-note">※まずアプリだけ試したい方向け</p>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px;" target="_blank">📱 LINE登録して詳細を確認する</a>
+        </div>
+      </div>
+      <!-- ミドル -->
+      <div class="plan-card featured">
+        <div class="plan-header featured-bg">
+          <div class="plan-badge">🔥 人気No.1</div>
+          <div class="plan-name">AIアプリ＋合格PGM</div>
+          <div class="plan-price">¥150,800<span>（税込）</span></div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-items">
+            <li>1次試験対策AIアプリ（建龍版）</li>
+            <li>18年分過去問データ</li>
+            <li>苦手分野自動分析機能</li>
+            <li>週1グループZoom講座（1次試験まで）</li>
+            <li>個別合格ロードマップ作成</li>
+            <li class="disabled">2次試験対策</li>
+            <li class="disabled">経験記述指導</li>
+          </ul>
+          <p class="plan-note">※1次試験合格を最短で目指す方向け</p>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px;" target="_blank">📱 LINE登録して詳細を確認する</a>
+        </div>
+      </div>
+      <!-- バック -->
+      <div class="plan-card">
+        <div class="plan-header">
+          <div class="plan-name">1次＋2次＋経験記述PGM</div>
+          <div class="plan-price">¥369,400<span>（税込）</span></div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-items">
+            <li>1次試験対策AIアプリ（建龍版）</li>
+            <li>18年分過去問データ</li>
+            <li>苦手分野自動分析機能</li>
+            <li>週1グループZoom講座（1次試験まで）</li>
+            <li>週1グループZoom講座（2次試験まで）</li>
+            <li>2次試験対策AIアプリ</li>
+            <li>経験記述 個別指導プログラム</li>
+          </ul>
+          <p class="plan-note">※2次試験まで一気に合格したい方向け<br>※2次試験対策は2026年7月末より開始予定</p>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px;" target="_blank">📱 LINE登録して詳細を確認する</a>
+        </div>
+      </div>
+      <!-- 2次試験 近日公開 -->
+      <div style="margin-top: 24px; border: 2px dashed #ccc; border-radius: 12px; overflow: hidden; opacity: 0.85;">
+        <div style="background: #3a3a3a; padding: 20px; text-align: center;">
+          <div style="display:inline-block; background: #555; color: #fff; font-size: 10px; font-weight: 900; padding: 3px 10px; border-radius: 10px; margin-bottom: 8px;">🔜 近日公開予定</div>
+          <div style="color: #ccc; font-size: 16px; font-weight: 900; margin-bottom: 4px;">2次試験対策プラン</div>
+          <div style="color: #fff; font-size: 13px; opacity: 0.7;">2026年7月末より順次提供開始予定</div>
+        </div>
+        <div style="padding: 20px; background: #f9f9f9;">
+          <ul class="plan-items" style="margin-bottom: 16px;">
+            <li>2次試験対策AIアプリ</li>
+            <li>週1グループZoom講座（2次試験対策）</li>
+            <li>経験記述 個別指導プログラム</li>
+            <li>1次試験合格者向け差額払い制度あり</li>
+          </ul>
+          <p style="font-size: 12px; color: #999; line-height: 1.7; margin-bottom: 16px;">
+            ※価格・詳細は開講時にBAND・LINEにてご案内します。<br>
+            ※1次試験対策プランご購入者は差額払いで移行できます。
+          </p>
+          <a href="https://lin.ee/643ybhob" class="btn-gold" style="display:block; text-align:center; font-size:13px; padding:12px; opacity:1;" target="_blank">📱 LINE登録して開講情報を受け取る</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINE CTA -->
+    <div class="zoom-cta">
+      <h3>📱 まずはLINE登録（無料）</h3>
+      <p>LINE登録→Googleフォーム→BAND参加→アプリ受け取りまですべて無料。<br>BAND内で講座詳細・プランをご確認いただけます。</p>
+      <a href="https://lin.ee/643ybhob" class="btn-gold" target="_blank">LINE登録してアプリを受け取る</a>
+    </div>
+  </div>
+</section>
+
+<!-- LINE CTA -->
+<section class="cta-band">
+  <div class="inner">
+    <h2>まずは<em>無料</em>でAIアプリを<br>体験してください</h2>
+    <p>
+      LINE登録→Googleフォーム送信→BAND参加→アプリ受け取り<br>
+      すべて無料。まずはアプリを試してから決めてください。
+    </p>
+    <div class="cta-buttons">
+      <a href="https://lin.ee/643ybhob" class="btn-gold" target="_blank">📱 LINE登録してアプリを受け取る</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="/">トップページ</a>
+    <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+    <a href="/privacy.html">プライバシーポリシー</a>
+    <a href="/riyokiyaku.html">利用規約</a>
+  </div>
+  <p>
+    運営：セコカン金太朗塾｜お問い合わせ：kenchiku1@seko-can.com<br>
+    <a href="/tokushoho.html" style="color:rgba(255,255,255,0.4); font-size:11px;">特定商取引法に基づく表記</a>
+  </p>
+  <p style="margin-top:12px;">© 2026 セコカン金太朗塾 All Rights Reserved.</p>
 </footer>
+
 </body>
 </html>
