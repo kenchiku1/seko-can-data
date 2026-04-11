@@ -23,12 +23,16 @@
     --bg-light: #f9f8f5;
   }
 
+  html, body {
+    overflow-x: hidden;
+  }
   body {
     font-family: 'Noto Sans JP', sans-serif;
     color: var(--text);
     background: #fff;
     line-height: 1.9;
     font-size: 15px;
+    padding-top: 62px; /* fixed navの高さ分 */
   }
 
   /* ===== NAV ===== */
@@ -39,9 +43,11 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     box-shadow: 0 2px 12px rgba(0,0,0,0.3);
   }
   .lp-nav .nav-logo {
