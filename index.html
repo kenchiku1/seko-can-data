@@ -40,12 +40,16 @@ header{background:var(--dk);padding:14px 20px;display:flex;justify-content:space
 .hero-note{font-size:11px;color:var(--mt);margin-top:10px}
 
 /* FLOW STRIP */
-.flow-strip{background:var(--dk2);padding:18px 20px;overflow-x:auto}
-.flow-inner{display:flex;align-items:center;justify-content:center;gap:0;min-width:620px;max-width:860px;margin:0 auto}
-.flow-step{display:flex;align-items:center;gap:8px;padding:6px 14px}
+.flow-strip{background:var(--dk2);padding:18px 16px}
+.flow-inner{display:flex;align-items:center;justify-content:center;gap:0;max-width:860px;margin:0 auto;flex-wrap:wrap;row-gap:6px}
+.flow-step{display:flex;align-items:center;gap:8px;padding:6px 10px}
 .flow-step .fn{width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--dk);font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .flow-step .ft{font-size:12px;color:var(--tx);white-space:nowrap}
 .flow-arrow{color:var(--gold);font-size:16px;flex-shrink:0}
+@media(max-width:559px){
+  .flow-arrow{display:none}
+  .flow-step{background:rgba(196,145,42,.12);border-radius:20px;padding:4px 12px}
+}
 
 /* SECTION COMMON */
 section{padding:64px 20px}
@@ -80,7 +84,7 @@ section{padding:64px 20px}
 .qcard-head.study{border-top:4px solid #9090CC}
 
 .qcard-cat{font-size:10px;color:#8B7040;letter-spacing:.08em;margin-bottom:4px}
-.qcard-name{font-family:'Noto Serif JP',serif;font-size:19px;font-weight:900;color:#1A1208;line-height:1.3;margin-bottom:12px}
+.qcard-name{font-family:'Noto Serif JP',serif;font-size:clamp(15px,4vw,19px);font-weight:900;color:#1A1208;line-height:1.3;margin-bottom:12px}
 
 /* ボタンエリア：1級・2級を縦に2行で高さ統一 */
 .qcard-body{
@@ -225,7 +229,7 @@ footer a:hover{color:var(--gold-l)}
   <div class="inner">
     <div class="sec-label">qualifications</div>
     <h2 class="sec-title">対応している<em>資格一覧</em></h2>
-    <p class="sec-desc">気になる資格を選んでください。受講中の資格はLPページへ。準備中の資格はLINEで開講通知を受け取れます。</p>
+    <p class="sec-desc">気になる資格を選んでください。建築1級は現在受講受付中です。その他の資格は順次開設予定です。</p>
     <p class="sec-note">⚠ 各試験の日程は毎年変動します。必ずご自身で試験実施機関の公式サイトをご確認ください。</p>
 
     <div class="qual-grid">
@@ -251,7 +255,7 @@ footer a:hover{color:var(--gold-l)}
 
       <!-- 土木施工管理技士 -->
       <div class="qcard">
-        <div class="qcard-head soon">
+        <div class="qcard-head plan">
           <div class="qcard-cat">CIVIL ENGINEERING｜土木</div>
           <div class="qcard-name">土木施工管理技士</div>
         </div>
@@ -308,7 +312,7 @@ footer a:hover{color:var(--gold-l)}
 
       <!-- 電気工事施工管理技士 -->
       <div class="qcard">
-        <div class="qcard-head study">
+        <div class="qcard-head plan">
           <div class="qcard-cat">ELECTRICAL｜電気工事</div>
           <div class="qcard-name">電気工事施工管理技士</div>
         </div>
@@ -327,14 +331,14 @@ footer a:hover{color:var(--gold-l)}
 
       <!-- 電気通信工事施工管理技士 -->
       <div class="qcard">
-        <div class="qcard-head study">
+        <div class="qcard-head plan">
           <div class="qcard-cat">TELECOM｜電気通信工事</div>
           <div class="qcard-name">電気通信工事施工管理技士</div>
         </div>
         <div class="qcard-body">
           <div class="grade-row">
             <div class="grade-label">1級</div>
-           <span class="qcard-btn btn-coming">開設予定</span>
+            <span class="qcard-btn btn-coming">開設予定</span>
           </div>
           <div class="grade-row">
             <div class="grade-label">2級</div>
