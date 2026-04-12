@@ -18,15 +18,11 @@
 html{scroll-behavior:smooth}
 body{font-family:'Noto Sans JP',sans-serif;font-size:16px;line-height:1.8;color:#2C1F0A;background:#fff;overflow-x:hidden}
 img{max-width:100%;height:auto;display:block}
-
-/* HEADER */
 header{background:var(--dk);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
 .logo{font-family:'Noto Serif JP',serif;font-size:13px;font-weight:700;color:var(--gold-l);letter-spacing:.04em}
 .hcta{background:var(--gold);color:var(--dk);font-size:12px;font-weight:700;padding:8px 14px;border-radius:3px;text-decoration:none;white-space:nowrap}
-
-/* HERO */
 .hero{background:var(--dk);min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 20px 80px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:url('/hero_bg.jpg') center/cover no-repeat;opacity:.28;z-index:0}
+.hero::before{content:'';position:absolute;inset:0;background:url('images/hero_bg.jpg') center/cover no-repeat;opacity:.28;z-index:0}
 .hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(26,18,8,.75) 0%,rgba(26,18,8,.88) 60%,rgba(26,18,8,.97) 100%);z-index:0}
 .hero>*{position:relative;z-index:1}
 .badge{display:inline-block;background:var(--gold);color:var(--dk);font-size:11px;font-weight:700;letter-spacing:.12em;padding:5px 14px;border-radius:2px;margin-bottom:24px}
@@ -39,22 +35,16 @@ header{background:var(--dk);padding:12px 16px;display:flex;justify-content:space
 .num .l{font-size:11px;color:var(--mt);margin-top:4px;letter-spacing:.06em}
 .btn{display:inline-block;background:var(--gold);color:var(--dk);font-family:'Noto Serif JP',serif;font-size:clamp(15px,4vw,18px);font-weight:700;padding:16px 32px;border-radius:3px;text-decoration:none;letter-spacing:.04em;width:100%;max-width:380px;text-align:center}
 .btn-note{font-size:11px;color:var(--mt);margin-top:10px}
-
-/* SECTIONS */
 section{padding:60px 20px}
 .inner{max-width:780px;margin:0 auto}
 .slabel{font-size:10px;letter-spacing:.22em;color:var(--gold);margin-bottom:12px;text-transform:uppercase}
 .stitle{font-family:'Noto Serif JP',serif;font-size:clamp(20px,5vw,34px);font-weight:900;line-height:1.45;margin-bottom:28px}
 .stitle em{font-style:normal;color:var(--gold)}
-
-/* PAIN */
 .pain{background:var(--off)}
 .ptxt{font-size:15px;line-height:2;color:#3A2A10}
 .ptxt p+p{margin-top:18px}
 .qbox{border-left:4px solid var(--gold);background:var(--gold-pale);padding:18px 20px;margin:28px 0;border-radius:0 8px 8px 0}
 .qbox p{font-family:'Noto Serif JP',serif;font-size:14px;line-height:1.9;color:#2C1F0A;font-style:italic}
-
-/* STORY */
 .story{background:var(--dk2)}
 .story .stitle{color:var(--tx)}
 .tl{border-left:2px solid var(--gold);padding-left:24px;margin-top:28px}
@@ -64,22 +54,16 @@ section{padding:60px 20px}
 .tlt{font-size:14px;color:var(--mt);line-height:1.85}
 .tlt strong{color:var(--gold-l);font-weight:700}
 .tlt em{font-style:normal;color:#fff}
-
-/* BREAKTHROUGH */
 .bt{background:var(--dk3)}
 .bt .stitle{color:var(--tx)}
 .btcard{background:rgba(196,145,42,.1);border:1px solid rgba(196,145,42,.3);border-radius:10px;padding:24px 20px;margin-top:28px}
 .btcard p{font-size:14px;color:var(--mt);line-height:1.9}
 .btcard p+p{margin-top:14px}
 .bthigh{font-family:'Noto Serif JP',serif;font-size:clamp(16px,4vw,22px);font-weight:700;color:var(--gold-l);text-align:center;margin:28px 0;line-height:1.65;padding:0 4px}
-
-/* TARGET */
 .target{background:var(--ltbg)}
 .cklist{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:20px}
 .cklist li{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #E8D9BB;border-radius:8px;padding:14px 16px;font-size:14px;color:#2C1F0A;line-height:1.7}
 .cklist li::before{content:'▶';color:var(--gold);flex-shrink:0;margin-top:2px;font-size:12px}
-
-/* FEATURES */
 .features{background:#fff}
 .fgrid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:24px}
 @media(min-width:560px){.fgrid{grid-template-columns:1fr 1fr}}
@@ -87,8 +71,6 @@ section{padding:60px 20px}
 .fcard .icon{font-size:26px;margin-bottom:12px}
 .fcard h3{font-family:'Noto Serif JP',serif;font-size:15px;font-weight:700;color:#8B5E1A;margin-bottom:8px}
 .fcard p{font-size:13px;color:#5A4020;line-height:1.75}
-
-/* REASON */
 .reason{background:var(--dk)}
 .reason .stitle{color:var(--tx)}
 .rgrid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:24px}
@@ -97,14 +79,10 @@ section{padding:60px 20px}
 .rnum{font-family:'Noto Serif JP',serif;font-size:36px;font-weight:900;color:rgba(196,145,42,.22);line-height:1;margin-bottom:6px}
 .rcard h3{font-size:14px;font-weight:700;color:var(--gold-l);margin-bottom:8px}
 .rcard p{font-size:13px;color:var(--mt);line-height:1.75}
-
-/* VOICE */
 .voice{background:var(--off)}
 .vlist{display:flex;flex-direction:column;gap:16px;margin-top:24px}
 .vcard{background:#fff;border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 20px}
 .vcard p{font-size:14px;line-height:1.85;color:#2C1F0A}
-
-/* PRODUCT */
 .product{background:var(--ltbg)}
 .pcards{display:flex;flex-direction:column;gap:12px;margin-top:24px}
 .pcard{background:#fff;border:1px solid #E8D9BB;border-radius:10px;padding:18px 16px}
@@ -114,8 +92,6 @@ section{padding:60px 20px}
 .pcard-tag{font-size:11px;margin-top:3px}
 .pcard-price{font-family:'Noto Serif JP',serif;font-weight:700;font-size:17px;color:#8B5E1A;white-space:nowrap;flex-shrink:0}
 .pcard-desc{font-size:13px;color:#5A4020;margin-top:8px;line-height:1.7}
-
-/* URGENCY */
 .urgency{background:var(--dk2)}
 .urgency .stitle{color:var(--tx)}
 .ubox{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);border-radius:10px;padding:24px 20px;margin-top:24px}
@@ -127,8 +103,6 @@ section{padding:60px 20px}
 .ustat .sn{font-family:'Noto Serif JP',serif;font-size:clamp(20px,5vw,30px);font-weight:900;color:var(--gold-l);line-height:1}
 .ustat .su{font-size:10px;color:var(--gold);margin-top:4px;line-height:1.4}
 .ustat .sl{font-size:9px;color:var(--mt);margin-top:3px}
-
-/* FLOW */
 .flow{background:#fff}
 .fsteps{display:flex;flex-direction:column;gap:0;margin-top:24px}
 .fstep{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid #E8D9BB}
@@ -136,19 +110,13 @@ section{padding:60px 20px}
 .fno{width:40px;height:40px;border-radius:50%;background:var(--gold);color:var(--dk);font-family:'Noto Serif JP',serif;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .fstep h3{font-size:15px;font-weight:700;color:#2C1F0A;margin-bottom:4px}
 .fstep p{font-size:13px;color:#5A4020;line-height:1.75}
-
-/* CTA */
 .ctabot{background:var(--dk);text-align:center;padding:80px 20px}
 .ctabot .stitle{color:var(--tx);margin-bottom:14px}
 .ctabot .desc{color:var(--mt);font-size:14px;max-width:480px;margin:0 auto 40px;line-height:1.9}
 .divider{width:40px;height:2px;background:var(--gold);margin:0 auto 28px}
-
-/* FOOTER */
 footer{background:#0D0A04;text-align:center;padding:24px 20px;font-size:11px;color:var(--mt);letter-spacing:.06em}
 footer a{color:var(--mt);text-decoration:none}
 footer p+p{margin-top:8px}
-
-/* ANIMATION */
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .hero>*{animation:fadeUp .8s ease both}
 .hero>*:nth-child(1){animation-delay:.1s}
@@ -201,7 +169,7 @@ footer p+p{margin-top:8px}
     <div class="slabel">my story</div>
     <h2 class="stitle" style="color:var(--tx)">7年間の<em style="color:var(--gold-l)">検証</em>が、<br>このプログラムになった。</h2>
     <div style="margin:0 0 28px;border-radius:10px;overflow:hidden">
-      <img src="/story_img.jpg" alt="難関突破・合格の瞬間" style="width:100%;border-radius:10px;opacity:.92">
+      <img src="images/story_img.jpg" alt="難関突破・合格の瞬間" style="width:100%;border-radius:10px;opacity:.92">
     </div>
     <div class="tl">
       <div class="tli">
@@ -340,7 +308,6 @@ footer p+p{margin-top:8px}
         <div class="pcard-top">
           <div>
             <div class="pcard-name">建龍版アプリ</div>
-            <div class="pcard-tag" style="color:#8B5E1A">フロント商品・おすすめ</div>
           </div>
           <div class="pcard-price">¥14,800</div>
         </div>
@@ -350,7 +317,6 @@ footer p+p{margin-top:8px}
         <div class="pcard-top">
           <div>
             <div class="pcard-name">1次試験合格PGM</div>
-            <div class="pcard-tag" style="color:#8B7040">ミドル・本命商品</div>
           </div>
           <div class="pcard-price">¥150,800</div>
         </div>
@@ -360,7 +326,6 @@ footer p+p{margin-top:8px}
         <div class="pcard-top">
           <div>
             <div class="pcard-name">1次＋2次完全合格PGM</div>
-            <div class="pcard-tag" style="color:#8B7040">バックエンド</div>
           </div>
           <div class="pcard-price">¥369,400</div>
         </div>
@@ -370,11 +335,11 @@ footer p+p{margin-top:8px}
         <div class="pcard-top">
           <div>
             <div class="pcard-name">経験記述合格突破PGM</div>
-            <div class="pcard-tag" style="color:#8B7040">バックエンド・個別対応</div>
+            <div class="pcard-tag" style="color:#8B7040">個別対応</div>
           </div>
-          <div class="pcard-price">要相談</div>
+          <div class="pcard-price">後日発表</div>
         </div>
-        <div class="pcard-desc">2次試験・経験記述の個別指導（内容はご相談）</div>
+        <div class="pcard-desc">2次試験・経験記述の個別指導（内容は個人により変わります）</div>
       </div>
     </div>
     <p style="font-size:12px;color:#8B7040;margin-top:14px">※まずは無料コミュニティ（BAND）への参加からお気軽にどうぞ。</p>
@@ -386,7 +351,7 @@ footer p+p{margin-top:8px}
     <div class="slabel">warning</div>
     <h2 class="stitle" style="color:var(--tx)">なぜ、<em style="color:#F0A080">今すぐ</em>資格を取らなければ危険なのか。</h2>
     <div style="border-radius:10px;overflow:hidden;margin-bottom:24px">
-      <img src="/urgency_img.jpg" alt="合格への道・いままでの自分" style="width:100%;border-radius:10px;opacity:.95">
+      <img src="images/urgency_img.jpg" alt="合格への道・いままでの自分" style="width:100%;border-radius:10px;opacity:.95">
     </div>
     <div class="ubox">
       <p><strong>2030年ごろ（あと3〜4年後）から、資格なし＝リストラ対象の時代がやってくる。</strong></p>
@@ -455,8 +420,8 @@ footer p+p{margin-top:8px}
 
 <footer>
   <p>
-    <a href="/tokushoho.html">特定商取引法に基づく表記</a>　|　
-    <a href="/privacy.html">プライバシーポリシー</a>　|　
+    <a href="/tokushoho.html">特定商取引法に基づく表記</a> |
+    <a href="/privacy.html">プライバシーポリシー</a> |
     <a href="/riyoukiyaku.html">利用規約</a>
   </p>
   <p>&copy; 2025 セコカン金太朗塾 All Rights Reserved.</p>
