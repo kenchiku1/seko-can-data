@@ -1,206 +1,443 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>施工管理 合格最短ルート</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="最短60日で1級施工管理技士に合格。さらに残業削減・年収アップを実現する方法を無料公開中。">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>セコカン金太朗塾 | 施工管理技士 合格最短ルート</title>
+<meta name="description" content="1級・2級の建築・土木・管工事・建設機械・電気・電気通信施工管理技士の合格を最短ルートで。現役現場所長が教えるAI×伴走型の資格対策講座。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C4912A;--gold-l:#F0C96B;--gold-pale:#FBF0D8;
+  --dk:#1A1208;--dk2:#2D2010;
+  --tx:#F5EDD8;--mt:#BBA97A;
+  --off:#FAF7F2;--ltbg:#F5EFE4;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;font-size:16px;line-height:1.8;color:#2C1F0A;background:#fff;overflow-x:hidden}
 
-  <style>
-    body {
-      margin: 0;
-      font-family: "Hiragino Kaku Gothic ProN", sans-serif;
-      line-height: 1.6;
-      color: #333;
-    }
-    .container {
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    h1, h2 {
-      line-height: 1.4;
-    }
-    .hero {
-      background: #0d47a1;
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
-    }
-    .cta {
-      background: #ff5722;
-      color: white;
-      padding: 15px 25px;
-      display: inline-block;
-      margin: 20px 0;
-      font-size: 18px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-    .section {
-      margin: 40px 0;
-    }
-    .box {
-      background: #f5f5f5;
-      padding: 20px;
-      border-radius: 5px;
-    }
-    .highlight {
-      color: #e53935;
-      font-weight: bold;
-    }
-    .footer {
-      font-size: 12px;
-      text-align: center;
-      padding: 20px;
-      background: #fafafa;
-    }
-  </style>
+/* HEADER */
+header{background:var(--dk);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif JP',serif;font-weight:900;font-size:16px;color:var(--dk);flex-shrink:0}
+.logo-text{font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;color:var(--gold-l);letter-spacing:.04em}
+.hcta{background:var(--gold);color:var(--dk);font-size:12px;font-weight:700;padding:8px 16px;border-radius:3px;text-decoration:none;white-space:nowrap}
+
+/* HERO */
+.hero{background:var(--dk);padding:70px 20px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(196,145,42,.12) 0%,transparent 70%);pointer-events:none}
+.hero-label{display:inline-block;background:rgba(196,145,42,.2);border:1px solid rgba(196,145,42,.4);color:var(--gold);font-size:11px;letter-spacing:.18em;padding:5px 16px;border-radius:2px;margin-bottom:28px}
+.hero h1{font-family:'Noto Serif JP',serif;font-size:clamp(26px,6vw,54px);font-weight:900;line-height:1.4;color:var(--tx);margin-bottom:16px}
+.hero h1 em{font-style:normal;color:var(--gold-l)}
+.hero-sub{font-size:clamp(13px,3vw,16px);color:var(--mt);margin-bottom:48px;line-height:1.9}
+.hero-stats{display:flex;justify-content:center;gap:clamp(24px,6vw,64px);flex-wrap:wrap;margin-bottom:48px}
+.stat .n{font-family:'Noto Serif JP',serif;font-size:clamp(32px,7vw,56px);font-weight:900;color:var(--gold-l);line-height:1}
+.stat .n span{font-size:.5em;color:var(--gold)}
+.stat .l{font-size:11px;color:var(--mt);margin-top:4px;letter-spacing:.06em}
+.hero-cta{display:inline-block;background:var(--gold);color:var(--dk);font-family:'Noto Serif JP',serif;font-size:clamp(14px,3.5vw,17px);font-weight:700;padding:16px 36px;border-radius:3px;text-decoration:none;letter-spacing:.04em}
+.hero-note{font-size:11px;color:var(--mt);margin-top:10px}
+
+/* FLOW STRIP */
+.flow-strip{background:var(--dk2);padding:18px 20px;overflow-x:auto}
+.flow-inner{display:flex;align-items:center;justify-content:center;gap:0;min-width:620px;max-width:860px;margin:0 auto}
+.flow-step{display:flex;align-items:center;gap:8px;padding:6px 14px}
+.flow-step .fn{width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--dk);font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flow-step .ft{font-size:12px;color:var(--tx);white-space:nowrap}
+.flow-arrow{color:var(--gold);font-size:16px;flex-shrink:0}
+
+/* SECTION COMMON */
+section{padding:64px 20px}
+.inner{max-width:960px;margin:0 auto}
+.sec-label{font-size:10px;letter-spacing:.22em;color:var(--gold);margin-bottom:10px;text-transform:uppercase;text-align:center}
+.sec-title{font-family:'Noto Serif JP',serif;font-size:clamp(22px,5vw,36px);font-weight:900;line-height:1.45;text-align:center;margin-bottom:12px}
+.sec-title em{font-style:normal;color:var(--gold)}
+.sec-desc{font-size:14px;color:#6B5030;text-align:center;margin-bottom:12px;line-height:1.9;max-width:600px;margin-left:auto;margin-right:auto}
+.sec-note{font-size:12px;color:#C0392B;text-align:center;margin-bottom:40px;font-weight:700}
+
+/* QUALIFICATION CARDS */
+.qual-section{background:var(--off)}
+.qual-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+
+/* カード全体 */
+.qcard{
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid #E8D9BB;
+  display:flex;
+  flex-direction:column;
+  transition:transform .2s,box-shadow .2s;
+}
+.qcard:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
+
+/* カードヘッド */
+.qcard-head{padding:20px 20px 16px}
+.qcard-head.open {border-top:4px solid #1A6B3C}
+.qcard-head.soon {border-top:4px solid var(--gold)}
+.qcard-head.plan {border-top:4px solid #9999AA}
+.qcard-head.study{border-top:4px solid #9090CC}
+
+.qcard-cat{font-size:10px;color:#8B7040;letter-spacing:.08em;margin-bottom:4px}
+.qcard-name{font-family:'Noto Serif JP',serif;font-size:19px;font-weight:900;color:#1A1208;line-height:1.3;margin-bottom:12px}
+
+/* ボタンエリア：1級・2級を縦に2行で高さ統一 */
+.qcard-body{
+  padding:0 20px 20px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+/* 1行 = ラベル + ボタン */
+.grade-row{
+  display:grid;
+  grid-template-columns:48px 1fr;
+  align-items:center;
+  gap:10px;
+}
+.grade-label{
+  font-size:11px;
+  font-weight:700;
+  color:#8B7040;
+  background:var(--gold-pale);
+  border-radius:4px;
+  padding:4px 0;
+  text-align:center;
+  white-space:nowrap;
+  /* 高さ固定 */
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+/* ボタン：全て同じ高さ36px */
+.qcard-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:700;
+  text-decoration:none;
+  text-align:center;
+  line-height:1.2;
+  padding:0 10px;
+  white-space:nowrap;
+}
+.btn-open  {background:var(--gold);color:var(--dk)}
+.btn-line  {background:#06C755;color:#fff}
+.btn-coming{background:#E8D9BB;color:#8B7040;pointer-events:none;cursor:default}
+.btn-study {background:#DDDDF0;color:#3A3A5A;pointer-events:none;cursor:default}
+
+.qcard-date-note{
+  font-size:11px;
+  color:#C0392B;
+  margin-top:6px;
+  padding-top:8px;
+  border-top:1px dashed #E8D9BB;
+  line-height:1.6;
+}
+
+/* HOW IT WORKS */
+.how{background:#fff}
+.steps{display:flex;flex-direction:column;gap:0;max-width:640px;margin:0 auto}
+.step{display:flex;gap:20px;align-items:flex-start;padding:20px 0;border-bottom:1px solid #E8D9BB}
+.step:last-child{border-bottom:none}
+.step-no{width:44px;height:44px;border-radius:50%;background:var(--gold);color:var(--dk);font-family:'Noto Serif JP',serif;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step h3{font-size:15px;font-weight:700;color:#1A1208;margin-bottom:4px}
+.step p{font-size:13px;color:#5A4020;line-height:1.75}
+.step p strong{color:var(--gold);font-weight:700}
+
+/* WHY */
+.why{background:var(--dk)}
+.why .sec-title{color:var(--tx)}
+.why .sec-desc{color:var(--mt)}
+.why-grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:560px){.why-grid{grid-template-columns:1fr 1fr 1fr}}
+.why-card{background:rgba(196,145,42,.08);border:1px solid rgba(196,145,42,.2);border-radius:10px;padding:22px 20px}
+.why-num{font-family:'Noto Serif JP',serif;font-size:40px;font-weight:900;color:rgba(196,145,42,.2);line-height:1;margin-bottom:6px}
+.why-card h3{font-size:14px;font-weight:700;color:var(--gold-l);margin-bottom:8px}
+.why-card p{font-size:13px;color:var(--mt);line-height:1.75}
+
+/* CTA BOTTOM */
+.cta-bot{background:var(--dk2);text-align:center;padding:80px 20px}
+.cta-bot h2{font-family:'Noto Serif JP',serif;font-size:clamp(20px,5vw,32px);font-weight:900;color:var(--tx);margin-bottom:14px;line-height:1.5}
+.cta-bot h2 em{font-style:normal;color:var(--gold-l)}
+.cta-bot p{font-size:14px;color:var(--mt);margin-bottom:36px;line-height:1.9}
+.cta-big{display:inline-block;background:var(--gold);color:var(--dk);font-family:'Noto Serif JP',serif;font-size:clamp(15px,4vw,18px);font-weight:700;padding:18px 40px;border-radius:4px;text-decoration:none;letter-spacing:.04em}
+.cta-note{font-size:11px;color:var(--mt);margin-top:12px}
+
+/* FOOTER */
+footer{background:#0D0A04;text-align:center;padding:28px 20px;font-size:11px;color:var(--mt);letter-spacing:.05em}
+footer a{color:var(--mt);text-decoration:none}
+footer a:hover{color:var(--gold-l)}
+.footer-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:12px}
+</style>
 </head>
-
 <body>
 
-<!-- ファーストビュー -->
-<div class="hero">
-  <h1>最短60日で<br>1級施工管理技士に合格</h1>
-  <p>
-    さらに——<br>
-    残業「月45時間 → 20時間以下」に削減
+<header>
+  <div class="logo-wrap">
+    <div class="logo-icon">金</div>
+    <div class="logo-text">セコカン金太朗塾</div>
+  </div>
+  <a href="https://lin.ee/Rcdv0HZ" class="hcta">LINEで無料登録</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">施工管理技士　合格最短ルート</div>
+  <h1>7回落ちた現場監督が、<br><em>逆転合格</em>できた理由を<br>全部渡します。</h1>
+  <p class="hero-sub">
+    建築・土木・管工事・建設機械・電気・電気通信——<br>
+    1級も2級も、AI×現役所長の伴走で最短突破。
   </p>
+  <div class="hero-stats">
+    <div class="stat"><div class="n">18<span>年分</span></div><div class="l">過去問データ蓄積</div></div>
+    <div class="stat"><div class="n">7<span>回</span></div><div class="l">挫折からの逆転合格</div></div>
+    <div class="stat"><div class="n">6<span>種</span></div><div class="l">施工管理技士に対応</div></div>
+  </div>
+  <a href="#qualifications" class="hero-cta">受講できる資格を見る ↓</a>
+  <p class="hero-note">LINE登録だけ・クレジットカード不要</p>
+</section>
 
-  <p>
-    ✔ 忙しくて勉強できない<br>
-    ✔ 何からやればいいか分からない<br>
-    ✔ 独学に限界を感じている
-  </p>
-
-  <a href="#cta" class="cta">無料で診断する（3分）</a>
-</div>
-
-<div class="container">
-
-<!-- 共感 -->
-<div class="section">
-  <h2>こんな悩みありませんか？</h2>
-  <div class="box">
-    ・勉強時間が取れない<br>
-    ・参考書が続かない<br>
-    ・試験のポイントが分からない<br>
-    ・現場が忙しすぎる<br>
-    ・将来に不安がある
+<!-- FLOW STRIP -->
+<div class="flow-strip">
+  <div class="flow-inner">
+    <div class="flow-step"><div class="fn">1</div><div class="ft">LINE登録</div></div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="fn">2</div><div class="ft">BANDコミュニティ参加</div></div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="fn">3</div><div class="ft">限定動画を視聴</div></div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="fn">4</div><div class="ft">無料Zoom相談</div></div>
+    <div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="fn">5</div><div class="ft">合格プログラム開始</div></div>
   </div>
 </div>
 
-<!-- 問題提起 -->
-<div class="section">
-  <h2>そのやり方、間違っています</h2>
-  <p>
-    多くの人がやっているのは——
-  </p>
-  <div class="box">
-    ・とりあえず過去問<br>
-    ・とりあえず暗記<br>
-    ・とりあえず参考書
+<!-- QUALIFICATIONS -->
+<section class="qual-section" id="qualifications">
+  <div class="inner">
+    <div class="sec-label">qualifications</div>
+    <h2 class="sec-title">対応している<em>資格一覧</em></h2>
+    <p class="sec-desc">気になる資格を選んでください。受講中の資格はLPページへ。準備中の資格はLINEで開講通知を受け取れます。</p>
+    <p class="sec-note">⚠ 各試験の日程は毎年変動します。必ずご自身で試験実施機関の公式サイトをご確認ください。</p>
+
+    <div class="qual-grid">
+
+      <!-- 建築施工管理技士 -->
+      <div class="qcard">
+        <div class="qcard-head open">
+          <div class="qcard-cat">ARCHITECTURE｜建築</div>
+          <div class="qcard-name">建築施工管理技士</div>
+        </div>
+        <div class="qcard-body">
+          <div class="grade-row">
+            <div class="grade-label">1級</div>
+            <a href="/lp.html" class="qcard-btn btn-open">講座の詳細を見る →</a>
+          </div>
+          <div class="grade-row">
+            <div class="grade-label">2級</div>
+            <a href="https://lin.ee/Rcdv0HZ" class="qcard-btn btn-line">LINEで開講通知を受け取る</a>
+          </div>
+          <p class="qcard-date-note">⚠ 試験日程は毎年変動します。<br>必ず公式サイトでご確認ください。</p>
+        </div>
+      </div>
+
+      <!-- 土木施工管理技士 -->
+      <div class="qcard">
+        <div class="qcard-head soon">
+          <div class="qcard-cat">CIVIL ENGINEERING｜土木</div>
+          <div class="qcard-name">土木施工管理技士</div>
+        </div>
+        <div class="qcard-body">
+          <div class="grade-row">
+            <div class="grade-label">1級</div>
+            <a href="https://lin.ee/Rcdv0HZ" class="qcard-btn btn-line">LINEで開講通知を受け取る</a>
+          </div>
+          <div class="grade-row">
+            <div class="grade-label">2級</div>
+            <span class="qcard-btn btn-coming">開設予定</span>
+          </div>
+          <p class="qcard-date-note">⚠ 試験日程は毎年変動します。<br>必ず公式サイトでご確認ください。</p>
+        </div>
+      </div>
+
+      <!-- 管工事施工管理技士 -->
+      <div class="qcard">
+        <div class="qcard-head plan">
+          <div class="qcard-cat">PLUMBING｜管工事</div>
+          <div class="qcard-name">管工事施工管理技士</div>
+        </div>
+        <div class="qcard-body">
+          <div class="grade-row">
+            <div class="grade-label">1級</div>
+            <span class="qcard-btn btn-coming">開設予定</span>
+          </div>
+          <div class="grade-row">
+            <div class="grade-label">2級</div>
+            <span class="qcard-btn btn-coming">開設予定</span>
+          </div>
+          <p class="qcard-date-note">⚠ 試験日程は毎年変動します。<br>必ず公式サイトでご確認ください。</p>
+        </div>
+      </div>
+
+      <!-- 建設機械施工技士 -->
+      <div class="qcard">
+        <div class="qcard-head plan">
+          <div class="qcard-cat">MACHINERY｜建設機械</div>
+          <div class="qcard-name">建設機械施工技士</div>
+        </div>
+        <div class="qcard-body">
+          <div class="grade-row">
+            <div class="grade-label">1級</div>
+            <span class="qcard-btn btn-coming">開設予定</span>
+          </div>
+          <div class="grade-row">
+            <div class="grade-label">2級</div>
+            <span class="qcard-btn btn-coming">開設予定</span>
+          </div>
+          <p class="qcard-date-note">⚠ 試験日程は毎年変動します。<br>必ず公式サイトでご確認ください。</p>
+        </div>
+      </div>
+
+      <!-- 電気工事施工管理技士 -->
+      <div class="qcard">
+        <div class="qcard-head study">
+          <div class="qcard-cat">ELECTRICAL｜電気工事</div>
+          <div class="qcard-name">電気工事施工管理技士</div>
+        </div>
+        <div class="qcard-body">
+          <div class="grade-row">
+            <div class="grade-label">1級</div>
+            <span class="qcard-btn btn-study">検討中</span>
+          </div>
+          <div class="grade-row">
+            <div class="grade-label">2級</div>
+            <span class="qcard-btn btn-study">検討中</span>
+          </div>
+          <p class="qcard-date-note">⚠ 試験日程は毎年変動します。<br>必ず公式サイトでご確認ください。</p>
+        </div>
+      </div>
+
+      <!-- 電気通信工事施工管理技士 -->
+      <div class="qcard">
+        <div class="qcard-head study">
+          <div class="qcard-cat">TELECOM｜電気通信工事</div>
+          <div class="qcard-name">電気通信工事施工管理技士</div>
+        </div>
+        <div class="qcard-body">
+          <div class="grade-row">
+            <div class="grade-label">1級</div>
+            <span class="qcard-btn btn-study">検討中</span>
+          </div>
+          <div class="grade-row">
+            <div class="grade-label">2級</div>
+            <span class="qcard-btn btn-study">検討中</span>
+          </div>
+          <p class="qcard-date-note">⚠ 試験日程は毎年変動します。<br>必ず公式サイトでご確認ください。</p>
+        </div>
+      </div>
+
+    </div>
   </div>
-  <p class="highlight">
-    👉これはすべて非効率です
-  </p>
-  <p>
-    結果：時間だけ消費し、不合格
-  </p>
-</div>
+</section>
 
-<!-- 解決策 -->
-<div class="section">
-  <h2>解決策：施工管理AI×最短ルート</h2>
-  <div class="box">
-    ✔ 出る順だけ学習<br>
-    ✔ 無駄ゼロ設計<br>
-    ✔ AIが最短ルートを提示
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="inner">
+    <div class="sec-label">how to start</div>
+    <h2 class="sec-title">参加までの<em>5ステップ</em></h2>
+    <p class="sec-desc" style="margin-bottom:36px">どの資格でも流れは同じ。まずはLINEから。</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-no">1</div>
+        <div>
+          <h3>LINEを友だち追加する</h3>
+          <p>下のボタンからLINE公式アカウントを追加後、<strong>受けたい資格名を1通送ってください。</strong>（例：「建築1級」「土木2級」）自動でご案内が届きます。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-no">2</div>
+        <div>
+          <h3>BANDコミュニティに参加する</h3>
+          <p>招待URLからコミュニティへ。受講生・運営が集まる場です。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-no">3</div>
+        <div>
+          <h3>限定動画「合格の真髄」を視聴する</h3>
+          <p>BAND内の動画を最後まで見ると<strong>シークレットパスワード</strong>が手に入ります。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-no">4</div>
+        <div>
+          <h3>無料Zoom合格ロードマップ作成会に申し込む</h3>
+          <p>パスワードを使って申込みフォームへエントリー。あなた専用の合格プランを一緒に作ります。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-no">5</div>
+        <div>
+          <h3>合格プログラムを開始する</h3>
+          <p>AIアプリ×週1伴走で、最短ルートで合格へ。</p>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
 
-  <p>
-    さらに——
-  </p>
-
-  <div class="box">
-    ✔ 書類作成時間削減<br>
-    ✔ 現場効率アップ<br>
-    ✔ 残業削減
+<!-- WHY -->
+<section class="why">
+  <div class="inner">
+    <div class="sec-label">why kintaro juku</div>
+    <h2 class="sec-title" style="color:var(--tx)">大手予備校でも独学でもなく、<br><em>金太朗塾を選ぶ理由</em></h2>
+    <p class="sec-desc" style="margin-bottom:36px;color:var(--mt)">7回落ちた人間だからこそ、わかることがある。</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-num">01</div>
+        <h3>失敗パターンを知っている</h3>
+        <p>一発合格のエリートには見えない「なぜ落ちるのか」の本質を、身をもって検証した人間が教える。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">02</div>
+        <h3>模倣不可能な18年分のデータ</h3>
+        <p>H20〜最新年度まで網羅した出題傾向データは、後発の競合が絶対に追いつけない知的財産。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">03</div>
+        <h3>挫折させない仕組みがある</h3>
+        <p>週1Zoomによる強制力。大手予備校が「教材を渡して終わり」なのに対し、合格まで本気で伴走する。</p>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- ベネフィット -->
-<div class="section">
-  <h2>得られる結果</h2>
-  <div class="box">
-    ・最短60日で合格ライン<br>
-    ・勉強時間 半分以下<br>
-    ・残業45h → 20h以下<br>
-    ・年収アップ
+<!-- CTA BOTTOM -->
+<section class="cta-bot">
+  <div class="inner">
+    <h2>まず、<em>LINEに一言</em>送るだけ。</h2>
+    <p>受けたい資格名を送ってください。<br>あとは金太朗塾がぜんぶ案内します。</p>
+    <a href="https://lin.ee/Rcdv0HZ" class="cta-big">LINEで無料登録する →</a>
+    <p class="cta-note">登録60秒・クレジットカード不要・いつでも退会OK</p>
   </div>
-</div>
+</section>
 
-<!-- 実績 -->
-<div class="section">
-  <h2>実績</h2>
-  <div class="box">
-    30代 男性：年収450万 → 580万／一発合格<br>
-    20代 男性：未経験 → 合格＋転職成功<br>
-    40代 男性：3回不合格 → 合格
+<footer>
+  <div class="footer-links">
+    <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+    <a href="/privacy.html">プライバシーポリシー</a>
+    <a href="/riyoukiyaku.html">利用規約</a>
   </div>
-</div>
-
-<!-- 比較 -->
-<div class="section">
-  <h2>他との違い</h2>
-  <div class="box">
-    一般：範囲が広い・暗記中心・現場で使えない<br><br>
-    当サービス：出る部分だけ・理解重視・現場直結
-  </div>
-</div>
-
-<!-- CTA -->
-<div id="cta" class="section" style="text-align:center;">
-  <h2>今だけ無料公開中</h2>
-  <p>
-    合格最短ルート診断（3分）
-  </p>
-
-  <a href="https://lin.ee/あなたのリンク" class="cta">
-    無料で診断する
-  </a>
-
-  <p style="font-size:12px;">
-    ※強引な営業は一切ありません
-  </p>
-</div>
-
-<!-- FAQ -->
-<div class="section">
-  <h2>よくある質問</h2>
-  <div class="box">
-    Q. 本当に無料？<br>
-    A. はい、完全無料です<br><br>
-
-    Q. 忙しくても可能？<br>
-    A. 忙しい方向けに設計しています<br><br>
-
-    Q. 初心者でもOK？<br>
-    A. 問題ありません
-  </div>
-</div>
-
-</div>
-
-<!-- フッター -->
-<div class="footer">
-  運営者：相馬 朗宏<br>
-  所在地：札幌市中央区南1条東3丁目12-2F<br>
-  メール：kenchiku1@seko-can.com<br>
-  電話番号：090-XXXX-XXXX<br>
-</div>
+  <p>&copy; 2025 セコカン金太朗塾 All Rights Reserved.</p>
+</footer>
 
 </body>
 </html>
