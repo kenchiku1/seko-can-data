@@ -63,88 +63,38 @@ section{padding:64px 20px}
 /* QUALIFICATION CARDS */
 .qual-section{background:var(--off)}
 .qual-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
-
-/* カード全体 */
-.qcard{
-  background:#fff;
-  border-radius:12px;
-  overflow:hidden;
-  border:1px solid #E8D9BB;
-  display:flex;
-  flex-direction:column;
-  transition:transform .2s,box-shadow .2s;
-}
+.qcard{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8D9BB;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s;}
 .qcard:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
-
-/* カードヘッド */
 .qcard-head{padding:20px 20px 16px}
 .qcard-head.open {border-top:4px solid #1A6B3C}
 .qcard-head.soon {border-top:4px solid var(--gold)}
 .qcard-head.plan {border-top:4px solid #9999AA}
 .qcard-head.study{border-top:4px solid #9090CC}
-
 .qcard-cat{font-size:10px;color:#8B7040;letter-spacing:.08em;margin-bottom:4px}
 .qcard-name{font-family:'Noto Serif JP',serif;font-size:clamp(15px,4vw,19px);font-weight:900;color:#1A1208;line-height:1.3;margin-bottom:12px}
-
-/* ボタンエリア：1級・2級を縦に2行で高さ統一 */
-.qcard-body{
-  padding:0 20px 20px;
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-/* 1行 = ラベル + ボタン */
-.grade-row{
-  display:grid;
-  grid-template-columns:48px 1fr;
-  align-items:center;
-  gap:10px;
-}
-.grade-label{
-  font-size:11px;
-  font-weight:700;
-  color:#8B7040;
-  background:var(--gold-pale);
-  border-radius:4px;
-  padding:4px 0;
-  text-align:center;
-  white-space:nowrap;
-  /* 高さ固定 */
-  height:36px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-/* ボタン：全て同じ高さ36px */
-.qcard-btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:36px;
-  border-radius:6px;
-  font-size:12px;
-  font-weight:700;
-  text-decoration:none;
-  text-align:center;
-  line-height:1.2;
-  padding:0 10px;
-  white-space:nowrap;
-}
+.qcard-body{padding:0 20px 20px;flex:1;display:flex;flex-direction:column;gap:8px;}
+.grade-row{display:grid;grid-template-columns:48px 1fr;align-items:center;gap:10px;}
+.grade-label{font-size:11px;font-weight:700;color:#8B7040;background:var(--gold-pale);border-radius:4px;padding:4px 0;text-align:center;white-space:nowrap;height:36px;display:flex;align-items:center;justify-content:center;}
+.qcard-btn{display:flex;align-items:center;justify-content:center;height:36px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;text-align:center;line-height:1.2;padding:0 10px;white-space:nowrap;}
 .btn-open  {background:var(--gold);color:var(--dk)}
 .btn-line  {background:#06C755;color:#fff}
 .btn-coming{background:#E8D9BB;color:#8B7040;pointer-events:none;cursor:default}
 .btn-study {background:#DDDDF0;color:#3A3A5A;pointer-events:none;cursor:default}
+.qcard-date-note{font-size:11px;color:#C0392B;margin-top:6px;padding-top:8px;border-top:1px dashed #E8D9BB;line-height:1.6;}
 
-.qcard-date-note{
-  font-size:11px;
-  color:#C0392B;
-  margin-top:6px;
-  padding-top:8px;
-  border-top:1px dashed #E8D9BB;
-  line-height:1.6;
-}
+/* ▼ リードマグネット（ショーケン版）セクション */
+.gift-section{background:var(--dk)}
+.gift-inner{max-width:680px;margin:0 auto;text-align:center}
+.gift-label{display:inline-block;background:rgba(196,145,42,.2);border:1px solid rgba(196,145,42,.4);color:var(--gold);font-size:10px;letter-spacing:.18em;padding:4px 14px;border-radius:2px;margin-bottom:20px}
+.gift-title{font-family:'Noto Serif JP',serif;font-size:clamp(20px,5vw,30px);font-weight:900;color:var(--tx);line-height:1.5;margin-bottom:16px}
+.gift-title em{font-style:normal;color:var(--gold-l)}
+.gift-desc{font-size:14px;color:var(--mt);line-height:1.95;margin-bottom:28px}
+.gift-voices{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;text-align:left}
+.gift-voice{background:rgba(196,145,42,.08);border-left:3px solid var(--gold);padding:12px 16px;border-radius:0 8px 8px 0}
+.gift-voice p{font-size:13px;color:var(--mt);line-height:1.8}
+.btn-line-lg{display:inline-flex;align-items:center;gap:10px;background:#06C755;color:#fff;font-family:'Noto Serif JP',serif;font-size:clamp(14px,3.5vw,17px);font-weight:700;padding:16px 32px;border-radius:4px;text-decoration:none;letter-spacing:.04em;transition:opacity .2s}
+.btn-line-lg:hover{opacity:.88}
+.gift-note{font-size:11px;color:var(--mt);margin-top:12px}
 
 /* HOW IT WORKS */
 .how{background:#fff}
@@ -231,7 +181,6 @@ footer a:hover{color:var(--gold-l)}
     <h2 class="sec-title">対応している<em>資格一覧</em></h2>
     <p class="sec-desc">気になる資格を選んでください。建築1級は現在受講受付中です。その他の資格は順次開設予定です。</p>
     <p class="sec-note">⚠ 各試験の日程は毎年変動します。必ずご自身で試験実施機関の公式サイトをご確認ください。</p>
-
     <div class="qual-grid">
 
       <!-- 建築施工管理技士 -->
@@ -348,6 +297,37 @@ footer a:hover{color:var(--gold-l)}
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- ▼ リードマグネット（ショーケン版）※資格一覧の直後に追加 -->
+<section class="gift-section">
+  <div class="inner">
+    <div class="gift-inner">
+      <div class="gift-label">FREE GIFT｜LINE登録者限定</div>
+      <h2 class="gift-title">まず、<em>これだけ受け取ってください。</em><br>費用は一切かかりません。</h2>
+      <p class="gift-desc">
+        何かを説明するより、まず使ってみてください。<br>
+        LINEで登録するだけで、あなたの手元に届きます。<br>
+        使った人からこんな声が届いています。
+      </p>
+      <div class="gift-voices">
+        <div class="gift-voice">
+          <p>「こんなに整理されているとは思わなかった。通勤電車だけで続けられています。」</p>
+        </div>
+        <div class="gift-voice">
+          <p>「自分の弱点がはっきり見えた。今まで何を勉強していたんだろうと思った。」</p>
+        </div>
+        <div class="gift-voice">
+          <p>「無料でここまでくれるなら、本気で取り組もうと思えた。」</p>
+        </div>
+      </div>
+      <a href="https://lin.ee/Rcdv0HZ" class="btn-line-lg">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.477 2 2 6.065 2 11.185c0 4.607 3.656 8.453 8.573 9.075.334.072.789.22.903.505.103.26.067.667.033.93l-.147.878c-.045.26-.207 1.02.894.556 1.1-.463 5.94-3.499 8.108-5.992C21.687 15.388 22 13.34 22 11.185 22 6.065 17.523 2 12 2z"/></svg>
+        LINEで無料受け取りはこちら
+      </a>
+      <p class="gift-note">登録60秒・クレジットカード不要・いつでも退会OK</p>
     </div>
   </div>
 </section>
