@@ -83,15 +83,49 @@ section{padding:60px 20px}
 .vlist{display:flex;flex-direction:column;gap:16px;margin-top:24px}
 .vcard{background:#fff;border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 20px}
 .vcard p{font-size:14px;line-height:1.85;color:#2C1F0A}
-.product{background:var(--ltbg)}
-.pcards{display:flex;flex-direction:column;gap:12px;margin-top:24px}
-.pcard{background:#fff;border:1px solid #E8D9BB;border-radius:10px;padding:18px 16px}
-.pcard.main{background:var(--gold-pale);border-color:#C4912A}
-.pcard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-.pcard-name{font-weight:700;font-size:15px;color:#2C1F0A}
-.pcard-tag{font-size:11px;margin-top:3px}
-.pcard-price{font-family:'Noto Serif JP',serif;font-weight:700;font-size:17px;color:#8B5E1A;white-space:nowrap;flex-shrink:0}
-.pcard-desc{font-size:13px;color:#5A4020;margin-top:8px;line-height:1.7}
+
+/* ▼ リードマグネット（ショーケン版）セクション */
+.gift{background:var(--dk2)}
+.gift-box{
+  background:rgba(196,145,42,.08);
+  border:1px solid rgba(196,145,42,.35);
+  border-radius:14px;
+  padding:28px 24px;
+  margin-top:28px;
+  text-align:center;
+}
+.gift-box .gift-label{
+  display:inline-block;
+  background:var(--gold);color:var(--dk);
+  font-size:11px;font-weight:700;
+  padding:4px 14px;border-radius:2px;
+  letter-spacing:.08em;margin-bottom:16px;
+}
+.gift-box h3{
+  font-family:'Noto Serif JP',serif;
+  font-size:clamp(17px,4vw,24px);
+  font-weight:900;color:var(--gold-l);
+  line-height:1.5;margin-bottom:14px;
+}
+.gift-box p{
+  font-size:14px;color:var(--mt);
+  line-height:1.95;margin-bottom:24px;
+  max-width:560px;margin-left:auto;margin-right:auto;
+}
+.gift-voices{
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:28px;text-align:left;
+}
+.gift-voice{
+  background:rgba(255,255,255,0.05);
+  border-left:3px solid var(--gold);
+  padding:12px 16px;border-radius:0 8px 8px 0;
+}
+.gift-voice p{
+  font-size:13px;color:var(--mt);
+  line-height:1.8;margin-bottom:0;
+}
+
 .urgency{background:var(--dk2)}
 .urgency .stitle{color:var(--tx)}
 .ubox{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);border-radius:10px;padding:24px 20px;margin-top:24px}
@@ -135,6 +169,7 @@ footer p+p{margin-top:8px}
   <a href="#cta" class="hcta">無料で始める</a>
 </header>
 
+<!-- HERO -->
 <section class="hero">
   <div class="badge">1級建築施工管理技士 1次試験対策</div>
   <h1>7回落ちた現場監督が、<br>なぜ<em>逆転合格</em>できたのか。<br>その秘密を、全部渡します。</h1>
@@ -148,6 +183,7 @@ footer p+p{margin-top:8px}
   <p class="btn-note">LINE登録だけ・クレジットカード不要</p>
 </section>
 
+<!-- PAIN -->
 <section class="pain">
   <div class="inner">
     <div class="slabel">your story</div>
@@ -165,6 +201,7 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
+<!-- STORY -->
 <section class="story">
   <div class="inner">
     <div class="slabel">my story</div>
@@ -189,6 +226,7 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
+<!-- THE TRUTH -->
 <section class="bt">
   <div class="inner">
     <div class="slabel">the truth</div>
@@ -201,6 +239,7 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
+<!-- TARGET -->
 <section class="target">
   <div class="inner">
     <div class="slabel">for you</div>
@@ -216,6 +255,7 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
+<!-- FEATURES（3Mメソッド）-->
 <section class="features">
   <div class="inner">
     <div class="slabel">3M method</div>
@@ -245,6 +285,7 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
+<!-- REASON -->
 <section class="reason">
   <div class="inner">
     <div class="slabel">why us</div>
@@ -269,6 +310,7 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
+<!-- VOICE -->
 <section class="voice">
   <div class="inner">
     <div class="slabel">for you</div>
@@ -290,63 +332,37 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
-<section class="product">
+<!-- ▼ リードマグネット：ショーケン版（体験への誘い）-->
+<section class="gift">
   <div class="inner">
-    <div class="slabel">program</div>
-    <h2 class="stitle">商品ラインナップ</h2>
-    <div class="pcards">
-      <div class="pcard">
-        <div class="pcard-top">
-          <div>
-            <div class="pcard-name">ショーケン版アプリ</div>
-            <div class="pcard-tag" style="color:#C0392B">先着30名・4/30まで登録／5/14まで利用</div>
-          </div>
-          <div class="pcard-price">無料</div>
+    <div class="slabel">free gift</div>
+    <h2 class="stitle" style="color:var(--tx)">まず、<em style="color:var(--gold-l)">これだけ受け取ってください。</em></h2>
+    <div class="gift-box">
+      <div class="gift-label">🎁 LINE登録者限定・無料プレゼント</div>
+      <h3>「使ったその日から、<br>勉強のやり方が変わった」</h3>
+      <p>
+        何かを説明するより、まず使ってみてください。<br>
+        登録するだけで、あなたの手元に届きます。<br>
+        費用は一切かかりません。
+      </p>
+      <div class="gift-voices">
+        <div class="gift-voice">
+          <p>「こんなに整理されているとは思わなかった。通勤電車だけで続けられています。」</p>
         </div>
-        <div class="pcard-desc">1次試験AI解説アプリ（基本版）</div>
-      </div>
-      <div class="pcard main">
-        <div class="pcard-top">
-          <div>
-            <div class="pcard-name">建龍版アプリ</div>
-          </div>
-          <div class="pcard-price">¥14,800</div>
+        <div class="gift-voice">
+          <p>「自分の弱点がはっきり見えた。今まで何を勉強していたんだろうと思った。」</p>
         </div>
-        <div class="pcard-desc">1次試験AI解説アプリ（完全版）18年分の出題傾向分析・弱点克服機能付き</div>
-      </div>
-      <div class="pcard">
-        <div class="pcard-top">
-          <div>
-            <div class="pcard-name">1次試験合格PGM</div>
-          </div>
-          <div class="pcard-price">¥150,800</div>
+        <div class="gift-voice">
+          <p>「無料でここまでくれるなら、本気で取り組もうと思えた。」</p>
         </div>
-        <div class="pcard-desc">建龍版アプリ＋週1回GMT（試験日まで）</div>
       </div>
-      <div class="pcard">
-        <div class="pcard-top">
-          <div>
-            <div class="pcard-name">1次＋2次完全合格PGM</div>
-          </div>
-          <div class="pcard-price">¥369,400</div>
-        </div>
-        <div class="pcard-desc">建龍版＋週1回GMT＋2次対策AIアプリ＋週1回GMT</div>
-      </div>
-      <div class="pcard">
-        <div class="pcard-top">
-          <div>
-            <div class="pcard-name">経験記述合格突破PGM</div>
-            <div class="pcard-tag" style="color:#8B7040">個別対応</div>
-          </div>
-          <div class="pcard-price">後日発表</div>
-        </div>
-        <div class="pcard-desc">2次試験・経験記述の個別指導（内容は個人により変わります）</div>
-      </div>
+      <a href="https://lin.ee/Rcdv0HZ" class="btn" style="max-width:340px;margin:0 auto;">LINEで無料受け取りはこちら</a>
+      <p style="font-size:11px;color:var(--mt);margin-top:12px;">登録60秒・クレジットカード不要・いつでも退会OK</p>
     </div>
-    <p style="font-size:12px;color:#8B7040;margin-top:14px">※まずは無料コミュニティ（BAND）への参加からお気軽にどうぞ。</p>
   </div>
 </section>
 
+<!-- URGENCY -->
 <section class="urgency">
   <div class="inner">
     <div class="slabel">warning</div>
@@ -378,6 +394,7 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
+<!-- FLOW -->
 <section class="flow" id="cta">
   <div class="inner">
     <div class="slabel">how to start</div>
@@ -408,6 +425,7 @@ footer p+p{margin-top:8px}
   </div>
 </section>
 
+<!-- CTA BOTTOM -->
 <section class="ctabot">
   <div class="inner">
     <div class="slabel">start now</div>
@@ -425,7 +443,7 @@ footer p+p{margin-top:8px}
     <a href="/privacy.html">プライバシーポリシー</a> |
     <a href="/riyokiyaku.html">利用規約</a>
   </p>
-  <p>&copy; 2025 セコカン金太朗塾 All Rights Reserved.</p>
+  <p>&copy; 2026 セコカン金太朗塾 All Rights Reserved.</p>
 </footer>
 
 </body>
