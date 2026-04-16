@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>seko-can.com | 一級建築施工管理技士</title>
+    <title>建龍版 | 一級建築施工管理技士</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
@@ -13,6 +13,10 @@
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect } = React;
+
+        const CORRECT_PASSWORD = 'KENRYU';
+        const STORAGE_KEY_AUTH = 'kenryu_auth';
+        const STORAGE_KEY_HISTORY = 'kenryu_history';
 
         function shuffle(array) {
             const arr = [...array];
@@ -24,12 +28,16 @@
         }
 
         function App() {
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [passwordInput, setPasswordInput] = useState('');
+            const [passwordError, setPasswordError] = useState('');
+
             const [view, setView] = useState('menu');
             const [questions, setQuestions] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
             const [showModal, setShowModal] = useState(false);
             const [judge, setJudge] = useState('');
-            
+
             const [score, setScore] = useState(0);
             const [quizInfo, setQuizInfo] = useState({ year: '', session: '' });
             const [history, setHistory] = useState([]);
@@ -38,15 +46,31 @@
             const [selectedSession, setSelectedSession] = useState('午前');
 
             useEffect(() => {
+                // 認証状態チェック
                 try {
-                    const savedHistory = localStorage.getItem('sekocan_history');
-                    if (savedHistory) {
-                        setHistory(JSON.parse(savedHistory));
-                    }
+                    const auth = localStorage.getItem(STORAGE_KEY_AUTH);
+                    if (auth === 'true') setIsAuthenticated(true);
+                } catch (e) {}
+
+                // 履歴読み込み
+                try {
+                    const savedHistory = localStorage.getItem(STORAGE_KEY_HISTORY);
+                    if (savedHistory) setHistory(JSON.parse(savedHistory));
                 } catch (e) {
-                    localStorage.removeItem('sekocan_history');
+                    localStorage.removeItem(STORAGE_KEY_HISTORY);
                 }
             }, []);
+
+            const handlePasswordSubmit = () => {
+                if (passwordInput.trim().toUpperCase() === CORRECT_PASSWORD) {
+                    localStorage.setItem(STORAGE_KEY_AUTH, 'true');
+                    setIsAuthenticated(true);
+                    setPasswordError('');
+                } else {
+                    setPasswordError('パスワードが違います。正しいパスワードを入力してください。');
+                    setPasswordInput('');
+                }
+            };
 
             const getRankInfo = (percentage) => {
                 if (percentage >= 90) return { rank: 'S', title: '施工管理技士', color: 'text-yellow-600', bg: 'bg-yellow-100' };
@@ -61,14 +85,11 @@
                 try {
                     const year = selectedYear;
                     const session = selectedSession;
-                    
                     const fetchUrl = `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/${year}.json?t=${new Date().getTime()}`;
                     const res = await fetch(fetchUrl);
                     if (!res.ok) throw new Error("データが見つかりません");
-                    
                     const data = await res.json();
                     const all = Array.isArray(data) ? data : (data.questions || []);
-
                     const filtered = all.filter(q => {
                         if (!q.session) return false;
                         const s = String(q.session).trim();
@@ -76,13 +97,11 @@
                         if (session === '午後') return s.includes('午後') || s.toUpperCase() === 'PM' || s === '2';
                         return true;
                     });
-
                     if (filtered.length === 0) {
                         alert(`【データ不足】${year}年度の「${session}」の問題が見つかりません。`);
                         setView('menu');
                         return;
                     }
-
                     setQuestions(shuffle(filtered));
                     setCurrentIdx(0);
                     setScore(0);
@@ -114,7 +133,6 @@
             const finishQuiz = () => {
                 const percentage = Math.round((score / questions.length) * 100);
                 const rankInfo = getRankInfo(percentage);
-                
                 const newRecord = {
                     date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
                     year: quizInfo.year,
@@ -125,33 +143,78 @@
                     title: rankInfo.title,
                     rank: rankInfo.rank
                 };
-                
                 const newHistory = [newRecord, ...history];
                 setHistory(newHistory);
-                localStorage.setItem('sekocan_history', JSON.stringify(newHistory));
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(newHistory));
                 setView('result');
             };
 
+            // ── パスワード画面 ──
+            if (!isAuthenticated) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-6">
+                        <div className="w-full max-w-sm">
+                            <div className="text-center mb-8">
+                                <div className="text-5xl mb-4">🔒</div>
+                                <h1 className="text-2xl font-black text-yellow-400 mb-2">建龍版</h1>
+                                <p className="text-gray-400 font-bold text-sm">プレミアム解説・集中攻略</p>
+                            </div>
+
+                            <div className="bg-gray-800 p-6 rounded-2xl shadow-xl border border-yellow-500/30">
+                                <p className="text-gray-300 font-bold text-sm mb-4 text-center">
+                                    パスワードを入力してください
+                                </p>
+                                <input
+                                    type="password"
+                                    value={passwordInput}
+                                    onChange={(e) => setPasswordInput(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+                                    placeholder="パスワード"
+                                    className="w-full p-4 rounded-xl bg-gray-700 text-white font-bold text-center text-lg border-2 border-gray-600 focus:border-yellow-400 focus:outline-none mb-4"
+                                />
+                                {passwordError && (
+                                    <p className="text-red-400 font-bold text-sm text-center mb-4">{passwordError}</p>
+                                )}
+                                <button
+                                    onClick={handlePasswordSubmit}
+                                    className="w-full py-4 bg-yellow-400 text-gray-900 rounded-xl font-black text-lg shadow-lg active:bg-yellow-500 transition"
+                                >
+                                    解錠する 🔓
+                                </button>
+                            </div>
+
+                            <p className="text-gray-600 text-xs text-center mt-6">
+                                パスワードは講座お申込み後にお知らせします
+                            </p>
+                        </div>
+                    </div>
+                );
+            }
+
+            // ── メニュー画面 ──
             if (view === 'menu') {
                 return (
                     <div className="max-w-md mx-auto p-8 text-center">
-                        <h1 className="text-4xl font-black mb-8 text-gray-800 tracking-tighter">一級建築施工管理技士<br/><span className="text-2xl text-blue-600">過去問道場</span></h1>
-                        
+                        <div className="mb-2">
+                            <span className="inline-block bg-yellow-100 text-yellow-800 text-xs font-black px-3 py-1 rounded-full">建龍版 🔓</span>
+                        </div>
+                        <h1 className="text-4xl font-black mb-8 text-gray-800 tracking-tighter">一級建築施工管理技士<br/><span className="text-2xl text-yellow-600">過去問道場</span></h1>
+
                         <div className="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
                             <label className="block text-left text-sm font-bold text-gray-600 mb-2">年度を選択</label>
-                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-yellow-500 focus:outline-none text-lg">
                                 {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21","H20"].map(y => (
                                     <option key={y} value={y}>{y}年度</option>
                                 ))}
                             </select>
 
                             <label className="block text-left text-sm font-bold text-gray-600 mb-2">セッションを選択</label>
-                            <select value={selectedSession} onChange={(e) => setSelectedSession(e.target.value)} className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                            <select value={selectedSession} onChange={(e) => setSelectedSession(e.target.value)} className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-yellow-500 focus:outline-none text-lg">
                                 <option value="午前">午前 (AM)</option>
                                 <option value="午後">午後 (PM)</option>
                             </select>
 
-                            <button onClick={startQuiz} className="w-full py-4 bg-blue-600 text-white rounded-xl font-black text-xl shadow-lg active:bg-blue-800 transition">
+                            <button onClick={startQuiz} className="w-full py-4 bg-yellow-500 text-white rounded-xl font-black text-xl shadow-lg active:bg-yellow-700 transition">
                                 現場へ入場（クイズ開始）
                             </button>
                         </div>
@@ -165,21 +228,22 @@
 
             if (view === 'loading') return <div className="text-center mt-32 text-2xl font-black text-gray-500 animate-pulse">資材搬入中...</div>;
 
+            // ── クイズ画面 ──
             if (view === 'quiz') {
                 const q = questions[currentIdx];
                 return (
                     <div className="max-w-md mx-auto p-4 min-h-screen flex flex-col">
-                        <div className="flex justify-between items-end mb-4 px-2 border-b-2 border-gray-300 pb-2">
+                        <div className="flex justify-between items-end mb-4 px-2 border-b-2 border-yellow-300 pb-2">
                             <span className="font-bold text-gray-500">{quizInfo.year} {quizInfo.session}</span>
-                            <span className="text-xl font-black text-blue-700">第 {currentIdx + 1} 問 <span className="text-sm text-gray-400">/ 全 {questions.length} 問</span></span>
+                            <span className="text-xl font-black text-yellow-600">第 {currentIdx + 1} 問 <span className="text-sm text-gray-400">/ 全 {questions.length} 問</span></span>
                         </div>
-                        
+
                         {!showModal ? (
                             <div className="flex-grow">
                                 <p className="text-lg font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
                                 <div className="space-y-3">
                                     {q.choices && Object.entries(q.choices).map(([k, t]) => (
-                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold text-gray-700 active:bg-blue-100 active:border-blue-500 transition">
+                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold text-gray-700 active:bg-yellow-100 active:border-yellow-500 transition">
                                             {k}. {t}
                                         </button>
                                     ))}
@@ -188,25 +252,23 @@
                         ) : (
                             <div className="flex-grow flex flex-col pb-6">
                                 <div className={`text-4xl font-black mb-6 text-center ${judge.includes('正解') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
-                                
-                                {/* 📝 解説セクションの復活 */}
+
                                 <div className="bg-white p-5 rounded-2xl shadow-sm border-2 border-gray-200 mb-6 flex-grow">
-                                    {/* ショーケン版（通常解説） */}
+                                    {/* ショーケン版解説 */}
                                     <div className="mb-6">
                                         <span className="inline-block bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full mb-3">ショーケン版解説</span>
                                         <p className="text-gray-800 font-bold whitespace-pre-wrap leading-relaxed">{q.explanation_sho || "解説がありません。"}</p>
                                     </div>
-                                    
-                                    {/* 建龍版（鍵付きプレミアム解説） */}
-                                    <div className="p-4 bg-gray-100 rounded-xl border border-gray-300 relative overflow-hidden">
-                                        <div className="flex items-center mb-2">
-                                            <span className="inline-block bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded-full">建龍版解説</span>
-                                            <span className="ml-2 text-xl">🔒</span>
+
+                                    {/* 建龍版解説（解放済み） */}
+                                    <div className="p-4 bg-yellow-50 rounded-xl border-2 border-yellow-300">
+                                        <div className="flex items-center mb-3">
+                                            <span className="inline-block bg-yellow-500 text-white text-sm font-bold px-3 py-1 rounded-full">建龍版解説</span>
+                                            <span className="ml-2 text-xl">🔓</span>
                                         </div>
-                                        <p className="text-gray-400 font-bold blur-[3px] select-none">ここは本番の建龍版アプリで解放される有料コンテンツです。詳細な図解や覚え方のコツが記載されています。資格取得への最短ルートはこちら！</p>
-                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                            <span className="bg-white/90 text-gray-800 font-black px-4 py-2 rounded-lg shadow-md border border-gray-300">完全版アプリで解放</span>
-                                        </div>
+                                        <p className="text-gray-800 font-bold whitespace-pre-wrap leading-relaxed">
+                                            {q.explanation_ken || q.explanation_sho || "解説がありません。"}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -219,28 +281,29 @@
                 );
             }
 
+            // ── 結果画面 ──
             if (view === 'result') {
                 const percentage = Math.round((score / questions.length) * 100);
                 const rankInfo = getRankInfo(percentage);
-                
                 return (
                     <div className="max-w-md mx-auto p-6 text-center pt-12">
                         <h2 className="text-2xl font-bold text-gray-600 mb-2">最終結果</h2>
                         <div className="text-5xl font-black mb-8 text-gray-800">{score} <span className="text-2xl text-gray-500">/ {questions.length}問 正解</span></div>
-                        
+
                         <div className={`p-8 rounded-3xl mb-10 shadow-lg border-4 border-white ${rankInfo.bg}`}>
                             <p className="text-sm font-bold text-gray-600 mb-2">あなたの現在の職位</p>
                             <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}<span className="text-3xl"> ランク</span></div>
                             <div className={`text-3xl font-black ${rankInfo.color}`}>{rankInfo.title}</div>
                         </div>
 
-                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-xl active:bg-blue-800 transition mb-4">
+                        <button onClick={() => setView('menu')} className="w-full py-5 bg-yellow-500 text-white rounded-2xl font-black text-xl shadow-xl active:bg-yellow-700 transition mb-4">
                             現場事務所へ戻る
                         </button>
                     </div>
                 );
             }
 
+            // ── 現場経歴書画面 ──
             if (view === 'history') {
                 return (
                     <div className="max-w-md mx-auto p-6">
