@@ -177,6 +177,13 @@
                         {!showModal ? (
                             <div className="flex-grow">
                                 <p className="text-lg font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
+                                {q.imageUrl && (
+                                    <img
+                                        src={`images/${q.imageUrl}`}
+                                        alt="問題図"
+                                        style={{width:'100%', maxWidth:'500px', margin:'0 auto 16px', display:'block', borderRadius:'8px', border:'1px solid #e5e7eb'}}
+                                    />
+                                )}
                                 <div className="space-y-3">
                                     {q.choices && Object.entries(q.choices).map(([k, t]) => (
                                         <button key={k} onClick={() => handleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold text-gray-700 active:bg-blue-100 active:border-blue-500 transition">
