@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>1級セコカン 数値瞬殺アプリ｜法規系</title>
+  <style>
+    :root {
+      --bg: #0D1B3E;
+      --bg2: #0a1530;
+      --gold: #FFD700;
+      --accent: #FF6B6B;
+      --text: #FFFFFF;
+      --sub: rgba(255,255,255,0.65);
+      --card: rgba(255,255,255,0.07);
+      --card-hover: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.14);
+      --correct: #56C568;
+      --wrong: #FF6B6B;
+      --correct-bg: rgba(86,197,104,0.13);
+      --wrong-bg: rgba(255,107,107,0.13);
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Hiragino Kaku Gothic Pro','Noto Sans JP','Meiryo',sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* ===== SCREENS ===== */
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: clamp(16px,4vw,32px);
+    }
+    .screen.active { display: flex; }
+    #screen-quiz {
+      align-items: stretch;
+      justify-content: flex-start;
+      padding: 0;
+    }
+
+    /* ===== PASSWORD SCREEN ===== */
+    .pw-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: clamp(28px,7vw,52px) clamp(24px,6vw,44px);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+    .pw-helmet {
+      font-size: clamp(40px,10vw,56px);
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+    .pw-logo {
+      font-size: clamp(14px,3.5vw,17px);
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .pw-subtitle {
+      font-size: clamp(11px,3vw,13px);
+      color: var(--sub);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+    .pw-label {
+      font-size: clamp(11px,2.8vw,13px);
+      color: var(--sub);
+      text-align: left;
+      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .pw-input {
+      width: 100%;
+      background: rgba(255,255,255,0.09);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      font-size: clamp(18px,5vw,24px);
+      font-weight: 700;
+      padding: 14px 18px;
+      text-align: center;
+      letter-spacing: 5px;
+      outline: none;
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .pw-input:focus { border-color: var(--gold); }
+    .pw-error {
+      color: var(--wrong);
+      font-size: clamp(11px,3vw,13px);
+      margin-bottom: 14px;
+      font-weight: 700;
+      min-height: 20px;
+      text-align: center;
+    }
+    .pw-note {
+      margin-top: 20px;
+      font-size: clamp(10px,2.5vw,12px);
+      color: var(--sub);
+      line-height: 1.7;
+    }
+    .pw-note a { color: var(--gold); text-decoration: none; }
+
+    /* ===== TITLE SCREEN ===== */
+    .title-box {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+    .badge-pill {
+      display: inline-block;
+      background: rgba(255,215,0,0.13);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: clamp(10px,2.5vw,12px);
+      font-weight: 800;
+      padding: 5px 16px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+      letter-spacing: 1.5px;
+    }
+    .title-main {
+      font-size: clamp(28px,7.5vw,44px);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1.15;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    .title-sub {
+      font-size: clamp(14px,3.5vw,17px);
+      color: var(--sub);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      flex: 1;
+      min-width: 80px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 8px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: clamp(22px,6vw,30px);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: clamp(9px,2.5vw,11px);
+      color: var(--sub);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: rgba(255,107,107,0.13);
+      border: 1px solid rgba(255,107,107,0.3);
+      color: var(--accent);
+      font-size: clamp(10px,2.5vw,12px);
+      font-weight: 800;
+      padding: 5px 13px;
+      border-radius: 20px;
+    }
+    .btn-stack { display:flex; flex-direction:column; gap:12px; width:100%; }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+      width: 100%;
+      background: var(--gold);
+      color: #0D1B3E;
+      border: none;
+      border-radius: 16px;
+      font-size: clamp(16px,4vw,19px);
+      font-weight: 900;
+      padding: clamp(15px,4vw,19px);
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary:active { opacity:0.82; transform:scale(0.98); }
+    .btn-ghost {
+      width: 100%;
+      background: transparent;
+      color: var(--sub);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      font-size: clamp(14px,3.5vw,16px);
+      font-weight: 700;
+      padding: clamp(13px,3.5vw,17px);
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-ghost:active { opacity:0.7; }
+
+    /* ===== QUIZ SCREEN ===== */
+    .quiz-wrapper {
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: clamp(14px,4vw,32px) clamp(14px,4vw,28px);
+    }
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .q-progress-label {
+      font-size: clamp(12px,3vw,14px);
+      font-weight: 700;
+      color: var(--sub);
+    }
+    .q-num-big {
+      font-size: clamp(22px,5.5vw,28px);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .q-score-live {
+      font-size: clamp(13px,3.5vw,16px);
+      font-weight: 800;
+      color: var(--correct);
+      background: rgba(86,197,104,0.1);
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 5px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--accent));
+      border-radius: 3px;
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .category-chip {
+      display: inline-block;
+      background: rgba(255,107,107,0.13);
+      border: 1px solid rgba(255,107,107,0.28);
+      color: var(--accent);
+      font-size: clamp(10px,2.5vw,12px);
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+    .quiz-question {
+      font-size: clamp(15px,4vw,19px);
+      font-weight: 700;
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: 26px;
+      white-space: pre-wrap;
+    }
+    .choices { display:flex; flex-direction:column; gap:11px; }
+    .choice-btn {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: clamp(13px,3.5vw,17px) clamp(14px,4vw,22px);
+      color: var(--text);
+      font-size: clamp(14px,3.7vw,17px);
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.14s, border-color 0.14s, transform 0.08s;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+    .choice-btn:active:not(:disabled) {
+      transform: scale(0.975);
+      background: var(--card-hover);
+    }
+    .choice-btn:disabled { cursor: default; }
+    .choice-btn.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+    .choice-btn.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+    .choice-btn.dimmed { opacity: 0.38; }
+    .choice-lbl {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      width: 30px;
+      height: 30px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 50%;
+      font-size: clamp(12px,3vw,14px);
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .choice-btn.correct .choice-lbl { background: var(--correct); color:#fff; }
+    .choice-btn.wrong .choice-lbl { background: var(--wrong); color:#fff; }
+
+    /* ===== ANSWER REVEAL ===== */
+    .answer-reveal {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 22px;
+    }
+    .answer-reveal.show { display: flex; }
+    .judge-badge {
+      font-size: clamp(24px,6vw,32px);
+      font-weight: 900;
+      text-align: center;
+      padding: 8px 0;
+    }
+    .judge-badge.correct-color { color: var(--correct); }
+    .judge-badge.wrong-color { color: var(--wrong); }
+    .explanation-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: clamp(14px,4vw,20px);
+    }
+    .expl-label {
+      font-size: clamp(10px,2.5vw,12px);
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .expl-text {
+      font-size: clamp(13px,3.5vw,15px);
+      line-height: 1.8;
+      color: rgba(255,255,255,0.88);
+      white-space: pre-wrap;
+    }
+    .next-wrap { margin-top: 4px; }
+
+    /* ===== RESULT SCREEN ===== */
+    .result-box {
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+    .result-label {
+      font-size: clamp(15px,4vw,19px);
+      font-weight: 700;
+      color: var(--sub);
+      margin-bottom: 8px;
+    }
+    .result-score-big {
+      font-size: clamp(56px,15vw,88px);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .result-denom {
+      font-size: clamp(16px,4vw,20px);
+      font-weight: 700;
+      color: var(--sub);
+      margin-bottom: 28px;
+    }
+    .result-rank-card {
+      background: var(--card);
+      border: 2px solid var(--gold);
+      border-radius: 22px;
+      padding: clamp(22px,5.5vw,36px);
+      margin-bottom: 28px;
+    }
+    .rank-letter {
+      font-size: clamp(48px,12vw,72px);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .rank-name {
+      font-size: clamp(15px,4vw,20px);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .rank-pct {
+      font-size: clamp(30px,8vw,44px);
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .line-cta-box {
+      background: linear-gradient(135deg,#06C755 0%,#039940 100%);
+      border-radius: 22px;
+      padding: clamp(22px,5.5vw,36px);
+      margin-bottom: 20px;
+    }
+    .line-cta-title {
+      font-size: clamp(16px,4.5vw,21px);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .line-cta-sub {
+      font-size: clamp(12px,3vw,14px);
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 18px;
+      line-height: 1.7;
+    }
+    .btn-line {
+      display: block;
+      background: #fff;
+      color: #06C755;
+      text-decoration: none;
+      border-radius: 14px;
+      font-size: clamp(15px,4vw,18px);
+      font-weight: 900;
+      padding: 15px 20px;
+      transition: opacity 0.15s;
+    }
+    .btn-line:active { opacity: 0.82; }
+
+    @media (max-width: 559px) {
+      .quiz-wrapper { padding: 12px 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================================================
+     SCREEN 1: パスワード
+====================================================== -->
+<div id="screen-password" class="screen active">
+  <div class="pw-box">
+    <div class="pw-helmet">⛑️</div>
+    <div class="pw-logo">セコカン金太朗塾</div>
+    <div class="pw-subtitle">1級セコカン 数値瞬殺アプリ<br>【法規系】</div>
+    <div class="pw-label">🔒 パスワードを入力してください</div>
+    <input id="pw-input" class="pw-input" type="password"
+           placeholder="••••••••" maxlength="20"
+           autocomplete="off" autocorrect="off" autocapitalize="none">
+    <div id="pw-error" class="pw-error"></div>
+    <button class="btn-primary" onclick="checkPassword()">入場する →</button>
+    <div class="pw-note">
+      パスワードは以下からご購入いただけます。<br><br>
+      🏠 <a href="https://www.seko-can.com" target="_blank">seko-can.com</a>（公式サイト）<br>
+      📝 <a href="https://note.com" target="_blank">note有料記事</a><br><br>
+      購入済みの方はnoteまたは公式サイトの<br>購入完了ページをご確認ください。
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================
+     SCREEN 2: タイトル
+====================================================== -->
+<div id="screen-title" class="screen">
+  <div class="title-box">
+    <div class="badge-pill">⚡ 法規系 | 全40問</div>
+    <h1 class="title-main">数値瞬殺アプリ<br>【法規系】</h1>
+    <p class="title-sub">1次試験に出る重要数値を<br>4択クイズで完全制覇！</p>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num">40</div>
+        <div class="stat-label">問</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">4択</div>
+        <div class="stat-label">形式</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">回数</div>
+      </div>
+    </div>
+
+    <div class="tag-list">
+      <span class="tag">建築基準法</span>
+      <span class="tag">建設業法</span>
+      <span class="tag">労働安全衛生法</span>
+      <span class="tag">足場・クレーン</span>
+      <span class="tag">建設リサイクル法</span>
+    </div>
+
+    <div class="btn-stack">
+      <button class="btn-primary" onclick="startQuiz(false)">
+        ⚡ ランダムで開始（おすすめ）
+      </button>
+      <button class="btn-ghost" onclick="startQuiz(true)">
+        📋 出題順固定で開始
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================
+     SCREEN 3: クイズ
+====================================================== -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-wrapper">
+
+    <!-- ヘッダー -->
+    <div class="quiz-header">
+      <div>
+        <div class="q-num-big">第 <span id="q-num">1</span> 問</div>
+        <div class="q-progress-label">全 <span id="q-total">40</span> 問</div>
+      </div>
+      <div class="q-score-live" id="q-score-live">✓ 0</div>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- カテゴリ -->
+    <div class="category-chip" id="q-category">建築基準法</div>
+
+    <!-- 問題文 -->
+    <div class="quiz-question" id="q-text"></div>
+
+    <!-- 選択肢 -->
+    <div class="choices" id="q-choices"></div>
+
+    <!-- 解答・解説（回答後に表示） -->
+    <div class="answer-reveal" id="answer-reveal">
+      <div class="judge-badge" id="judge-badge"></div>
+      <div class="explanation-box">
+        <div class="expl-label">📖 解説</div>
+        <div class="expl-text" id="q-explanation"></div>
+      </div>
+      <div class="next-wrap">
+        <button class="btn-primary" id="next-btn" onclick="nextQuestion()">次の問題へ →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================================================
+     SCREEN 4: 結果
+====================================================== -->
+<div id="screen-result" class="screen">
+  <div class="result-box">
+    <div class="result-label">🏁 最終結果</div>
+    <div class="result-score-big" id="result-score">0</div>
+    <div class="result-denom">/ <span id="result-total">40</span> 問 正解</div>
+
+    <div class="result-rank-card">
+      <div class="rank-letter" id="rank-letter">S</div>
+      <div class="rank-name" id="rank-name">数値瞬殺マスター！</div>
+      <div class="rank-pct" id="rank-pct">0%</div>
+    </div>
+
+    <!-- LINE 誘導 -->
+    <div class="line-cta-box">
+      <div class="line-cta-title">🎁 LINE登録で特典プレゼント！</div>
+      <div class="line-cta-sub">
+        「経験記述 完全攻略PDF」を<br>
+        無料でお届けします。<br>
+        2次試験対策もセコカン金太朗塾にお任せ！
+      </div>
+      <a href="https://lin.ee/UiTxJw2" class="btn-line" target="_blank">
+        📲 LINE登録して特典を受け取る
+      </a>
+    </div>
+
+    <div class="btn-stack">
+      <button class="btn-primary" onclick="showScreen('screen-title')">
+        🔄 もう一度チャレンジ
+      </button>
+      <button class="btn-ghost" onclick="showScreen('screen-title')">
+        🏠 トップに戻る
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================
+     JavaScript
+====================================================== -->
+<script>
+  /* ===== PASSWORD ===== */
+  // パスワードを変更する場合はここを編集してください
+  const PASSWORD = 'SUUCHI1';
+
+  function checkPassword() {
+    const val = document.getElementById('pw-input').value.trim().toUpperCase();
+    const errEl = document.getElementById('pw-error');
+    if (val === PASSWORD) {
+      errEl.textContent = '';
+      showScreen('screen-title');
+    } else {
+      errEl.textContent = 'パスワードが違います。もう一度お試しください。';
+      document.getElementById('pw-input').value = '';
+    }
+  }
+  document.getElementById('pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  /* ===== SCREEN MANAGER ===== */
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  /* ===== QUESTION DATA ===== */
+  const allQuestions = [
+
+    /* ── 建築基準法（10問） ── */
+    {
+      id:1, category:'建築基準法',
+      question:'建築基準法において、木造建築物で\n建築確認申請が必要となる\n延べ面積の下限はいくつか？\n（3階建て未満・高さ・軒高が規定値以下の場合）',
+      choices:{A:'200m²超',B:'500m²超',C:'1,000m²超',D:'300m²超'},
+      answer:'B',
+      explanation:'木造建築物は「3階以上」「延べ面積500m²超」「高さ13m超」「軒高9m超」のいずれかに該当すると確認申請が必要。延べ面積の基準は 500m²超。'
+    },
+    {
+      id:2, category:'建築基準法',
+      question:'建築基準法において、特殊建築物\n（劇場・病院・ホテル等）で\n確認申請が必要となる\n当該用途部分の床面積の下限はいくつか？',
+      choices:{A:'100m²超',B:'300m²超',C:'200m²超',D:'500m²超'},
+      answer:'C',
+      explanation:'特殊建築物は当該用途部分の床面積が 200m² を超える場合に確認申請が必要（建築基準法第6条第1項第一号）。用途の種類によらず 200m² が判断基準となる。'
+    },
+    {
+      id:3, category:'建築基準法',
+      question:'建築基準法において、\n非常用昇降機（エレベーター）の設置が\n義務付けられる建築物の高さはいくつか？',
+      choices:{A:'20mを超えるもの',B:'45mを超えるもの',C:'60mを超えるもの',D:'31mを超えるもの'},
+      answer:'D',
+      explanation:'高さ 31m を超える建築物には、消防隊の活動のため非常用昇降機の設置が義務付けられる（建築基準法第34条第2項）。'
+    },
+    {
+      id:4, category:'建築基準法',
+      question:'建築基準法において、\n避雷設備の設置が義務付けられる\n建築物の高さはいくつか？',
+      choices:{A:'15mを超えるもの',B:'20mを超えるもの',C:'25mを超えるもの',D:'31mを超えるもの'},
+      answer:'B',
+      explanation:'高さ 20m を超える建築物には、有効に避雷設備を設けなければならない（建築基準法第33条）。'
+    },
+    {
+      id:5, category:'建築基準法',
+      question:'建築基準法の面積区画において、\n主要構造部を耐火構造とした建築物の\n区画の最大面積はいくつか？',
+      choices:{A:'500m²ごと',B:'3,000m²ごと',C:'1,500m²ごと',D:'1,000m²ごと'},
+      answer:'C',
+      explanation:'主要構造部が耐火構造の場合は 1,500m² ごとに防火区画（面積区画）が必要。スプリンクラー設置で 3 倍（4,500m²）に緩和される。準耐火は 1,000m² が基本。'
+    },
+    {
+      id:6, category:'建築基準法',
+      question:'建築基準法において、排煙設備の設置が\n免除される居室（防煙壁等で区画）の\n床面積の上限はいくつか？',
+      choices:{A:'30m²以内',B:'100m²以内',C:'200m²以内',D:'50m²以内'},
+      answer:'D',
+      explanation:'床面積が 50m² 以内かつ防煙壁等で区画された居室は排煙設備が免除される（建設省告示第1436号）。'
+    },
+    {
+      id:7, category:'建築基準法',
+      question:'建築基準法で定める「不燃材料」の\n加熱開始後に燃焼等が起きてはならない\n加熱試験時間はいくつか？',
+      choices:{A:'5分間',B:'10分間',C:'20分間',D:'30分間'},
+      answer:'C',
+      explanation:'「難燃材料：5分」「準不燃材料：10分」「不燃材料：20分」。数字が大きいほど防火性能が高く、不燃材料が最高性能。語呂：5・10・20（ごじゅう）で覚えよう。'
+    },
+    {
+      id:8, category:'建築基準法',
+      question:'建築基準法で定める「準不燃材料」の\n加熱開始後に燃焼等が起きてはならない\n加熱試験時間はいくつか？',
+      choices:{A:'5分間',B:'10分間',C:'20分間',D:'15分間'},
+      answer:'B',
+      explanation:'準不燃材料は加熱開始後 10 分間は燃焼しないことが必要。難燃（5分）→ 準不燃（10分）→ 不燃（20分）の順に性能が高い。'
+    },
+    {
+      id:9, category:'建築基準法',
+      question:'建築基準法において、防火壁（または防火床）\nによる区画が必要となる\n建築物の延べ面積の下限はいくつか？',
+      choices:{A:'500m²以上',B:'3,000m²以上',C:'1,000m²を超えるもの',D:'2,000m²以上'},
+      answer:'C',
+      explanation:'延べ面積が 1,000m² を超える建築物には、原則として防火壁または防火床を設けなければならない（建築基準法第26条）。'
+    },
+    {
+      id:10, category:'建築基準法',
+      question:'建築基準法上の「道路」として\n認められる幅員の最低基準はいくつか？\n（接道義務の基準となる道路）',
+      choices:{A:'2m以上',B:'3m以上',C:'4m以上',D:'6m以上'},
+      answer:'C',
+      explanation:'建築基準法上の道路は原則として幅員 4m 以上。建築物の敷地はこの道路に 2m 以上接しなければならない（接道義務）。'
+    },
+
+    /* ── 建設業法（8問） ── */
+    {
+      id:11, category:'建設業法',
+      question:'建設業法において、公共性のある工事で\n主任技術者・監理技術者を\n「専任」しなければならない\n請負代金の下限はいくつか？（建築一式以外）',
+      choices:{A:'2,500万円以上',B:'3,500万円以上',C:'4,000万円以上',D:'5,000万円以上'},
+      answer:'C',
+      explanation:'令和5年（2023年）改正後、専任義務が発生するのは 4,000万円以上（建築一式は 8,000万円以上）。改正前は 3,500万円だった点に注意。'
+    },
+    {
+      id:12, category:'建設業法',
+      question:'建設業法において、公共性のある工事で\n主任技術者・監理技術者を\n「専任」しなければならない\n請負代金の下限はいくつか？（建築一式工事）',
+      choices:{A:'5,000万円以上',B:'6,000万円以上',C:'7,000万円以上',D:'8,000万円以上'},
+      answer:'D',
+      explanation:'令和5年（2023年）改正後、建築一式工事の専任義務は 8,000万円以上。改正前の 7,000万円と混同しないよう注意。'
+    },
+    {
+      id:13, category:'建設業法',
+      question:'建設業法において、\n特定建設業の許可が必要となる\n下請け契約の総額の下限はいくつか？\n（建築一式工事以外）',
+      choices:{A:'3,000万円以上',B:'4,000万円以上',C:'4,500万円以上',D:'5,000万円以上'},
+      answer:'C',
+      explanation:'令和5年（2023年）改正後、特定建設業許可が必要な下請け総額は 4,500万円以上（建築一式は 7,000万円以上）。改正前は 4,000万円だった。'
+    },
+    {
+      id:14, category:'建設業法',
+      question:'建設業法において、\n特定建設業の許可が必要となる\n下請け契約の総額の下限はいくつか？\n（建築一式工事の場合）',
+      choices:{A:'5,000万円以上',B:'6,000万円以上',C:'7,000万円以上',D:'8,000万円以上'},
+      answer:'C',
+      explanation:'令和5年（2023年）改正後、建築一式工事の特定建設業許可が必要な下請け総額は 7,000万円以上。改正前の 6,000万円と混同注意。'
+    },
+    {
+      id:15, category:'建設業法',
+      question:'建設業法において、\n建設業の許可の有効期限はいくつか？',
+      choices:{A:'3年',B:'5年',C:'10年',D:'2年'},
+      answer:'B',
+      explanation:'建設業の許可の有効期限は 5 年。期限前に更新申請が必要で、怠ると許可が失効する。'
+    },
+    {
+      id:16, category:'建設業法',
+      question:'建設業法において、元請負人が\n下請負人から工事完成の通知を受けた後\n検査を完了しなければならない\n期限はいくつか？',
+      choices:{A:'7日以内',B:'10日以内',C:'14日以内',D:'20日以内'},
+      answer:'D',
+      explanation:'建設業法第24条の4により、元請負人は下請負人からの完成通知を受けた日から 20 日以内に検査を完了しなければならない。'
+    },
+    {
+      id:17, category:'建設業法',
+      question:'建設業法において、元請負人が\n注文者から工事代金を受領した後\n下請負人への支払いを行わなければ\nならない期限はいくつか？',
+      choices:{A:'10日以内',B:'30日以内',C:'1か月以内',D:'50日以内'},
+      answer:'C',
+      explanation:'建設業法第24条の3により、元請負人は注文者から受領した日から 1か月以内に下請け分を支払わなければならない。'
+    },
+    {
+      id:18, category:'建設業法',
+      question:'建設業法において、\n施工体制台帳の作成が義務付けられる\n下請け総額の下限はいくつか？\n（建築一式工事の場合）',
+      choices:{A:'4,000万円以上',B:'4,500万円以上',C:'7,000万円以上',D:'8,000万円以上'},
+      answer:'C',
+      explanation:'施工体制台帳の作成義務が生じる下請け総額は、特定建設業許可の基準と同じ。建築一式は 7,000万円以上（それ以外は 4,500万円以上）。'
+    },
+
+    /* ── 労働安全衛生法：足場・作業床（7問） ── */
+    {
+      id:19, category:'労働安全衛生法',
+      question:'労働安全衛生規則において、\n作業床の設置が義務付けられる\n作業箇所の高さはいくつか？',
+      choices:{A:'1.5m以上',B:'2m以上',C:'3m以上',D:'5m以上'},
+      answer:'B',
+      explanation:'高さ 2m 以上の箇所での作業には作業床の設置が義務付けられる（安全衛生規則第518条）。設置困難な場合はフルハーネス型安全帯の使用が必要。'
+    },
+    {
+      id:20, category:'労働安全衛生法',
+      question:'労働安全衛生規則において、\n足場の作業床の幅の最低基準はいくつか？',
+      choices:{A:'20cm以上',B:'30cm以上',C:'40cm以上',D:'50cm以上'},
+      answer:'C',
+      explanation:'足場の作業床の幅は 40cm 以上が必要（安全衛生規則第563条）。床材の隙間は 3cm 以下とし、脱落防止措置も義務付けられている。'
+    },
+    {
+      id:21, category:'労働安全衛生法',
+      question:'労働安全衛生規則において、\n足場の作業床に設ける\n手すりの高さの最低基準はいくつか？',
+      choices:{A:'75cm以上',B:'85cm以上',C:'100cm以上',D:'90cm以上'},
+      answer:'B',
+      explanation:'足場の手すりは高さ 85cm 以上が必要（安全衛生規則第563条）。加えて中桟（35cm 以上50cm 以下）または幅木の設置も義務付けられている。'
+    },
+    {
+      id:22, category:'労働安全衛生法',
+      question:'労働安全衛生規則において、\n足場の作業床に設ける\n中桟（中間手すり）の\n高さの範囲はいくつか？',
+      choices:{A:'25cm以上40cm以下',B:'35cm以上50cm以下',C:'40cm以上60cm以下',D:'45cm以上65cm以下'},
+      answer:'B',
+      explanation:'中桟は手すり（85cm 以上）と作業床の間に、35cm 以上 50cm 以下の高さに設けることが義務付けられている。'
+    },
+    {
+      id:23, category:'労働安全衛生法',
+      question:'労働安全衛生規則において、\n枠組足場の最大積載荷重はいくつか？',
+      choices:{A:'200kg',B:'300kg',C:'400kg',D:'500kg'},
+      answer:'C',
+      explanation:'枠組足場の最大積載荷重は 400kg。単管足場は 1スパン 1層当たり 150kg が目安。超過積載は足場崩壊の重大事故につながる。'
+    },
+    {
+      id:24, category:'労働安全衛生法',
+      question:'労働安全衛生規則において、\n単管足場の作業床の最大積載荷重\n（1スパン1層当たり）はいくつか？',
+      choices:{A:'100kg',B:'150kg',C:'200kg',D:'250kg'},
+      answer:'B',
+      explanation:'単管足場の積載荷重は 1スパン 1層当たり 150kg が限度（安全衛生規則第562条）。枠組足場（400kg）より低い点に注意。'
+    },
+    {
+      id:25, category:'労働安全衛生法',
+      question:'労働安全衛生規則において、\n枠組足場の壁つなぎの間隔の上限はいくつか？\n（垂直方向）',
+      choices:{A:'6m以下',B:'9m以下',C:'12m以下',D:'5m以下'},
+      answer:'B',
+      explanation:'枠組足場の壁つなぎは垂直方向 9m 以下・水平方向 8m 以下。単管足場は垂直 5m 以下・水平 5.5m 以下と異なるので注意。'
+    },
+
+    /* ── 労働安全衛生法：作業主任者（6問） ── */
+    {
+      id:26, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n地山の掘削作業主任者を\n選任しなければならない\n掘削面の高さの下限はいくつか？',
+      choices:{A:'1.5m以上',B:'2m以上',C:'3m以上',D:'5m以上'},
+      answer:'B',
+      explanation:'掘削面の高さが 2m 以上の地山の掘削作業では、作業主任者の選任が義務付けられる（安全衛生法施行令第6条）。'
+    },
+    {
+      id:27, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n型枠支保工の組立等作業主任者を\n選任しなければならない\n支柱の高さの下限はいくつか？',
+      choices:{A:'2m以上',B:'3m以上',C:'3.5m以上',D:'5m以上'},
+      answer:'C',
+      explanation:'支柱の高さが 3.5m 以上の型枠支保工では、作業主任者の選任が必要（安全衛生法施行令第6条）。高層スラブ施工時は特に注意。'
+    },
+    {
+      id:28, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n鉄骨の組立等作業主任者を\n選任しなければならない\n高さの下限はいくつか？',
+      choices:{A:'3m以上',B:'3.5m以上',C:'5m以上',D:'10m以上'},
+      answer:'C',
+      explanation:'高さ 5m 以上の鉄骨の組立・解体・変更作業には、鉄骨の組立等作業主任者の選任が義務付けられる。コンクリート造解体も同じ 5m。'
+    },
+    {
+      id:29, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\nコンクリート造の工作物の解体等\n作業主任者を選任しなければならない\n高さの下限はいくつか？',
+      choices:{A:'3m以上',B:'3.5m以上',C:'5m以上',D:'10m以上'},
+      answer:'C',
+      explanation:'高さ 5m 以上のコンクリート造工作物の解体・破壊作業には、コンクリート造工作物の解体等作業主任者の選任が必要。鉄骨組立と同じ 5m。'
+    },
+    {
+      id:30, category:'労働安全衛生法',
+      question:'酸素欠乏症等防止規則において、\n酸素欠乏の定義となる\n空気中の酸素濃度はいくつか？',
+      choices:{A:'20%未満',B:'18%未満',C:'16%未満',D:'15%未満'},
+      answer:'B',
+      explanation:'酸素欠乏とは空気中の酸素濃度が 18% 未満の状態をいう（酸欠則第2条）。通常の大気は約 21%。ピットや地下作業は特に危険。'
+    },
+    {
+      id:31, category:'労働安全衛生法',
+      question:'労働安全衛生規則において、\nコンクリート打設の際に\n型枠支保工の点検が義務付けられる\n雨量の目安はいくつか？\n（大雨等の悪天候後の作業再開前）',
+      choices:{A:'10mm以上降った後',B:'一定量以上の大雨の後',C:'20mm以上降った後',D:'5mm以上降った後'},
+      answer:'B',
+      explanation:'大雨等の悪天候後に型枠支保工の作業を再開する場合は、あらかじめ点検を実施しなければならない。具体的な降雨量の数値よりも「大雨・中震以上の地震後に点検義務あり」という原則を押さえよう。'
+    },
+
+    /* ── 労働安全衛生法：選任・管理（4問） ── */
+    {
+      id:32, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n安全管理者を選任しなければならない\n事業場の常時労働者数の下限はいくつか？\n（建設業の場合）',
+      choices:{A:'10人以上',B:'30人以上',C:'50人以上',D:'100人以上'},
+      answer:'C',
+      explanation:'安全管理者は常時 50 人以上の労働者を使用する建設業の事業場で選任が必要。産業医の選任基準とも同じく 50 人。'
+    },
+    {
+      id:33, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n安全衛生推進者を選任しなければならない\n事業場の常時労働者数の範囲はいくつか？',
+      choices:{A:'5人以上10人未満',B:'10人以上50人未満',C:'30人以上50人未満',D:'5人以上30人未満'},
+      answer:'B',
+      explanation:'安全衛生推進者は 10 人以上 50 人未満の事業場で選任が必要。50 人以上になると安全管理者・衛生管理者等に切り替わる。'
+    },
+    {
+      id:34, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n産業医を選任しなければならない\n事業場の常時労働者数の下限はいくつか？',
+      choices:{A:'30人以上',B:'50人以上',C:'100人以上',D:'300人以上'},
+      answer:'B',
+      explanation:'産業医は常時 50 人以上の労働者を使用する事業場で選任が必要。1,000 人以上（有害業務は 500 人以上）では専属産業医が必要。'
+    },
+    {
+      id:35, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n特定元方事業者が\n統括安全衛生責任者を選任しなければ\nならない労働者数の下限はいくつか？\n（ずい道等及び圧気工法を除く建設業）',
+      choices:{A:'20人以上',B:'30人以上',C:'50人以上',D:'100人以上'},
+      answer:'C',
+      explanation:'ずい道等・圧気工法の場合は 30 人以上で選任義務発生。それ以外の建設業（地上工事等）は 50 人以上で統括安全衛生責任者の選任が必要。'
+    },
+
+    /* ── クレーン・玉掛け（4問） ── */
+    {
+      id:36, category:'労働安全衛生法',
+      question:'クレーン等安全規則において、\n玉掛け用ワイヤーロープの\n安全係数の最低基準はいくつか？',
+      choices:{A:'3以上',B:'4以上',C:'5以上',D:'6以上'},
+      answer:'D',
+      explanation:'玉掛け用ワイヤーロープの安全係数は 6 以上（クレーン等安全規則第213条）。チェーンは 5 以上。数字の大きさと「玉掛け＝6」を紐付けて覚えよう。'
+    },
+    {
+      id:37, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n移動式クレーンの操作に\n「技能講習」が必要となる\n吊り上げ荷重の範囲はいくつか？',
+      choices:{A:'0.5t以上1t未満',B:'1t以上5t未満',C:'5t以上10t未満',D:'3t以上5t未満'},
+      answer:'B',
+      explanation:'移動式クレーンは「1t未満→特別教育」「1t以上5t未満→技能講習」「5t以上→免許」が必要。技能講習の範囲は 1t 以上 5t 未満。'
+    },
+    {
+      id:38, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n高所作業車の操作に\n「技能講習」が必要となる\n最大作業床高さの下限はいくつか？',
+      choices:{A:'5m以上',B:'7m以上',C:'10m以上',D:'15m以上'},
+      answer:'C',
+      explanation:'高所作業車は「2m以上10m未満→特別教育」「10m以上→技能講習」が必要。2m 未満は無資格でも操作可（ただし作業床設置義務あり）。'
+    },
+    {
+      id:39, category:'労働安全衛生法',
+      question:'労働安全衛生法において、\n吊り上げ荷重が何t以上のクレーンで\n玉掛けを行う場合に\n「技能講習」修了者が必要となるか？',
+      choices:{A:'0.5t以上',B:'1t以上',C:'2t以上',D:'3t以上'},
+      answer:'B',
+      explanation:'クレーンの吊り上げ荷重が 1t 以上の場合、玉掛けは技能講習修了者が行う必要がある。1t 未満は特別教育のみで可。'
+    },
+
+    /* ── 建設リサイクル法（1問） ── */
+    {
+      id:40, category:'建設リサイクル法',
+      question:'建設リサイクル法において、\n分別解体等の実施が義務付けられる\n建築物の解体工事における\n床面積の合計の下限はいくつか？',
+      choices:{A:'50m²以上',B:'80m²以上',C:'100m²以上',D:'200m²以上'},
+      answer:'B',
+      explanation:'建設リサイクル法では、床面積の合計が 80m² 以上の建築物の解体工事は分別解体と特定建設資材廃棄物の再資源化が義務付けられる。新築・増築の場合は 500m² 以上。'
+    }
+
+  ]; // end allQuestions
+
+  /* ===== QUIZ STATE ===== */
+  let questions = [];
+  let currentIdx = 0;
+  let score = 0;
+  let answered = false;
+
+  function startQuiz(fixed) {
+    questions = fixed ? [...allQuestions] : shuffle([...allQuestions]);
+    currentIdx = 0;
+    score = 0;
+    showScreen('screen-quiz');
+    renderQuestion();
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderQuestion() {
+    const q = questions[currentIdx];
+    answered = false;
+
+    // Header
+    document.getElementById('q-num').textContent = currentIdx + 1;
+    document.getElementById('q-total').textContent = questions.length;
+    document.getElementById('q-score-live').textContent = '✓ ' + score;
+
+    // Progress bar
+    document.getElementById('progress-fill').style.width =
+      ((currentIdx / questions.length) * 100) + '%';
+
+    // Category & question
+    document.getElementById('q-category').textContent = q.category;
+    document.getElementById('q-text').textContent = q.question;
+
+    // Build choice buttons
+    const choicesEl = document.getElementById('q-choices');
+    choicesEl.innerHTML = '';
+    Object.entries(q.choices).forEach(([k, v]) => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.dataset.key = k;
+      btn.onclick = () => handleAnswer(k);
+      btn.innerHTML =
+        `<span class="choice-lbl">${k}</span><span>${v}</span>`;
+      choicesEl.appendChild(btn);
+    });
+
+    // Hide reveal
+    document.getElementById('answer-reveal').classList.remove('show');
+
+    // Next button label
+    document.getElementById('next-btn').textContent =
+      currentIdx + 1 < questions.length ? '次の問題へ →' : '結果を見る 🏁';
+
+    window.scrollTo(0, 0);
+  }
+
+  function handleAnswer(selected) {
+    if (answered) return;
+    answered = true;
+
+    const q = questions[currentIdx];
+    const isCorrect = selected === q.answer;
+    if (isCorrect) score++;
+
+    // Style buttons
+    document.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.disabled = true;
+      const k = btn.dataset.key;
+      if (k === q.answer)        btn.classList.add('correct');
+      else if (k === selected)   btn.classList.add('wrong');
+      else                       btn.classList.add('dimmed');
+    });
+
+    // Judge badge
+    const badge = document.getElementById('judge-badge');
+    badge.textContent = isCorrect ? '⭕️ 正解！' : '❌ 不正解';
+    badge.className = 'judge-badge ' + (isCorrect ? 'correct-color' : 'wrong-color');
+
+    // Explanation
+    document.getElementById('q-explanation').textContent = q.explanation;
+
+    // Show reveal
+    document.getElementById('answer-reveal').classList.add('show');
+    document.getElementById('q-score-live').textContent = '✓ ' + score;
+
+    // Smooth scroll to explanation
+    setTimeout(() => {
+      document.getElementById('answer-reveal')
+        .scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 150);
+  }
+
+  function nextQuestion() {
+    if (currentIdx + 1 < questions.length) {
+      currentIdx++;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    const pct = Math.round((score / questions.length) * 100);
+    const r = getRank(pct);
+    document.getElementById('result-score').textContent = score;
+    document.getElementById('result-total').textContent = questions.length;
+    document.getElementById('rank-pct').textContent = pct + '%';
+    document.getElementById('rank-letter').textContent = r.letter;
+    document.getElementById('rank-name').textContent = r.name;
+    showScreen('screen-result');
+  }
+
+  function getRank(pct) {
+    if (pct >= 90) return { letter:'S', name:'⚡ 数値瞬殺マスター！' };
+    if (pct >= 70) return { letter:'A', name:'🏆 合格圏内！もうひと押し！' };
+    if (pct >= 50) return { letter:'B', name:'📚 基礎は固まってきた' };
+    if (pct >= 30) return { letter:'C', name:'🔨 反復練習で必ず伸びる' };
+    return           { letter:'D', name:'🚧 まずは繰り返しで慣れよう' };
+  }
+</script>
+</body>
+</html>
