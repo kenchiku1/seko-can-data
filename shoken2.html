@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>seko-can.com | 二級建築施工管理技士</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // 年度オプション（新しい順）
+        const YEAR_OPTIONS = [
+            { value: 'R7-2', label: 'R7 後期' },
+            { value: 'R7-1', label: 'R7 前期' },
+            { value: 'R6-2', label: 'R6 後期' },
+            { value: 'R6-1', label: 'R6 前期' },
+            { value: 'R5-2', label: 'R5 後期' },
+            { value: 'R5-1', label: 'R5 前期' },
+            { value: 'R4-2', label: 'R4 後期' },
+            { value: 'R4-1', label: 'R4 前期' },
+            { value: 'R3-2', label: 'R3 後期' },
+            { value: 'R3-1', label: 'R3 前期' },
+            { value: 'R2-2', label: 'R2 後期' },
+            { value: 'R1-2', label: 'R1 後期' },
+            { value: 'R1-1', label: 'R1 前期' },
+            { value: 'H30-2', label: 'H30 後期' },
+            { value: 'H30-1', label: 'H30 前期' },
+            { value: 'H29', label: 'H29 (学科)' },
+            { value: 'H28', label: 'H28 (学科)' },
+            { value: 'H27', label: 'H27 (学科)' },
+            { value: 'H26', label: 'H26 (学科)' },
+            { value: 'H25', label: 'H25 (学科)' },
+            { value: 'H24', label: 'H24 (学科)' },
+            { value: 'H23', label: 'H23 (学科)' },
+            { value: 'H22', label: 'H22 (学科)' },
+            { value: 'H21', label: 'H21 (学科)' },
+        ];
+
+        // 受験種別オプション（旧形式のみで使用）
+        const TARGET_OPTIONS = [
+            'すべて',
+            '全受検種別共通',
+            '建築',
+            '建築・躯体',
+            '建築・仕上げ',
+            '躯体',
+            '仕上げ',
+        ];
+
+        // 旧形式（H21〜H29）かどうかを判定
+        const isOldFormat = (year) => !year.includes('-');
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function App() {
+            const [view, setView] = useState('menu');
+            const [questions, setQuestions] = useState([]);
+            const [currentIdx, setCurrentIdx] = useState(0);
+            const [showModal, setShowModal] = useState(false);
+            const [judge, setJudge] = useState('');
+
+            const [score, setScore] = useState(0);
+            const [quizInfo, setQuizInfo] = useState({ yearLabel: '', target: '' });
+            const [history, setHistory] = useState([]);
+
+            const [selectedYear, setSelectedYear] = useState('R7-1');
+            const [selectedTarget, setSelectedTarget] = useState('すべて');
+
+            useEffect(() => {
+                try {
+                    const savedHistory = localStorage.getItem('sekocan_shoken2_history');
+                    if (savedHistory) {
+                        setHistory(JSON.parse(savedHistory));
+                    }
+                } catch (e) {
+                    localStorage.removeItem('sekocan_shoken2_history');
+                }
+            }, []);
+
+            const getYearLabel = (val) => {
+                const opt = YEAR_OPTIONS.find(o => o.value === val);
+                return opt ? opt.label : val;
+            };
+
+            const getRankInfo = (percentage) => {
+                if (percentage >= 90) return { rank: 'S', title: '施工管理技士', color: 'text-yellow-600', bg: 'bg-yellow-100' };
+                if (percentage >= 70) return { rank: 'A', title: '主任技術者', color: 'text-blue-600', bg: 'bg-blue-100' };
+                if (percentage >= 50) return { rank: 'B', title: '現場記録者', color: 'text-green-600', bg: 'bg-green-100' };
+                if (percentage >= 30) return { rank: 'C', title: '書類整理係', color: 'text-orange-600', bg: 'bg-orange-100' };
+                return { rank: 'D', title: '新規入場者（見習い）', color: 'text-gray-600', bg: 'bg-gray-200' };
+            };
+
+            const startQuiz = async () => {
+                setView('loading');
+                try {
+                    const year = selectedYear;
+                    const fetchUrl = `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/shoken2/${year}.json?t=${new Date().getTime()}`;
+                    const res = await fetch(fetchUrl);
+                    if (!res.ok) throw new Error("データが見つかりません");
+
+                    const data = await res.json();
+                    let all = Array.isArray(data) ? data : (data.questions || []);
+
+                    // 旧形式の場合、受験種別でフィルタ
+                    if (isOldFormat(year) && selectedTarget !== 'すべて') {
+                        all = all.filter(q => q.target === selectedTarget);
+                    }
+
+                    if (all.length === 0) {
+                        const targetMsg = (isOldFormat(year) && selectedTarget !== 'すべて') ? `／受験種別「${selectedTarget}」` : '';
+                        alert(`【データ不足】${getYearLabel(year)}${targetMsg}の問題が見つかりません。`);
+                        setView('menu');
+                        return;
+                    }
+
+                    setQuestions(shuffle(all));
+                    setCurrentIdx(0);
+                    setScore(0);
+                    setQuizInfo({ yearLabel: getYearLabel(year), target: isOldFormat(year) ? selectedTarget : '' });
+                    setView('quiz');
+                } catch (e) {
+                    alert(`通信エラー：データを読み込めませんでした。`);
+                    setView('menu');
+                }
+            };
+
+            const handleAnswer = (k) => {
+                const q = questions[currentIdx];
+                const isCorrect = String(k) === String(q.answer);
+                if (isCorrect) setScore(prev => prev + 1);
+                setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
+                setShowModal(true);
+            };
+
+            const nextQuestion = () => {
+                setShowModal(false);
+                if (currentIdx + 1 < questions.length) {
+                    setCurrentIdx(currentIdx + 1);
+                } else {
+                    finishQuiz();
+                }
+            };
+
+            const finishQuiz = () => {
+                const percentage = Math.round((score / questions.length) * 100);
+                const rankInfo = getRankInfo(percentage);
+
+                const newRecord = {
+                    date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                    year: quizInfo.yearLabel,
+                    target: quizInfo.target,
+                    score: score,
+                    total: questions.length,
+                    percentage: percentage,
+                    title: rankInfo.title,
+                    rank: rankInfo.rank
+                };
+
+                const newHistory = [newRecord, ...history];
+                setHistory(newHistory);
+                localStorage.setItem('sekocan_shoken2_history', JSON.stringify(newHistory));
+                setView('result');
+            };
+
+            // ── MENU 画面 ──
+            if (view === 'menu') {
+                const showTargetSelector = isOldFormat(selectedYear);
+                return (
+                    <div className="max-w-md mx-auto p-8 text-center">
+                        <h1 className="text-4xl font-black mb-2 text-gray-800 tracking-tighter">二級建築施工管理技士</h1>
+                        <h2 className="text-2xl text-blue-600 font-black mb-8">ショーケンセカンド 過去問道場</h2>
+
+                        <div className="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
+                            <label className="block text-left text-sm font-bold text-gray-600 mb-2">年度を選択</label>
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                                {YEAR_OPTIONS.map(o => (
+                                    <option key={o.value} value={o.value}>{o.label}</option>
+                                ))}
+                            </select>
+
+                            {showTargetSelector && (
+                                <div>
+                                    <label className="block text-left text-sm font-bold text-gray-600 mb-2">受験種別を選択（旧形式のみ）</label>
+                                    <select value={selectedTarget} onChange={(e) => setSelectedTarget(e.target.value)} className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                                        {TARGET_OPTIONS.map(t => (
+                                            <option key={t} value={t}>{t}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
+                            <button onClick={startQuiz} className="w-full py-4 bg-blue-600 text-white rounded-xl font-black text-xl shadow-lg active:bg-blue-800 transition mt-2">
+                                現場へ入場（クイズ開始）
+                            </button>
+                        </div>
+
+                        <button onClick={() => setView('history')} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow active:bg-gray-900 transition">
+                            📋 現場経歴書（成績履歴）を見る
+                        </button>
+                    </div>
+                );
+            }
+
+            // ── LOADING 画面 ──
+            if (view === 'loading') return <div className="text-center mt-32 text-2xl font-black text-gray-500 animate-pulse">資材搬入中...</div>;
+
+            // ── QUIZ 画面 ──
+            if (view === 'quiz') {
+                const q = questions[currentIdx];
+                return (
+                    <div className="max-w-md mx-auto p-4 min-h-screen flex flex-col">
+                        <div className="flex justify-between items-end mb-4 px-2 border-b-2 border-gray-300 pb-2">
+                            <span className="font-bold text-gray-500 text-sm">
+                                {quizInfo.yearLabel}
+                                {quizInfo.target && quizInfo.target !== 'すべて' ? `／${quizInfo.target}` : ''}
+                            </span>
+                            <span className="text-xl font-black text-blue-700">第 {currentIdx + 1} 問 <span className="text-sm text-gray-400">/ 全 {questions.length} 問</span></span>
+                        </div>
+
+                        {!showModal ? (
+                            <div className="flex-grow">
+                                <p className="text-lg font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
+                                {q.imageUrl && (
+                                    <img
+                                        src={`shoken2/images/${q.imageUrl}`}
+                                        alt="問題図"
+                                        style={{width:'100%', maxWidth:'500px', margin:'0 auto 16px', display:'block', borderRadius:'8px', border:'1px solid #e5e7eb'}}
+                                    />
+                                )}
+                                <div className="space-y-3">
+                                    {q.choices && Object.entries(q.choices).map(([k, t]) => (
+                                        <button key={k} onClick={() => handleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold text-gray-700 active:bg-blue-100 active:border-blue-500 transition">
+                                            {t}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex-grow flex flex-col pb-6">
+                                <div className={`text-4xl font-black mb-6 text-center ${judge.includes('正解') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
+
+                                <div className="bg-white p-5 rounded-2xl shadow-sm border-2 border-gray-200 mb-6 flex-grow">
+                                    {/* ショーケンSecond版（通常解説） */}
+                                    <div className="mb-6">
+                                        <span className="inline-block bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full mb-3">ショーケンSecond版解説</span>
+                                        <p className="text-gray-800 font-bold whitespace-pre-wrap leading-relaxed">{q.explanation_sho || "解説がありません。"}</p>
+                                    </div>
+
+                                    {/* 建龍Second版（鍵付きプレミアム解説） */}
+                                    <div className="p-4 bg-gray-100 rounded-xl border border-gray-300 relative overflow-hidden">
+                                        <div className="flex items-center mb-2">
+                                            <span className="inline-block bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded-full">建龍Second版解説</span>
+                                            <span className="ml-2 text-xl">🔒</span>
+                                        </div>
+                                        <p className="text-gray-400 font-bold blur-[3px] select-none">ここは本番の建龍Second版アプリで解放される有料コンテンツです。詳細な図解や覚え方のコツが記載されています。資格取得への最短ルートはこちら！</p>
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <span className="bg-white/90 text-gray-800 font-black px-4 py-2 rounded-lg shadow-md border border-gray-300">完全版アプリで解放</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-xl shadow-xl active:bg-black mt-auto">
+                                    {currentIdx + 1 < questions.length ? '次の問題へ' : '結果発表へ'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            // ── RESULT 画面 ──
+            if (view === 'result') {
+                const percentage = Math.round((score / questions.length) * 100);
+                const rankInfo = getRankInfo(percentage);
+
+                return (
+                    <div className="max-w-md mx-auto p-6 text-center pt-12">
+                        <h2 className="text-2xl font-bold text-gray-600 mb-2">最終結果</h2>
+                        <div className="text-5xl font-black mb-8 text-gray-800">{score} <span className="text-2xl text-gray-500">/ {questions.length}問 正解</span></div>
+
+                        <div className={`p-8 rounded-3xl mb-10 shadow-lg border-4 border-white ${rankInfo.bg}`}>
+                            <p className="text-sm font-bold text-gray-600 mb-2">あなたの現在の職位</p>
+                            <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}<span className="text-3xl"> ランク</span></div>
+                            <div className={`text-3xl font-black ${rankInfo.color}`}>{rankInfo.title}</div>
+                        </div>
+
+                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-xl active:bg-blue-800 transition mb-4">
+                            現場事務所へ戻る
+                        </button>
+                    </div>
+                );
+            }
+
+            // ── HISTORY 画面 ──
+            if (view === 'history') {
+                return (
+                    <div className="max-w-md mx-auto p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-black text-gray-800">現場経歴書</h2>
+                            <button onClick={() => setView('menu')} className="px-4 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg active:bg-gray-400">戻る</button>
+                        </div>
+
+                        {history.length === 0 ? (
+                            <p className="text-center text-gray-500 font-bold mt-10">まだ経歴がありません。<br/>現場に入場して履歴を残しましょう。</p>
+                        ) : (
+                            <div className="space-y-4 overflow-y-auto max-h-[70vh] pb-10">
+                                {history.map((h, i) => {
+                                    const rankInfo = getRankInfo(h.percentage);
+                                    return (
+                                        <div key={i} className={`p-4 rounded-xl shadow-sm border-l-8 ${rankInfo.bg.replace('bg-', 'border-').replace('100', '400').replace('200', '400')} bg-white`}>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-xs font-bold text-gray-400">{h.date}</span>
+                                                <span className={`text-sm font-black px-2 py-1 rounded ${rankInfo.bg} ${rankInfo.color}`}>{h.rank}: {h.title}</span>
+                                            </div>
+                                            <div className="flex justify-between items-end">
+                                                <div className="font-black text-lg text-gray-800">
+                                                    {h.year}
+                                                    {h.target && h.target !== 'すべて' ? <span className="text-sm text-gray-500 ml-2">／{h.target}</span> : null}
+                                                </div>
+                                                <div className="font-bold text-gray-600">正答率 <span className="text-xl text-black">{h.percentage}%</span></div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
