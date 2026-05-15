@@ -75,7 +75,7 @@
     },
     "answer": "3",
     "image_note": "",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_04.jpg"
     "explanation_sho": "換気回数は「1時間の換気量 ÷ 室容積」です。その部屋の空気が1時間に何回入れ替わるかというペースを示します。",
     "explanation_ken": "0.5回/hなどの法規基準は暗記レベルだ。計算は簡単だが、実際のファンの能力と照らし合わせるのが監督の仕事。計算ミスは空気の澱みを作るぞ！"
   },
