@@ -115,7 +115,7 @@
     },
     "answer": "3",
     "image_note": "",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_06.jpg"
     "explanation_sho": "鉄筋コンクリート（RC）の鉄とコンクリートは熱膨張率がほぼ同じため、温度変化で剥がれにくい優れた相性を持っています。",
     "explanation_ken": "この「相性の良さ」が建物を支えている。ただし、被り厚が足りないと鉄筋が錆びて爆裂する。配筋検査は自分の目で厳しくチェックしろ。鉄とコンクリートは「最高の相棒」だ！"
   },
@@ -595,7 +595,7 @@
     },
     "answer": "2",
     "image_note": "図あり：ネットワーク工程表（A〜H作業、日数記載）",
-    "imageUrl": "",
+   "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_30.jpg"
     "explanation_sho": "ネットワーク工程表において、全体の工期を決定する「ゆとりのない作業のつながり」をクリティカルパスと呼びます。",
     "explanation_ken": "このパスが1日でも遅れたら、引渡しが1日遅れる。どこが「絶対に遅れられない作業」か、頭の中に叩き込んでおけ。クリティカルパスは「現場の生命線」だ！"
   },
