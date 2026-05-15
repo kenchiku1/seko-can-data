@@ -55,7 +55,7 @@
     },
     "answer": "3",
     "image_note": "図あり：湿り空気線図（A点・B点の比較）",
-    "imageUrl": "",
+   "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R7_kouki_2ken_03.jpg"
     "explanation_sho": "相対湿度は温度によって変わるため、図上の位置関係で単純に比較が必要です。3が不適当です。",
     "explanation_ken": "湿り空気線図は空調の基本。夏場に結露が起きる仕組みを説明するのにも役立つから、読み方は完璧にしておこう。空気の状態を線図でイメージ！"
   },
@@ -155,7 +155,7 @@
     },
     "answer": "3",
     "image_note": "図あり：定風量単一ダクト方式の冷房時湿り空気線図（状態点⑥・D・F・G）",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R7_kouki_2ken_08.jpg"
     "explanation_sho": "コイルの冷却負荷は、入り口と出口の比エンタルピーの差で求められます。",
     "explanation_ken": "空気線図上のプロットミスは設計ミスに直結する。F点とG点の違いを現場の機器と結びつけて理解しろ。負荷計算はエンタルピー差が基本！"
   },
@@ -595,7 +595,7 @@
     },
     "answer": "2",
     "image_note": "図あり：ネットワーク工程表（A〜H作業・各日数）",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R7_kouki_2ken_30.jpg"
     "explanation_sho": "作業Cは、AとBの両方が終わらないと開始できないダミー等の関係を確認する必要があります。",
     "explanation_ken": "クリティカルパス（一番時間のかかるルート）を把握してないと、工期遅延に気づけないぞ。毎日工程表を睨め。工程表は「終わりの日」から逆算！"
   },
