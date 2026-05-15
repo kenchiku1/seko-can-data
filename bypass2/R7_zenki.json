@@ -35,7 +35,7 @@
     },
     "answer": "3",
     "image_note": "図あり：水圧機（ピストンX・Y、面積A1・A2=2A1）",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R7_zenki_2ken_02.jpg"
     "explanation_sho": "ベルヌーイの定理は、流体のエネルギー保存の法則です。流速が速くなると「静圧」が下がるという関係を理解しましょう。",
     "explanation_ken": "配管の径を絞ると流速が上がり、圧力が変わる。この原理を知らないと、ポンプの選定や圧力トラブルの原因を突き止められないぞ。流速と圧力の関係は配管設計の基本！"
   },
@@ -155,7 +155,7 @@
     },
     "answer": "4",
     "image_note": "図あり：定風量単一ダクト方式の湿り空気線図（暖房時、状態点⑥・E・D）",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R7_zenki_2ken_08.jpg"
     "explanation_sho": "ファンコイルユニット（FCU）方式は、各部屋で個別に温度制御がしやすく、ダクトスペースも小さく済みます。",
     "explanation_ken": "メンテナンスで各部屋に入る必要があるのが難点。ドレンパンの掃除を怠ると漏水トラブルになるから、施工時の点検口の位置は命だぞ。FCUは「個別の快適」と「清掃のしやすさ」が命！"
   },
@@ -595,7 +595,7 @@
     },
     "answer": "2",
     "image_note": "図あり：ネットワーク工程表（A〜H作業、日数記載）",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R7_zenki_2ken_30.jpg"
     "explanation_sho": "ネットワーク工程表において、トータルフロート（ゆとり）がゼロの作業を結んだルートがクリティカルパスです。",
     "explanation_ken": "このパスが1日でも遅れたら、工期全体が1日遅れる。どこが「絶対に遅れられない作業」か、頭の中に叩き込んでおけ。クリティカルパスは「現場の生命線」！"
   },
