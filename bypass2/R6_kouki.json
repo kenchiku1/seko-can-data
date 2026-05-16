@@ -124,7 +124,7 @@
     "year": "R6",
     "session": "後期",
     "no": 7,
-    "category": "空調",
+    "category": "空調設備",
     "subcategory": "計画",
     "question": "空気調和設備の計画に関する記述のうち、省エネルギーの観点から、適当でないものはどれか。",
     "choices": {
@@ -144,7 +144,7 @@
     "year": "R6",
     "session": "後期",
     "no": 8,
-    "category": "空調",
+    "category": "空調設備",
     "subcategory": "湿り空気線図",
     "question": "下図に示す冷房時の湿り空気線図のc点に対応する空気調和システム図中の位置として、適当なものはどれか。",
     "choices": {
@@ -164,7 +164,7 @@
     "year": "R6",
     "session": "後期",
     "no": 9,
-    "category": "空調",
+    "category": "空調設備",
     "subcategory": "負荷",
     "question": "空気調和の負荷に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -184,7 +184,7 @@
     "year": "R6",
     "session": "後期",
     "no": 10,
-    "category": "空調",
+    "category": "空調設備",
     "subcategory": "フィルター",
     "question": "エアフィルターの種類と主な用途の組み合わせのうち、適当でないものはどれか。",
     "choices": {
@@ -204,7 +204,7 @@
     "year": "R6",
     "session": "後期",
     "no": 11,
-    "category": "空調",
+    "category": "空調設備",
     "subcategory": "熱源機器",
     "question": "吸収冷温水機に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -224,7 +224,7 @@
     "year": "R6",
     "session": "後期",
     "no": 12,
-    "category": "空調",
+    "category": "空調設備",
     "subcategory": "パッケージ空調",
     "question": "パッケージ形空気調和機に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -284,7 +284,7 @@
     "year": "R6",
     "session": "後期",
     "no": 15,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "上水道",
     "question": "上水道に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -304,7 +304,7 @@
     "year": "R6",
     "session": "後期",
     "no": 16,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "下水道",
     "question": "下水道に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -324,7 +324,7 @@
     "year": "R6",
     "session": "後期",
     "no": 17,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "給水設備",
     "question": "給水設備に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -344,7 +344,7 @@
     "year": "R6",
     "session": "後期",
     "no": 18,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "給湯設備",
     "question": "給湯設備に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -364,7 +364,7 @@
     "year": "R6",
     "session": "後期",
     "no": 19,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "排水・通気",
     "question": "排水・通気設備に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -384,7 +384,7 @@
     "year": "R6",
     "session": "後期",
     "no": 20,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "排水・通気",
     "question": "排水・通気設備に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -404,7 +404,7 @@
     "year": "R6",
     "session": "後期",
     "no": 21,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "消火設備",
     "question": "屋内消火栓設備に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -424,7 +424,7 @@
     "year": "R6",
     "session": "後期",
     "no": 22,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "ガス設備",
     "question": "ガス設備に関する記述のうち、適当でないものはどれか。",
     "choices": {
@@ -444,7 +444,7 @@
     "year": "R6",
     "session": "後期",
     "no": 23,
-    "category": "給排水衛生",
+    "category": "衛生設備",
     "subcategory": "処理対象人員算定",
     "question": "JISに規定する建築物の用途別による屎尿浄化槽の処理対象人員算定基準において、処理対象人員を算定する際、延べ面積によることが適当でないものはどれか。",
     "choices": {
