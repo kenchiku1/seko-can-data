@@ -75,7 +75,7 @@
     },
     "answer": "3",
     "image_note": "",
-    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_04.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_04.jpg",
     "explanation_sho": "換気回数は「1時間の換気量 ÷ 室容積」です。その部屋の空気が1時間に何回入れ替わるかというペースを示します。",
     "explanation_ken": "0.5回/hなどの法規基準は暗記レベルだ。計算は簡単だが、実際のファンの能力と照らし合わせるのが監督の仕事。計算ミスは空気の澱みを作るぞ！"
   },
@@ -115,7 +115,7 @@
     },
     "answer": "3",
     "image_note": "",
-    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_06.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_06.jpg",
     "explanation_sho": "鉄筋コンクリート（RC）の鉄とコンクリートは熱膨張率がほぼ同じため、温度変化で剥がれにくい優れた相性を持っています。",
     "explanation_ken": "この「相性の良さ」が建物を支えている。ただし、被り厚が足りないと鉄筋が錆びて爆裂する。配筋検査は自分の目で厳しくチェックしろ。鉄とコンクリートは「最高の相棒」だ！"
   },
@@ -325,7 +325,7 @@
     "session": "前期",
     "no": 17,
     "category": "衛生設備",
-    "subcategory": "給水",
+    "subcategory": "給水設備",
     "question": "給水方式に関する記述のうち、適当でないものはどれか。",
     "choices": {
       "1": "水道直結方式は、給水負荷が最大となる瞬間に対応するために、ピーク時の給水使用量を予想する必要がある。",
@@ -345,7 +345,7 @@
     "session": "前期",
     "no": 18,
     "category": "衛生設備",
-    "subcategory": "給湯",
+    "subcategory": "給湯設備",
     "question": "給湯設備に関する記述のうち、適当でないものはどれか。",
     "choices": {
       "1": "給湯用循環ポンプは、給湯温度を一定に保持するために設ける。",
@@ -595,7 +595,7 @@
     },
     "answer": "2",
     "image_note": "図あり：ネットワーク工程表（A〜H作業、日数記載）",
-   "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_30.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/R6_zenki_2ken_30.jpg",
     "explanation_sho": "ネットワーク工程表において、全体の工期を決定する「ゆとりのない作業のつながり」をクリティカルパスと呼びます。",
     "explanation_ken": "このパスが1日でも遅れたら、引渡しが1日遅れる。どこが「絶対に遅れられない作業」か、頭の中に叩き込んでおけ。クリティカルパスは「現場の生命線」だ！"
   },
