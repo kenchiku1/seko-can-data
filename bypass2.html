@@ -33,6 +33,9 @@
             return String(answer).split(',').map(s => s.trim()).sort();
         }
 
+        // H29以前は後期のみ・ファイル名にセッションサフィックスなし
+        const KOUKI_ONLY_YEARS = ['H21','H22','H23','H24','H25','H26','H27','H28','H29'];
+
         function App() {
             const [view, setView] = useState('menu');
             const [questions, setQuestions] = useState([]);
@@ -75,9 +78,11 @@
                     const year = selectedYear;
                     const session = selectedSession;
                     
-                    // ファイル名規則：R7_kouki.json / R7_zenki.json / R6_zenki.json など
-                    const sessionSuffix = session === '前期' ? 'zenki' : 'kouki';
-                    const fileName = `${year}_${sessionSuffix}.json`;
+                    // H21〜H29はファイル名にセッションサフィックスなし（例：H21.json）
+                    // H30以降は kouki/zenki サフィックスあり（例：H30_kouki.json）
+                    const fileName = KOUKI_ONLY_YEARS.includes(year)
+                        ? `${year}.json`
+                        : `${year}_${session === '前期' ? 'zenki' : 'kouki'}.json`;
                     const fetchUrl = `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/bypass2/${fileName}?t=${new Date().getTime()}`;
                     
                     const res = await fetch(fetchUrl);
@@ -100,7 +105,10 @@
                     setSelectedAnswers([]);
                     setView('quiz');
                 } catch (e) {
-                    alert(`通信エラー：${e.message || 'データを読み込めませんでした。'}\nGitHub上にbypass2/${selectedYear}_${selectedSession === '前期' ? 'zenki' : 'kouki'}.json があるか確認してください。`);
+                    const errorFile = KOUKI_ONLY_YEARS.includes(selectedYear)
+                        ? `${selectedYear}.json`
+                        : `${selectedYear}_${selectedSession === '前期' ? 'zenki' : 'kouki'}.json`;
+                    alert(`通信エラー：${e.message || 'データを読み込めませんでした。'}\nGitHub上にbypass2/${errorFile} があるか確認してください。`);
                     setView('menu');
                 }
             };
@@ -184,15 +192,19 @@
                         
                         <div className="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
                             <label className="block text-left text-sm font-bold text-gray-600 mb-2">年度を選択</label>
-                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-cyan-500 focus:outline-none text-lg">
-                                {["R7","R6","R5","R4","R3"].map(y => (
+                            <select value={selectedYear} onChange={(e) => {
+                                const y = e.target.value;
+                                setSelectedYear(y);
+                                if (KOUKI_ONLY_YEARS.includes(y)) setSelectedSession('後期');
+                            }} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-cyan-500 focus:outline-none text-lg">
+                                {["R7","R6","R5","R4","R3","R2","R1","H30","H29","H28","H27","H26","H25","H24","H23","H22","H21"].map(y => (
                                     <option key={y} value={y}>{y}年度</option>
                                 ))}
                             </select>
 
                             <label className="block text-left text-sm font-bold text-gray-600 mb-2">期を選択</label>
-                            <select value={selectedSession} onChange={(e) => setSelectedSession(e.target.value)} className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-cyan-500 focus:outline-none text-lg">
-                                <option value="前期">前期</option>
+                            <select value={selectedSession} onChange={(e) => setSelectedSession(e.target.value)} disabled={KOUKI_ONLY_YEARS.includes(selectedYear)} className="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-cyan-500 focus:outline-none text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                                <option value="前期" disabled={KOUKI_ONLY_YEARS.includes(selectedYear)}>前期</option>
                                 <option value="後期">後期</option>
                             </select>
 
