@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>seko-can.com | 2級電気通信工事施工管理技士（シグナルセカンド）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // answer が "2,3" 形式かを判定
+        function isMultipleAnswer(answer) {
+            return String(answer).includes(',');
+        }
+
+        // 二肢問題の正答配列を取得
+        function getAnswerArray(answer) {
+            return String(answer).split(',').map(s => s.trim()).sort();
+        }
+
+        // signal2 は R1〜R7 の後期のみ（全年度 kouki ファイル）
+        const SIGNAL2_YEARS = ['R7','R6','R5','R4','R3','R2','R1'];
+
+        function App() {
+            const [view, setView] = useState('menu');
+            const [questions, setQuestions] = useState([]);
+            const [currentIdx, setCurrentIdx] = useState(0);
+            const [showModal, setShowModal] = useState(false);
+            const [judge, setJudge] = useState('');
+
+            // 二肢問題用：選択中の番号セット
+            const [selectedAnswers, setSelectedAnswers] = useState([]);
+
+            const [score, setScore] = useState(0);
+            const [quizInfo, setQuizInfo] = useState({ year: '' });
+            const [history, setHistory] = useState([]);
+
+            const [selectedYear, setSelectedYear] = useState('R7');
+
+            useEffect(() => {
+                try {
+                    const savedHistory = localStorage.getItem('sekocan_signal2_history');
+                    if (savedHistory) {
+                        setHistory(JSON.parse(savedHistory));
+                    }
+                } catch (e) {
+                    localStorage.removeItem('sekocan_signal2_history');
+                }
+            }, []);
+
+            const getRankInfo = (percentage) => {
+                if (percentage >= 90) return { rank: 'S', title: '電気通信マイスター', color: 'text-yellow-600', bg: 'bg-yellow-100' };
+                if (percentage >= 70) return { rank: 'A', title: '主任技術者', color: 'text-blue-600', bg: 'bg-blue-100' };
+                if (percentage >= 50) return { rank: 'B', title: '通信技術者', color: 'text-green-600', bg: 'bg-green-100' };
+                if (percentage >= 30) return { rank: 'C', title: '配線見習い', color: 'text-orange-600', bg: 'bg-orange-100' };
+                return { rank: 'D', title: '新規入場者（見習い）', color: 'text-gray-600', bg: 'bg-gray-200' };
+            };
+
+            const startQuiz = async () => {
+                setView('loading');
+                try {
+                    const year = selectedYear;
+                    const fileName = `${year}_kouki.json`;
+                    const fetchUrl = `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/signal2/${fileName}?t=${new Date().getTime()}`;
+
+                    const res = await fetch(fetchUrl);
+                    if (!res.ok) throw new Error("データが見つかりません");
+
+                    const data = await res.json();
+                    const all = Array.isArray(data) ? data : (data.questions || []);
+
+                    if (all.length === 0) {
+                        alert(`【データ不足】${year}年度 後期 の問題が見つかりません。`);
+                        setView('menu');
+                        return;
+                    }
+
+                    setQuestions(shuffle(all));
+                    setCurrentIdx(0);
+                    setScore(0);
+                    setQuizInfo({ year });
+                    setSelectedAnswers([]);
+                    setView('quiz');
+                } catch (e) {
+                    alert(`通信エラー：${e.message || 'データを読み込めませんでした。'}\nGitHub上にsignal2/${selectedYear}_kouki.json があるか確認してください。`);
+                    setView('menu');
+                }
+            };
+
+            // 単一選択（通常問題）
+            const handleSingleAnswer = (k) => {
+                const q = questions[currentIdx];
+                const isCorrect = String(k) === String(q.answer);
+                if (isCorrect) setScore(prev => prev + 1);
+                setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
+                setShowModal(true);
+            };
+
+            // 二肢問題：選択肢のトグル
+            const toggleSelection = (k) => {
+                setSelectedAnswers(prev => {
+                    if (prev.includes(k)) {
+                        return prev.filter(x => x !== k);
+                    } else {
+                        if (prev.length >= 2) {
+                            return [...prev.slice(1), k];
+                        }
+                        return [...prev, k];
+                    }
+                });
+            };
+
+            // 二肢問題の確定
+            const submitMultipleAnswer = () => {
+                if (selectedAnswers.length !== 2) {
+                    alert('2つ選んでください。');
+                    return;
+                }
+                const q = questions[currentIdx];
+                const correct = getAnswerArray(q.answer);
+                const userAnswer = [...selectedAnswers].sort();
+                const isCorrect = correct[0] === userAnswer[0] && correct[1] === userAnswer[1];
+                if (isCorrect) setScore(prev => prev + 1);
+                setJudge(isCorrect ? '⭕️ 正解' : '❌ 不正解');
+                setShowModal(true);
+            };
+
+            const nextQuestion = () => {
+                setShowModal(false);
+                setSelectedAnswers([]);
+                if (currentIdx + 1 < questions.length) {
+                    setCurrentIdx(currentIdx + 1);
+                } else {
+                    finishQuiz();
+                }
+            };
+
+            const finishQuiz = () => {
+                const percentage = Math.round((score / questions.length) * 100);
+                const rankInfo = getRankInfo(percentage);
+
+                const newRecord = {
+                    date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                    year: quizInfo.year,
+                    session: '後期',
+                    score: score,
+                    total: questions.length,
+                    percentage: percentage,
+                    title: rankInfo.title,
+                    rank: rankInfo.rank
+                };
+
+                const newHistory = [newRecord, ...history];
+                setHistory(newHistory);
+                localStorage.setItem('sekocan_signal2_history', JSON.stringify(newHistory));
+                setView('result');
+            };
+
+            // ─── メニュー画面 ───
+            if (view === 'menu') {
+                return (
+                    <div className="max-w-md mx-auto p-8 text-center">
+                        <h1 className="text-4xl font-black mb-2 text-gray-800 tracking-tighter">2級電気通信工事施工管理技士</h1>
+                        <p className="text-2xl text-blue-600 font-black mb-8">📡 シグナルセカンド</p>
+
+                        <div className="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
+                            <label className="block text-left text-sm font-bold text-gray-600 mb-2">年度を選択</label>
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
+                                {SIGNAL2_YEARS.map(y => (
+                                    <option key={y} value={y}>{y}年度（後期）</option>
+                                ))}
+                            </select>
+
+                            <button onClick={startQuiz} className="w-full py-4 bg-blue-600 text-white rounded-xl font-black text-xl shadow-lg active:bg-blue-800 transition">
+                                現場へ入場（クイズ開始）
+                            </button>
+                        </div>
+
+                        <button onClick={() => setView('history')} className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold shadow active:bg-gray-900 transition">
+                            📋 現場経歴書（成績履歴）を見る
+                        </button>
+                    </div>
+                );
+            }
+
+            if (view === 'loading') return <div className="text-center mt-32 text-2xl font-black text-gray-500 animate-pulse">通信回線接続中...</div>;
+
+            // ─── クイズ画面 ───
+            if (view === 'quiz') {
+                const q = questions[currentIdx];
+                const isMulti = isMultipleAnswer(q.answer);
+
+                return (
+                    <div className="max-w-md mx-auto p-4 min-h-screen flex flex-col">
+                        <div className="flex justify-between items-end mb-4 px-2 border-b-2 border-gray-300 pb-2">
+                            <span className="font-bold text-gray-500">{quizInfo.year} 後期</span>
+                            <span className="text-xl font-black text-blue-700">第 {currentIdx + 1} 問 <span className="text-sm text-gray-400">/ 全 {questions.length} 問</span></span>
+                        </div>
+
+                        {!showModal ? (
+                            <div className="flex-grow">
+                                {/* 二肢問題バッジ */}
+                                {isMulti && (
+                                    <div className="mb-3 p-3 bg-yellow-50 border-2 border-yellow-300 rounded-xl">
+                                        <span className="inline-block bg-yellow-500 text-white text-sm font-bold px-3 py-1 rounded-full mb-1">⚠️ 応用能力問題</span>
+                                        <p className="text-sm text-yellow-800 font-bold mt-1">この問題は2つ選んでください</p>
+                                    </div>
+                                )}
+
+                                <p className="text-lg font-bold mb-6 text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question}</p>
+
+                                {q.imageUrl && (
+                                    <img
+                                        src={q.imageUrl}
+                                        alt="問題図"
+                                        style={{width:'100%', maxWidth:'500px', margin:'0 auto 16px', display:'block', borderRadius:'8px', border:'1px solid #e5e7eb'}}
+                                    />
+                                )}
+
+                                <div className="space-y-3">
+                                    {q.choices && Object.entries(q.choices).map(([k, t]) => {
+                                        if (isMulti) {
+                                            const isSelected = selectedAnswers.includes(k);
+                                            return (
+                                                <button
+                                                    key={k}
+                                                    onClick={() => toggleSelection(k)}
+                                                    className={`w-full p-4 border-2 rounded-xl text-left font-bold transition ${
+                                                        isSelected
+                                                            ? 'border-blue-500 bg-blue-100 text-blue-900'
+                                                            : 'border-gray-300 text-gray-700 active:bg-blue-50'
+                                                    }`}
+                                                >
+                                                    <span className="mr-2">{isSelected ? '☑️' : '⬜'}</span>
+                                                    {k}. {t}
+                                                </button>
+                                            );
+                                        } else {
+                                            return (
+                                                <button key={k} onClick={() => handleSingleAnswer(k)} className="w-full p-4 border-2 border-gray-300 rounded-xl text-left font-bold text-gray-700 active:bg-blue-100 active:border-blue-500 transition">
+                                                    {k}. {t}
+                                                </button>
+                                            );
+                                        }
+                                    })}
+                                </div>
+
+                                {/* 二肢問題の確定ボタン */}
+                                {isMulti && (
+                                    <button
+                                        onClick={submitMultipleAnswer}
+                                        disabled={selectedAnswers.length !== 2}
+                                        className={`w-full py-4 mt-6 rounded-xl font-black text-lg shadow-lg transition ${
+                                            selectedAnswers.length === 2
+                                                ? 'bg-blue-600 text-white active:bg-blue-800'
+                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        }`}
+                                    >
+                                        {selectedAnswers.length}/2 選択中 → 解答する
+                                    </button>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex-grow flex flex-col pb-6">
+                                <div className={`text-4xl font-black mb-6 text-center ${judge.includes('正解') ? 'text-red-500' : 'text-blue-600'}`}>{judge}</div>
+
+                                <div className="bg-white p-5 rounded-2xl shadow-sm border-2 border-gray-200 mb-6 flex-grow">
+                                    {/* シグナルセカンド版（通常解説） */}
+                                    <div className="mb-6">
+                                        <span className="inline-block bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full mb-3">シグナルセカンド版解説</span>
+                                        <p className="text-gray-800 font-bold whitespace-pre-wrap leading-relaxed">{q.explanation_sho || "解説がありません。"}</p>
+                                    </div>
+
+                                    {/* シグナル版（鍵付きプレミアム解説） */}
+                                    <div className="p-4 bg-gray-100 rounded-xl border border-gray-300 relative overflow-hidden">
+                                        <div className="flex items-center mb-2">
+                                            <span className="inline-block bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded-full">シグナル版解説</span>
+                                            <span className="ml-2 text-xl">🔒</span>
+                                        </div>
+                                        <p className="text-gray-400 font-bold blur-[3px] select-none">ここは本番のシグナル版アプリで解放される有料コンテンツです。現場経験20年のベテラン監督による実務目線の解説が記載されています。資格取得への最短ルートはこちら！</p>
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <span className="bg-white/90 text-gray-800 font-black px-4 py-2 rounded-lg shadow-md border border-gray-300">完全版アプリで解放</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onClick={nextQuestion} className="w-full py-5 bg-gray-800 text-white rounded-2xl font-black text-xl shadow-xl active:bg-black mt-auto">
+                                    {currentIdx + 1 < questions.length ? '次の問題へ' : '結果発表へ'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            // ─── 結果画面 ───
+            if (view === 'result') {
+                const percentage = Math.round((score / questions.length) * 100);
+                const rankInfo = getRankInfo(percentage);
+
+                return (
+                    <div className="max-w-md mx-auto p-6 text-center pt-12">
+                        <h2 className="text-2xl font-bold text-gray-600 mb-2">最終結果</h2>
+                        <div className="text-5xl font-black mb-8 text-gray-800">{score} <span className="text-2xl text-gray-500">/ {questions.length}問 正解</span></div>
+
+                        <div className={`p-8 rounded-3xl mb-10 shadow-lg border-4 border-white ${rankInfo.bg}`}>
+                            <p className="text-sm font-bold text-gray-600 mb-2">あなたの現在の職位</p>
+                            <div className={`text-7xl font-black mb-4 ${rankInfo.color}`}>{rankInfo.rank}<span className="text-3xl"> ランク</span></div>
+                            <div className={`text-3xl font-black ${rankInfo.color}`}>{rankInfo.title}</div>
+                        </div>
+
+                        <button onClick={() => setView('menu')} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-xl active:bg-blue-800 transition mb-4">
+                            現場事務所へ戻る
+                        </button>
+                    </div>
+                );
+            }
+
+            // ─── 履歴画面 ───
+            if (view === 'history') {
+                return (
+                    <div className="max-w-md mx-auto p-6 pt-8">
+                        <h2 className="text-3xl font-black mb-6 text-gray-800 text-center">📋 現場経歴書</h2>
+
+                        {history.length === 0 ? (
+                            <div className="bg-white p-8 rounded-2xl shadow-sm border-2 border-gray-200 text-center text-gray-500 font-bold">
+                                まだ経歴はありません。<br />クイズに挑戦すると、ここに記録されます。
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {history.map((h, i) => (
+                                    <div key={i} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center">
+                                        <div className="text-left">
+                                            <p className="text-xs text-gray-500 font-bold">{h.date}</p>
+                                            <p className="font-black text-gray-800">{h.year} {h.session}</p>
+                                            <p className="text-sm text-gray-600">{h.score}/{h.total}問 ({h.percentage}%)</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-3xl font-black text-blue-600">{h.rank}</p>
+                                            <p className="text-xs text-gray-600 font-bold">{h.title}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <button onClick={() => setView('menu')} className="w-full py-4 mt-6 bg-gray-800 text-white rounded-xl font-bold shadow active:bg-gray-900 transition">
+                            メニューへ戻る
+                        </button>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
