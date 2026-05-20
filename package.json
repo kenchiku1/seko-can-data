@@ -1,0 +1,7 @@
+{
+  "name": "seko-can-data",
+  "version": "1.0.0",
+  "dependencies": {
+    "@line/bot-sdk": "^8.0.0"
+  }
+}
