@@ -33,8 +33,22 @@
             return String(answer).split(',').map(s => s.trim()).sort();
         }
 
-        // signal2 は R1〜R7 の後期のみ（全年度 kouki ファイル）
-        const SIGNAL2_YEARS = ['R7','R6','R5','R4','R3','R2','R1'];
+        // signal2 は R1〜R7 の前期・後期（実在するJSONファイルのみ）
+        const SIGNAL2_OPTIONS = [
+            { value: 'R7_kouki', label: 'R7年度（後期）' },
+            { value: 'R7_zenki', label: 'R7年度（前期）' },
+            { value: 'R6_kouki', label: 'R6年度（後期）' },
+            { value: 'R6_zenki', label: 'R6年度（前期）' },
+            { value: 'R5_kouki', label: 'R5年度（後期）' },
+            { value: 'R5_zenki', label: 'R5年度（前期）' },
+            { value: 'R4_kouki', label: 'R4年度（後期）' },
+            { value: 'R4_zenki', label: 'R4年度（前期）' },
+            { value: 'R3_kouki', label: 'R3年度（後期）' },
+            { value: 'R3_zenki', label: 'R3年度（前期）' },
+            { value: 'R2_zenki', label: 'R2年度（前期）' },
+            { value: 'R1_kouki', label: 'R1年度（後期）' },
+            { value: 'R1_zenki', label: 'R1年度（前期）' },
+        ];
 
         function App() {
             const [view, setView] = useState('menu');
@@ -50,7 +64,7 @@
             const [quizInfo, setQuizInfo] = useState({ year: '' });
             const [history, setHistory] = useState([]);
 
-            const [selectedYear, setSelectedYear] = useState('R7');
+            const [selectedYear, setSelectedYear] = useState('R7_kouki');
 
             useEffect(() => {
                 try {
@@ -74,8 +88,9 @@
             const startQuiz = async () => {
                 setView('loading');
                 try {
-                    const year = selectedYear;
-                    const fileName = `${year}_kouki.json`;
+                    const [year, sessionCode] = selectedYear.split('_');
+                    const session = sessionCode === 'kouki' ? '後期' : '前期';
+                    const fileName = `${selectedYear}.json`;
                     const fetchUrl = `https://raw.githubusercontent.com/kenchiku1/seko-can-data/main/signal2/${fileName}?t=${new Date().getTime()}`;
 
                     const res = await fetch(fetchUrl);
@@ -93,11 +108,11 @@
                     setQuestions(shuffle(all));
                     setCurrentIdx(0);
                     setScore(0);
-                    setQuizInfo({ year });
+                    setQuizInfo({ year, session });
                     setSelectedAnswers([]);
                     setView('quiz');
                 } catch (e) {
-                    alert(`通信エラー：${e.message || 'データを読み込めませんでした。'}\nGitHub上にsignal2/${selectedYear}_kouki.json があるか確認してください。`);
+                    alert(`通信エラー：${e.message || 'データを読み込めませんでした。'}\nGitHub上にsignal2/${selectedYear}.json があるか確認してください。`);
                     setView('menu');
                 }
             };
@@ -157,7 +172,7 @@
                 const newRecord = {
                     date: new Date().toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
                     year: quizInfo.year,
-                    session: '後期',
+                    session: quizInfo.session,
                     score: score,
                     total: questions.length,
                     percentage: percentage,
@@ -181,8 +196,8 @@
                         <div className="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
                             <label className="block text-left text-sm font-bold text-gray-600 mb-2">年度を選択</label>
                             <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full p-4 mb-4 border-2 border-gray-300 rounded-xl font-bold bg-white focus:border-blue-500 focus:outline-none text-lg">
-                                {SIGNAL2_YEARS.map(y => (
-                                    <option key={y} value={y}>{y}年度（後期）</option>
+                                {SIGNAL2_OPTIONS.map(opt => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                             </select>
 
@@ -208,7 +223,7 @@
                 return (
                     <div className="max-w-md mx-auto p-4 min-h-screen flex flex-col">
                         <div className="flex justify-between items-end mb-4 px-2 border-b-2 border-gray-300 pb-2">
-                            <span className="font-bold text-gray-500">{quizInfo.year} 後期</span>
+                            <span className="font-bold text-gray-500">{quizInfo.year} {quizInfo.session}</span>
                             <span className="text-xl font-black text-blue-700">第 {currentIdx + 1} 問 <span className="text-sm text-gray-400">/ 全 {questions.length} 問</span></span>
                         </div>
 
