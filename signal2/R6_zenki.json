@@ -1,8 +1,8 @@
 [
   {
-    "id": "R6-ZEN-01",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_1",
+    "year": 2024,
+    "session": "前期",
     "no": 1,
     "block": "A",
     "required": false,
@@ -23,9 +23,9 @@
     "explanation_ken": "コンデンサの公式C=εS/dをそのまま使えばいい。距離を半分にしたら容量は2倍、面積を2倍にしたら容量はさらに2倍、合わせて4倍だ。迷わず(4)の4Cを選べ！"
   },
   {
-    "id": "R6-ZEN-02",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_2",
+    "year": 2024,
+    "session": "前期",
     "no": 2,
     "block": "A",
     "required": false,
@@ -46,9 +46,9 @@
     "explanation_ken": "ブリッジ平衡はA点・B点が等電位のとき「左上×右下=右上×左下」が成り立つ。20×720=180×R、R=14400/180=80Ωだ。現場で測定器のゼロ点調整に使われる回路、しっかり覚えとけ！"
   },
   {
-    "id": "R6-ZEN-03",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_3",
+    "year": 2024,
+    "session": "前期",
     "no": 3,
     "block": "A",
     "required": false,
@@ -69,9 +69,9 @@
     "explanation_ken": "並列インピーダンスの公式Z=R×XL/√(R²+XL²)だ。数値を代入してみろ。R=1、XL=1/√3を入れると分子は1/√3、分母は√(1+1/3)=√(4/3)=2/√3。割り算して0.5Ωだ。焦らず丁寧に計算すれば必ず出る！"
   },
   {
-    "id": "R6-ZEN-04",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_4",
+    "year": 2024,
+    "session": "前期",
     "no": 4,
     "block": "A",
     "required": false,
@@ -92,9 +92,9 @@
     "explanation_ken": "2進数→16進数は4ビットずつ区切って変換するだけだ。1010=10=A、0100=4、1100=12=C、0010=2。並べたらA4C2、一発で(2)だ。この変換は暗記で瞬殺できるようになれ！"
   },
   {
-    "id": "R6-ZEN-05",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_5",
+    "year": 2024,
+    "session": "前期",
     "no": 5,
     "block": "A",
     "required": false,
@@ -115,9 +115,9 @@
     "explanation_ken": "論理回路図を見たらまず出力から逆に読むか、入力を全パターン代入して確かめろ。A=1,B=1のときだけF=1になる真理値表はANDゲートの動作だ。答えは(1)一択だ！"
   },
   {
-    "id": "R6-ZEN-06",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_6",
+    "year": 2024,
+    "session": "前期",
     "no": 6,
     "block": "A",
     "required": false,
@@ -138,9 +138,9 @@
     "explanation_ken": "変調速度（ボーレート）はB=1/Tで求まる。T=2.5ms=0.0025sを代入するだけだ。1÷0.0025=400baud。FSKでもASKでもボーレートの計算式は同じだ、覚えとけ！"
   },
   {
-    "id": "R6-ZEN-07",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_7",
+    "year": 2024,
+    "session": "前期",
     "no": 7,
     "block": "A",
     "required": false,
@@ -161,9 +161,9 @@
     "explanation_ken": "AMのスペクトルは搬送波周波数を真ん中にして、左右（上下）対称に側波帯が並ぶ。これは基本中の基本だ。(ア)搬送波周波数、(イ)対称、(ウ)側波帯で(4)が正解！"
   },
   {
-    "id": "R6-ZEN-08",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_8",
+    "year": 2024,
+    "session": "前期",
     "no": 8,
     "block": "A",
     "required": false,
@@ -184,9 +184,9 @@
     "explanation_ken": "UHF帯は周波数が高いから電離層を突き抜けちまう。電離層反射が使えるのはMF・HF帯（中波・短波）の話だ。UHFは直接波が主役。(1)が間違いで答えは(1)だ！"
   },
   {
-    "id": "R6-ZEN-09",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_9",
+    "year": 2024,
+    "session": "前期",
     "no": 9,
     "block": "A",
     "required": false,
@@ -207,9 +207,9 @@
     "explanation_ken": "「非圧縮で容量が大きい」といえばWAVだ。MP3やAACは圧縮して容量を小さくした形式。WAVは生のPCMデータそのままで、音質は最高だがデータは重い。答えは(3)のWAVだ！"
   },
   {
-    "id": "R6-ZEN-10",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_10",
+    "year": 2024,
+    "session": "前期",
     "no": 10,
     "block": "A",
     "required": false,
@@ -230,9 +230,9 @@
     "explanation_ken": "インタプリタは1行ずつ翻訳しながら走る。コンパイラは全部まとめて翻訳してから走るから速い。C・FORTRANはコンパイラ言語だ。インタプリタといえばPythonやRubyを思い出せ。答えは(2)だ！"
   },
   {
-    "id": "R6-ZEN-11",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_11",
+    "year": 2024,
+    "session": "前期",
     "no": 11,
     "block": "A",
     "required": false,
@@ -253,9 +253,9 @@
     "explanation_ken": "p型半導体の「p」はポジティブ（正孔）のpだ！多数キャリアは正孔であって、自由電子じゃない。逆はn型（ネガティブ＝電子）だ。(1)は逆を書いてある誤りで答えは(1)！"
   },
   {
-    "id": "R6-ZEN-12",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_12",
+    "year": 2024,
+    "session": "前期",
     "no": 12,
     "block": "A",
     "required": false,
@@ -276,9 +276,9 @@
     "explanation_ken": "制御量と目標値を比較して訂正するのはフィードバック制御だ！シーケンス制御はあらかじめ決めた順序や条件で機械を動かすだけで、フィードバックはない。(3)が間違いで答えは(3)！"
   },
   {
-    "id": "R6-ZEN-13",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_13",
+    "year": 2024,
+    "session": "前期",
     "no": 13,
     "block": "B",
     "required": false,
@@ -299,9 +299,9 @@
     "explanation_ken": "光ファイバはコア（中心）が高屈折率、クラッド（外側）が低屈折率だ。光は高い屈折率の場所に閉じ込められる。(4)は逆に書いてある。現場でファイバ触る前にこの基本を頭に叩き込め！"
   },
   {
-    "id": "R6-ZEN-14",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_14",
+    "year": 2024,
+    "session": "前期",
     "no": 14,
     "block": "B",
     "required": false,
@@ -322,9 +322,9 @@
     "explanation_ken": "TDM（時分割多重）は1本の道路を時間で区切って複数の車（信号）を走らせるイメージだ。周波数で分けるのはFDM。TDMは時間、FDMは周波数、しっかり区別しろ！答えは(2)だ。"
   },
   {
-    "id": "R6-ZEN-15",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_15",
+    "year": 2024,
+    "session": "前期",
     "no": 15,
     "block": "B",
     "required": false,
@@ -345,9 +345,9 @@
     "explanation_ken": "UTPのUはUnshielded（シールドなし）のUだ！シールドありはSTP。(1)はSTPの説明をUTPに当てはめた誤りだ。現場でケーブル選ぶときも間違えるな！答えは(1)。"
   },
   {
-    "id": "R6-ZEN-16",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_16",
+    "year": 2024,
+    "session": "前期",
     "no": 16,
     "block": "B",
     "required": false,
@@ -368,9 +368,9 @@
     "explanation_ken": "FTTHのFはFiber（光ファイバ）。加入者宅に置く機器はONU（Optical Network Unit）、局側はOLT（Optical Line Terminal）だ。現場で光工事やるなら絶対覚えとけ！答えは(2)だ。"
   },
   {
-    "id": "R6-ZEN-17",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_17",
+    "year": 2024,
+    "session": "前期",
     "no": 17,
     "block": "B",
     "required": false,
@@ -391,9 +391,9 @@
     "explanation_ken": "MIMO＝Multiple Input Multiple Output。送信も受信も複数アンテナで同時に複数の独立した信号を飛ばす技術だ。4G/5Gの高速通信を支える要技術。SCSIはストレージ接続規格、CSMA/CDはLANの衝突制御。答えは(4)だ！"
   },
   {
-    "id": "R6-ZEN-18",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_18",
+    "year": 2024,
+    "session": "前期",
     "no": 18,
     "block": "B",
     "required": false,
@@ -414,9 +414,9 @@
     "explanation_ken": "電離層がフラフラして電波が反射したり抜けたりするのが「跳躍フェージング」だ。跳躍＝電離層を「跳び越す」イメージで覚えろ。干渉性は多重波の干渉、吸収性は電離層による吸収が原因。答えは(3)だ！"
   },
   {
-    "id": "R6-ZEN-19",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_19",
+    "year": 2024,
+    "session": "前期",
     "no": 19,
     "block": "B",
     "required": false,
@@ -437,9 +437,9 @@
     "explanation_ken": "全方向均等に放射する基準アンテナ＝等方性アンテナ（イソトロピックアンテナ）。これ基準の利得が絶対利得（dBi）。半波長ダイポール基準なら相対利得（dBd）だ。iとdで覚えろ！答えは(4)。"
   },
   {
-    "id": "R6-ZEN-20",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_20",
+    "year": 2024,
+    "session": "前期",
     "no": 20,
     "block": "B",
     "required": false,
@@ -460,9 +460,9 @@
     "explanation_ken": "DSRC（狭域通信）はETCや路側機との通信に使う専用技術で、Wi-Fiとは別物だ。「Wi-Fiスポットで渋滞情報」は完全に別の話。DSRCは5.8GHz帯、ITSの現場で必須知識だ！答えは(2)。"
   },
   {
-    "id": "R6-ZEN-21",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_21",
+    "year": 2024,
+    "session": "前期",
     "no": 21,
     "block": "B",
     "required": false,
@@ -483,9 +483,9 @@
     "explanation_ken": "IPはOSI第3層のネットワーク層だ！データリンク層（第2層）はEthernetやMACアドレスの世界。IPはIPアドレスでルーティングする層。層の番号を頭に叩き込め：物理→データリンク→ネットワーク→トランスポート→…。答えは(1)！"
   },
   {
-    "id": "R6-ZEN-22",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_22",
+    "year": 2024,
+    "session": "前期",
     "no": 22,
     "block": "B",
     "required": false,
@@ -506,9 +506,9 @@
     "explanation_ken": "ブリッジはデータリンク層（第2層）でMACアドレスを見てフレームを仕分けする機器だ。(1)はリピータ、(2)はルータ、(3)はゲートウェイの説明だ。各機器の動作層を丸ごと覚えろ！答えは(4)。"
   },
   {
-    "id": "R6-ZEN-23",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_23",
+    "year": 2024,
+    "session": "前期",
     "no": 23,
     "block": "B",
     "required": false,
@@ -529,9 +529,9 @@
     "explanation_ken": "公開鍵暗号で改ざん検知＋本人確認＝デジタル署名だ！バイオメトリクスは指紋・顔などの生体認証、ワンタイムパスワードは使い捨てパスワード。デジタル署名は現代の「印鑑＋封筒の封蝋」みたいなもんだ。答えは(2)！"
   },
   {
-    "id": "R6-ZEN-24",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_24",
+    "year": 2024,
+    "session": "前期",
     "no": 24,
     "block": "B",
     "required": false,
@@ -552,9 +552,9 @@
     "explanation_ken": "クラスCの先頭3ビット＝110（192〜223で始まる）。ネットワーク部24ビット、ホスト部8ビット（最大254台）だ。クラスB（128〜191）は先頭10、ネット部16ビット。(4)マルチキャストはクラスD（先頭1110）。答えは(1)！"
   },
   {
-    "id": "R6-ZEN-25",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_25",
+    "year": 2024,
+    "session": "前期",
     "no": 25,
     "block": "B",
     "required": false,
@@ -575,9 +575,9 @@
     "explanation_ken": "スラッシング＝メモリ不足でスワップがひたすら繰り返されてCPUが本来の仕事をできない状態だ。フラグメンテーションは断片化、ページングはメモリ管理方式の名前。「スラッシュ（叩く）」＝激しくスワップで覚えろ！答えは(3)。"
   },
   {
-    "id": "R6-ZEN-26",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_26",
+    "year": 2024,
+    "session": "前期",
     "no": 26,
     "block": "B",
     "required": false,
@@ -598,9 +598,9 @@
     "explanation_ken": "USB最大接続台数は127台（2の7乗-1）、USB3.2の最高速は20Gbps。「127と20」を数字として丸ごと覚えろ！(3)の「127と2」で引っかかるな。答えは(4)だ！"
   },
   {
-    "id": "R6-ZEN-27",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_27",
+    "year": 2024,
+    "session": "前期",
     "no": 27,
     "block": "B",
     "required": false,
@@ -621,9 +621,9 @@
     "explanation_ken": "半導体記憶装置といえばフラッシュメモリ系のUSBメモリ・SSD・SDカード。HDDは磁気ディスクで回転するモーターが入ってる、半導体じゃない。落としたら壊れやすいやつだ。答えは(2)HDD！"
   },
   {
-    "id": "R6-ZEN-28",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_28",
+    "year": 2024,
+    "session": "前期",
     "no": 28,
     "block": "B",
     "required": false,
@@ -644,9 +644,9 @@
     "explanation_ken": "ゴミ漁りで情報収集するのはソーシャルエンジニアリング（人的脆弱性を突く攻撃）の手口「トラッシング」だ。スパイウェアはマルウェア、フィッシングは偽サイト誘導、ワームは自己増殖プログラム。答えは(3)！"
   },
   {
-    "id": "R6-ZEN-29",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_29",
+    "year": 2024,
+    "session": "前期",
     "no": 29,
     "block": "B",
     "required": false,
@@ -667,9 +667,9 @@
     "explanation_ken": "JPEGは静止画の圧縮形式だ！地デジの動画圧縮はH.264（MPEG-4 AVC）、4KはH.265（HEVC）。JPEGを動画に使うとフレームごとに圧縮するだけで時間軸圧縮ができない。動画＝MPEG系を使う。答えは(1)！"
   },
   {
-    "id": "R6-ZEN-30",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_30",
+    "year": 2024,
+    "session": "前期",
     "no": 30,
     "block": "B",
     "required": false,
@@ -690,9 +690,9 @@
     "explanation_ken": "トランスモジュレーション（Trans-Modulation）は「変調方式を変換する」技術だ。地デジのOFDMをCATVのQAMに変換するイメージ。中間周波数に変換するのはヘテロダイン方式の話。答えは(4)！"
   },
   {
-    "id": "R6-ZEN-31",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_31",
+    "year": 2024,
+    "session": "前期",
     "no": 31,
     "block": "B",
     "required": false,
@@ -713,9 +713,9 @@
     "explanation_ken": "有機ELは「発光する」素子だ。撮像（光を受ける）素子はCCDとCMOSだ。有機ELをカメラの撮像素子に使う技術はまだ実用化されていない。受光と発光を混同するな！答えは(3)だ。"
   },
   {
-    "id": "R6-ZEN-32",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_32",
+    "year": 2024,
+    "session": "前期",
     "no": 32,
     "block": "B",
     "required": false,
@@ -736,9 +736,9 @@
     "explanation_ken": "IEEE 802.15.1＋2.4GHz帯＋周波数ホッピング＝Bluetooth一択だ！IrDAは赤外線通信、Wi-FiはIEEE 802.11系のLAN規格、GP-IBは計測器接続バス。キーワードの組合せで即答できるようにしろ！答えは(1)Bluetooth！"
   },
   {
-    "id": "R6-ZEN-33",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_33",
+    "year": 2024,
+    "session": "前期",
     "no": 33,
     "block": "C",
     "required": false,
@@ -759,9 +759,9 @@
     "explanation_ken": "平形保護層工事（フラットケーブル）は点検できない隠ぺい場所には使えないんだ。もし壁の中に隠しちゃったら修理できなくなる。点検できる場所専用と覚えろ！答えは(4)だ。"
   },
   {
-    "id": "R6-ZEN-34",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_34",
+    "year": 2024,
+    "session": "前期",
     "no": 34,
     "block": "C",
     "required": false,
@@ -782,9 +782,9 @@
     "explanation_ken": "油入変圧器の絶縁油は冷却（熱を逃がす）と絶縁の両方を担う。「加熱のため」というのはおかしい。熱を逃がすために油を使うんだ！現場で変圧器の油が漏れてたら大事故になるくらい大事な役目だぞ。答えは(3)。"
   },
   {
-    "id": "R6-ZEN-35",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_35",
+    "year": 2024,
+    "session": "前期",
     "no": 35,
     "block": "C",
     "required": false,
@@ -805,9 +805,9 @@
     "explanation_ken": "高圧ナトリウムランプは放電発光だ！熱放射（フィラメントが熱で光る）は白熱電球の話。ナトリウムランプは蒸気を電気で放電させて光らせる。街路灯の黄色いライトを思い出せ。答えは(1)！"
   },
   {
-    "id": "R6-ZEN-36",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_36",
+    "year": 2024,
+    "session": "前期",
     "no": 36,
     "block": "C",
     "required": false,
@@ -828,9 +828,9 @@
     "explanation_ken": "冷温水を供給するのは「水方式（ファンコイルユニット方式）」だ！「冷媒方式」は家庭用エアコンみたいにフロン等の冷媒を直接室内機に送るやつ。冷媒と冷水を混同するな！答えは(3)。"
   },
   {
-    "id": "R6-ZEN-37",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_37",
+    "year": 2024,
+    "session": "前期",
     "no": 37,
     "block": "C",
     "required": false,
@@ -851,9 +851,9 @@
     "explanation_ken": "移動式CO2消火設備は「ホースとノズルを持って移動する」のであって、貯蔵容器ごと移動するわけじゃない。大型の重いボンベを人が運ぶのは現実的じゃない。貯蔵容器は固定だ！答えは(2)。"
   },
   {
-    "id": "R6-ZEN-38",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_38",
+    "year": 2024,
+    "session": "前期",
     "no": 38,
     "block": "C",
     "required": false,
@@ -874,9 +874,9 @@
     "explanation_ken": "土の粒径順は「礫→砂→シルト→粘土」の順で小さくなる。(1)は礫→砂→粘土で順序的に正しい。(3)礫→シルト→砂は砂よりシルトが大きいから逆だ。土質の粒径順はガチで覚えとけ！答えは(1)。"
   },
   {
-    "id": "R6-ZEN-39",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_39",
+    "year": 2024,
+    "session": "前期",
     "no": 39,
     "block": "C",
     "required": false,
@@ -897,9 +897,9 @@
     "explanation_ken": "ラーメン構造はドイツ語でRahmen（枠組み）から来てる。柱と梁を剛接合（がっちり固定）した骨組みで荷重に耐える。マンションや事務所ビルの大半がこれだ。トラスは三角形の組合せ、アーチは弧状。答えは(4)！"
   },
   {
-    "id": "R6-ZEN-40",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_40",
+    "year": 2024,
+    "session": "前期",
     "no": 40,
     "block": "D",
     "required": true,
@@ -920,9 +920,9 @@
     "explanation_ken": "設計図書に工程表は入らない！設計図書＝図面＋仕様書＋現場説明書＋質問回答書だ。工程表は施工計画の話であって設計図書じゃない。現場で混乱すると書類不備になるから絶対覚えろ！答えは(2)。"
   },
   {
-    "id": "R6-ZEN-41",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_41",
+    "year": 2024,
+    "session": "前期",
     "no": 41,
     "block": "E",
     "required": false,
@@ -943,9 +943,9 @@
     "explanation_ken": "複数都道府県に営業所を持つなら国土交通大臣許可が必要だ！知事許可は1都道府県内のみ。大臣か知事かは営業所の所在地（都道府県をまたぐか否か）で決まる。現場の会社の許可証を確認してみろ！答えは(4)。"
   },
   {
-    "id": "R6-ZEN-42",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_42",
+    "year": 2024,
+    "session": "前期",
     "no": 42,
     "block": "E",
     "required": false,
@@ -966,9 +966,9 @@
     "explanation_ken": "建設業法の見積り義務：「請負契約を締結する際に工程ごとの日数を明らかに」だ。金額じゃなくて日数がポイント。協定ではなく請負契約。条文の穴埋めは「請負契約」と「日数」の組合せで答えは(2)！"
   },
   {
-    "id": "R6-ZEN-43",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_43",
+    "year": 2024,
+    "session": "前期",
     "no": 43,
     "block": "E",
     "required": false,
@@ -989,9 +989,9 @@
     "explanation_ken": "発注者＝工事を最初に注文する人（施主・お客さん）。元請負人＝施主から直接受注した建設業者（下請への注文者）。(1)は「注文書」「下請契約における請負人」と誤った定義を書いてある。建設業法の定義は基本中の基本！答えは(1)。"
   },
   {
-    "id": "R6-ZEN-44",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_44",
+    "year": 2024,
+    "session": "前期",
     "no": 44,
     "block": "E",
     "required": false,
@@ -1012,9 +1012,9 @@
     "explanation_ken": "平均賃金は直前3ヶ月の賃金総額÷総暦日数だ！6ヶ月じゃない。3ヶ月＝90日前後というのが基本。休業補償（60%以上）は正しい。賃金月1回以上も正しい。「6ヶ月」だけが引っかけ。答えは(2)！"
   },
   {
-    "id": "R6-ZEN-45",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_45",
+    "year": 2024,
+    "session": "前期",
     "no": 45,
     "block": "E",
     "required": false,
@@ -1035,9 +1035,9 @@
     "explanation_ken": "年少者禁止業務は重量物運搬・危険作業・高所作業等だが、交流200Vの充電電路の「点検業務」は禁止対象外だ。修理・敷設作業は別途制限があるが点検まで禁止ではない。(3)が誤った記述。答えは(3)！"
   },
   {
-    "id": "R6-ZEN-46",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_46",
+    "year": 2024,
+    "session": "前期",
     "no": 46,
     "block": "E",
     "required": false,
@@ -1058,9 +1058,9 @@
     "explanation_ken": "足場の作業主任者は高さ5m以上が選任義務だ！4mはセーフ（不要）。でも現場では安全のために主任者を置くことも多い。法令上の義務は「5m以上」をしっかり覚えとけ！答えは(1)。"
   },
   {
-    "id": "R6-ZEN-47",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_47",
+    "year": 2024,
+    "session": "前期",
     "no": 47,
     "block": "E",
     "required": false,
@@ -1081,9 +1081,9 @@
     "explanation_ken": "特別教育＝危険有害業務に就く「労働者」に「安全又は衛生」のために行う。職長教育は別の話（職長の安全衛生教育）。技能習得は技能講習の目的。穴埋めは「労働者」×「安全又は衛生」で答えは(2)！"
   },
   {
-    "id": "R6-ZEN-48",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_48",
+    "year": 2024,
+    "session": "前期",
     "no": 48,
     "block": "E",
     "required": false,
@@ -1104,9 +1104,9 @@
     "explanation_ken": "車両制限令の数値を覚えろ！幅2.5m・高さ3.8m・長さ12m・軸重10t・総重量25tだ。(1)軸重10t→ちょうどセーフ、(2)幅2.5m→ちょうどセーフ、(3)高さ3.5m→3.8m以下でセーフ、(4)長さ15m→12m超でアウト！答えは(4)！"
   },
   {
-    "id": "R6-ZEN-49",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_49",
+    "year": 2024,
+    "session": "前期",
     "no": 49,
     "block": "E",
     "required": false,
@@ -1127,9 +1127,9 @@
     "explanation_ken": "電気通信事業法の定義は「電磁的方式」と「他人」がキーワードだ！電子的ではなく電磁的、公衆ではなく他人。法文を丸暗記するより「電磁・他人」の組合せで覚えろ！答えは(3)。"
   },
   {
-    "id": "R6-ZEN-50",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_50",
+    "year": 2024,
+    "session": "前期",
     "no": 50,
     "block": "E",
     "required": false,
@@ -1150,9 +1150,9 @@
     "explanation_ken": "有線電気通信法の届出は「工事開始2週間前まで」だ！完了後じゃなくて開始前に届け出る。1ヶ月前でもなく2週間前。現場の工程に組み込んでおかないと法令違反になるから要注意！答えは(1)。"
   },
   {
-    "id": "R6-ZEN-51",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_51",
+    "year": 2024,
+    "session": "前期",
     "no": 51,
     "block": "E",
     "required": false,
@@ -1173,9 +1173,9 @@
     "explanation_ken": "技適マークは「〒」みたいな形のマークで、スマホやWi-Fiルータに必ず付いてるやつだ。電波法の技術基準を満たした証拠。PSEマークは電安法で家電製品。現場で使う無線機に技適マークがなかったら違法機器だ！答えは(2)。"
   },
   {
-    "id": "R6-ZEN-52",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_52",
+    "year": 2024,
+    "session": "前期",
     "no": 52,
     "block": "E",
     "required": false,
@@ -1196,9 +1196,9 @@
     "explanation_ken": "金属ダクトはPSEマーク不要の建築材料だ！電線・LED・遮断器はPSEマーク（電気用品安全法）が必要。ダクトはあくまでケーブルを収める「鉄の箱」で、電気用品の定義に入らない。答えは(4)！"
   },
   {
-    "id": "R6-ZEN-53",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_53",
+    "year": 2024,
+    "session": "前期",
     "no": 53,
     "block": "F",
     "required": true,
@@ -1219,9 +1219,9 @@
     "explanation_ken": "光ファイバの曲げは「敷設中20倍以上、固定後10倍以上」が基本だ！敷設中は引張力もかかるからより緩やかに曲げる必要がある。15倍は小さすぎる。ファイバを折ったら芯が割れて終わりだぞ。答えは(3)！"
   },
   {
-    "id": "R6-ZEN-54",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_54",
+    "year": 2024,
+    "session": "前期",
     "no": 54,
     "block": "F",
     "required": true,
@@ -1242,9 +1242,9 @@
     "explanation_ken": "ケーブルの接続点（ジョイント）は管路内じゃなくてマンホール内に設けるんだ！管路は狭くて作業できないし、後から修理もできない。ジョイントはマンホールの中で合成樹脂モールドするのが正解。答えは(4)だ！"
   },
   {
-    "id": "R6-ZEN-55",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_55",
+    "year": 2024,
+    "session": "前期",
     "no": 55,
     "block": "F",
     "required": true,
@@ -1265,9 +1265,9 @@
     "explanation_ken": "現地調査でやることは自然条件・搬入路・既設設備など「現場の物理的状況」の確認だ。「数量変更の取り扱い方法」は契約書や仕様書を読む話で、現地に行って調査するもんじゃない。答えは(2)！"
   },
   {
-    "id": "R6-ZEN-56",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_56",
+    "year": 2024,
+    "session": "前期",
     "no": 56,
     "block": "F",
     "required": true,
@@ -1288,9 +1288,9 @@
     "explanation_ken": "漏電火災警報器は甲種消防設備士の業務範囲外だ！甲種が工事できるのはスプリンクラー・自動火災報知設備・ガス系消火設備等。漏電警報器は電気工事の範疇に近い。届出の要否も含めて対象外なので(4)が誤り。答えは(4)！"
   },
   {
-    "id": "R6-ZEN-57",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_57",
+    "year": 2024,
+    "session": "前期",
     "no": 57,
     "block": "F",
     "required": true,
@@ -1311,9 +1311,9 @@
     "explanation_ken": "KY活動は「危険予知（Kiken Yochi）」で安全管理のツールだ！工程の進捗周知に使うもんじゃない。工程管理と安全管理をごっちゃにするな。KYは毎朝現場で「今日の危険はこれだ！」と指差し確認するやつ。答えは(3)。"
   },
   {
-    "id": "R6-ZEN-58",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_58",
+    "year": 2024,
+    "session": "前期",
     "no": 58,
     "block": "F",
     "required": true,
@@ -1334,9 +1334,9 @@
     "explanation_ken": "ネットワーク工程表（PERT/CPM）は矢線で作業の順序と関連を表してクリティカルパスを見つける工程表だ。(2)はバーチャート（横線式）、(4)は高層ビル向けタクト工程表の説明。矢線で重点管理工程がわかる＝ネットワーク工程表。答えは(3)！"
   },
   {
-    "id": "R6-ZEN-59",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_59",
+    "year": 2024,
+    "session": "前期",
     "no": 59,
     "block": "F",
     "required": true,
@@ -1357,9 +1357,9 @@
     "explanation_ken": "パルスを計数して周波数を測る＝周波数カウンタだ！オシロスコープは波形を目で見る、テスタは電圧・電流・抵抗を測る、ネットワークアナライザはSパラメータを測る。「計数回路でパルスを数える」がキーワード。答えは(1)！"
   },
   {
-    "id": "R6-ZEN-60",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_60",
+    "year": 2024,
+    "session": "前期",
     "no": 60,
     "block": "F",
     "required": true,
@@ -1380,9 +1380,9 @@
     "explanation_ken": "魚の骨みたいな図＝特性要因図（フィッシュボーン）だ！QC7つ道具の定番中の定番。散布図は2変数の相関、管理図は工程の安定性チェック、パレートは重要度順の棒グラフ。原因と結果の関係整理＝特性要因図！答えは(4)！"
   },
   {
-    "id": "R6-ZEN-61",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_61",
+    "year": 2024,
+    "session": "前期",
     "no": 61,
     "block": "F",
     "required": true,
@@ -1403,9 +1403,9 @@
     "explanation_ken": "飛来物対策は「飛来防止設備（防護棚・防護ネット）の設置＋保護具（ヘルメット）着用」だ。「ごみの飛散防止網」なんて曖昧な表現は法令上の措置じゃない。(1)の記述は誤り。落下物対策は現場の最重要安全事項だから正確に覚えろ！答えは(1)。"
   },
   {
-    "id": "R6-ZEN-62",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_62",
+    "year": 2024,
+    "session": "前期",
     "no": 62,
     "block": "G",
     "required": true,
@@ -1426,9 +1426,9 @@
     "explanation_ken": "①は間違い！水平配線は90m以内、パッチコード込みでも100m以内だ。150mは長すぎる。④外径が変わるまで強く締めたらケーブルが変形して伝送特性が落ちる。②曲げ半径4倍以上・③許容張力以下が正解の記述。答えは(3)②③！"
   },
   {
-    "id": "R6-ZEN-63",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_63",
+    "year": 2024,
+    "session": "前期",
     "no": 63,
     "block": "G",
     "required": true,
@@ -1449,9 +1449,9 @@
     "explanation_ken": "②は「資材計画」の説明を「資金計画」と呼んでる誤り。④は公害・近隣環境への影響抑制は「環境管理計画」の話で、品質管理計画は品質確保の計画だ。①工程計画・③仮設備計画は正しい。答えは(2)①③！"
   },
   {
-    "id": "R6-ZEN-64",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_64",
+    "year": 2024,
+    "session": "前期",
     "no": 64,
     "block": "G",
     "required": true,
@@ -1472,9 +1472,9 @@
     "explanation_ken": "③が誤り！出来高累計曲線はS字カーブ（曲線）で表す。「横線」じゃない。①グラフ式・②斜線式・④バナナ曲線はそれぞれの説明として正しい。誤りは③1つだけなので正しいのは3つ。答えは(3)3つ！"
   },
   {
-    "id": "R6-ZEN-65",
-    "year": "R6",
-    "session": "zenki",
+    "id": "r6_zenki_65",
+    "year": 2024,
+    "session": "前期",
     "no": 65,
     "block": "G",
     "required": true,

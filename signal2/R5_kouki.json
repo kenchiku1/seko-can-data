@@ -1,8 +1,8 @@
 [
   {
-    "id": "R5-KOU-01",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_1",
+    "year": 2023,
+    "session": "後期",
     "no": 1,
     "block": "A",
     "required": false,
@@ -23,9 +23,9 @@
     "explanation_ken": "アンペールの法則H=I/(2πr)に数値を代入するだけだ。I=12.56A、r=0.5m。分母は2×3.14×0.5=3.14。12.56÷3.14=4.0[A/m]。12.56≒4πって気づけば暗算でも出る！答えは(3)だ。"
   },
   {
-    "id": "R5-KOU-02",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_2",
+    "year": 2023,
+    "session": "後期",
     "no": 2,
     "block": "A",
     "required": false,
@@ -46,9 +46,9 @@
     "explanation_ken": "直列コンデンサは容量の大きい方が電圧小さく負担する（逆比）。V₁=E×C₂/(C₁+C₂)=24×40/60=16V。C₂の方が大きいのでC₁の電圧が大きい。これは比例配分だから落ち着いて計算すれば出る！答えは(3)。"
   },
   {
-    "id": "R5-KOU-03",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_3",
+    "year": 2023,
+    "session": "後期",
     "no": 3,
     "block": "A",
     "required": false,
@@ -69,9 +69,9 @@
     "explanation_ken": "並列回路は各アドミタンス（1/Z）のベクトル和だ。抵抗アドミタンス=1/R、容量アドミタンス=ωC。合成I=E×√((1/R)²+(ωC)²)=E√(1+(ωCR)²)/R。(4)が正解！"
   },
   {
-    "id": "R5-KOU-04",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_4",
+    "year": 2023,
+    "session": "後期",
     "no": 4,
     "block": "A",
     "required": false,
@@ -92,9 +92,9 @@
     "explanation_ken": "8PSKは1シンボルで3ビット（2³=8）を送れる。伝送速度=変調速度×ビット数/シンボル=1600×3=4800bps。16QAMなら4ビット/シンボル、64QAMなら6ビット。多値数を2の何乗かで覚えろ！答えは(2)。"
   },
   {
-    "id": "R5-KOU-05",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_5",
+    "year": 2023,
+    "session": "後期",
     "no": 5,
     "block": "A",
     "required": false,
@@ -115,9 +115,9 @@
     "explanation_ken": "ナイキストの定理「サンプリング周波数は最高周波数の2倍以上」。最高50kHzなら100kHz以上でサンプリング。最大サンプリング時間=1/100,000=10μs。20μsじゃ足りない！答えは(2)10μs。"
   },
   {
-    "id": "R5-KOU-06",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_6",
+    "year": 2023,
+    "session": "後期",
     "no": 6,
     "block": "A",
     "required": false,
@@ -138,9 +138,9 @@
     "explanation_ken": "スーパヘテロダインは局部発振器の周波数と受信波を混合（ミキシング）して中間周波数を作る。(ア)は周波数混合回路。そして中間周波を検波してオーディオ信号にするのが(イ)検波回路。スケルチ回路はFMラジオのノイズ抑制機能。答えは(1)！"
   },
   {
-    "id": "R5-KOU-07",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_7",
+    "year": 2023,
+    "session": "後期",
     "no": 7,
     "block": "A",
     "required": false,
@@ -161,9 +161,9 @@
     "explanation_ken": "プロトコルは通信機器同士が守るルール（通信規約）だ。処理手順をコンピュータに格納するのは「プログラム（ソフトウェア）」。(4)は全く別の概念を混同している。プログラムとプロトコルを区別しろ！答えは(4)。"
   },
   {
-    "id": "R5-KOU-08",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_8",
+    "year": 2023,
+    "session": "後期",
     "no": 8,
     "block": "A",
     "required": false,
@@ -184,9 +184,9 @@
     "explanation_ken": "機械語はCPUが2進数のまま直接実行できる命令だ。オペコード=操作の種類（何をする）、オペランド=操作対象（どれに対して）。(1)(2)は逆。(4)機械語はCPU依存で互換性ゼロだ。答えは(3)！"
   },
   {
-    "id": "R5-KOU-09",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_9",
+    "year": 2023,
+    "session": "後期",
     "no": 9,
     "block": "A",
     "required": false,
@@ -207,9 +207,9 @@
     "explanation_ken": "16進数の各桁を4ビットに変換するだけだ。1→0001、4→0100、B（=11）→1011。並べると000101001011、先頭の0を取ると101001011。8桁の(1)は11101011=EB(16)で違う。答えは(2)！"
   },
   {
-    "id": "R5-KOU-10",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_10",
+    "year": 2023,
+    "session": "後期",
     "no": 10,
     "block": "A",
     "required": false,
@@ -230,9 +230,9 @@
     "explanation_ken": "AをNOTしてからBとANDする回路だ。F=NOT(A)∧B。A=0のときNOT(A)=1なのでBが通る。A=1のときNOT(A)=0なのでFは必ず0。B=1のときだけA=0でF=1になる。真理値表は(1)が正解！"
   },
   {
-    "id": "R5-KOU-11",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_11",
+    "year": 2023,
+    "session": "後期",
     "no": 11,
     "block": "A",
     "required": false,
@@ -253,9 +253,9 @@
     "explanation_ken": "オペアンプ反転増幅器の増幅度はA=-R₂/R₁。マイナスは入出力が逆位相になること。フィードバック抵抗R₂を大きくするほど増幅度が上がる。(3)の1+R₂/R₁は非反転増幅器の式。現場でオペアンプ使うなら必須知識！答えは(2)。"
   },
   {
-    "id": "R5-KOU-12",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_12",
+    "year": 2023,
+    "session": "後期",
     "no": 12,
     "block": "A",
     "required": false,
@@ -276,9 +276,9 @@
     "explanation_ken": "ダイオードとバイアスEのクリッパ回路だ。正の半波でVi>Eになると、ダイオードがONしてVo=Eに張り付く（クリップ）。負の半波はダイオードOFF（逆バイアス）なので、正弦波がそのまま通る。正側がEで平坦になった波形＝(4)が正解！"
   },
   {
-    "id": "R5-KOU-13",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_13",
+    "year": 2023,
+    "session": "後期",
     "no": 13,
     "block": "B",
     "required": false,
@@ -299,9 +299,9 @@
     "explanation_ken": "2線でいいのは片方向のときだけだ。両方向同時にやる全二重は送受それぞれ2本ずつ，計4本必要になる。組み合わせは(ア)2線式，(イ)全二重伝送，答えは1番だ。"
   },
   {
-    "id": "R5-KOU-14",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_14",
+    "year": 2023,
+    "session": "後期",
     "no": 14,
     "block": "B",
     "required": false,
@@ -322,9 +322,9 @@
     "explanation_ken": "波長が違えば干渉しない，その性質を使って1本のファイバに複数の信号を乗せる──それがWDMだ。波長で分けるから波長分割多重，頭文字でWDM，答えは3番だ。"
   },
   {
-    "id": "R5-KOU-15",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_15",
+    "year": 2023,
+    "session": "後期",
     "no": 15,
     "block": "B",
     "required": false,
@@ -345,9 +345,9 @@
     "explanation_ken": "遠端漏話（FEXT）は信号と同じ方向に進んで受信側（遠端）に出る。逆方向に戻って送信側（近端）に出るのが近端漏話（NEXT）だ。(1)は説明が逆になっている，これが誤りで答えは1番だ。"
   },
   {
-    "id": "R5-KOU-16",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_16",
+    "year": 2023,
+    "session": "後期",
     "no": 16,
     "block": "B",
     "required": false,
@@ -368,9 +368,9 @@
     "explanation_ken": "同軸ケーブルは直流を重畳して給電できる。CATVのブースタ電源なんかまさにそれだ。「給電できない」は完全に誤りだ。答えは2番だ。"
   },
   {
-    "id": "R5-KOU-17",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_17",
+    "year": 2023,
+    "session": "後期",
     "no": 17,
     "block": "B",
     "required": false,
@@ -391,9 +391,9 @@
     "explanation_ken": "サブキャリアと時間スロットを組み合わせて端末に割り当てる──それがOFDMAだ。LTEで採用された方式で，4Gの主役技術だ。答えは4番だ。"
   },
   {
-    "id": "R5-KOU-18",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_18",
+    "year": 2023,
+    "session": "後期",
     "no": 18,
     "block": "B",
     "required": false,
@@ -414,9 +414,9 @@
     "explanation_ken": "アンテナを数波長以上離して複数置き，出力を合成か切り換えする──これが空間ダイバーシチだ。場所（空間）で分けるからそう呼ぶ。答えは2番だ。"
   },
   {
-    "id": "R5-KOU-19",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_19",
+    "year": 2023,
+    "session": "後期",
     "no": 19,
     "block": "B",
     "required": false,
@@ -437,9 +437,9 @@
     "explanation_ken": "基準アンテナはダイポールアンテナや等方性アンテナを使う。パラボラは超指向性の高利得アンテナで，衛星通信やマイクロ波通信のための専用アンテナだ。基準アンテナには使わない，答えは1番だ。"
   },
   {
-    "id": "R5-KOU-20",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_20",
+    "year": 2023,
+    "session": "後期",
     "no": 20,
     "block": "B",
     "required": false,
@@ -460,9 +460,9 @@
     "explanation_ken": "選択度は受信機の話だ。混信をかき分けて目的の周波数だけ受信できる能力のことだ。送信機には関係ない。送信機の性能は周波数安定度・帯域幅・電力で語る。答えは3番だ。"
   },
   {
-    "id": "R5-KOU-21",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_21",
+    "year": 2023,
+    "session": "後期",
     "no": 21,
     "block": "B",
     "required": false,
@@ -483,9 +483,9 @@
     "explanation_ken": "トークンパッシングは受け取ったビジートークンを壊さない。自分宛じゃなければそのまま次に回す。破棄したらネットワークが止まってしまう。答えは2番だ。"
   },
   {
-    "id": "R5-KOU-22",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_22",
+    "year": 2023,
+    "session": "後期",
     "no": 22,
     "block": "B",
     "required": false,
@@ -506,9 +506,9 @@
     "explanation_ken": "ARPはIPからMACを調べるプロトコルだ。まず相手のIPアドレスを入れてブロードキャストで全員に投げる，該当する装置だけが自分のMACアドレスで返事する。組み合わせは(ア)IP，(イ)ブロードキャスト，(ウ)MAC，答えは3番だ。"
   },
   {
-    "id": "R5-KOU-23",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_23",
+    "year": 2023,
+    "session": "後期",
     "no": 23,
     "block": "B",
     "required": false,
@@ -529,9 +529,9 @@
     "explanation_ken": "経路選択（ルーティング）と中継──これはネットワーク層（第3層）の仕事だ。IPプロトコルがここにいる。物理は電気信号，データリンクはMACアドレス，ネットワークはIPアドレスで動く，と覚えておけ。答えは4番だ。"
   },
   {
-    "id": "R5-KOU-24",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_24",
+    "year": 2023,
+    "session": "後期",
     "no": 24,
     "block": "B",
     "required": false,
@@ -552,9 +552,9 @@
     "explanation_ken": "サブネットマスク255.255.255.240はホスト部が下位4ビット（0～15）だ。IPの第4オクテット227を2進で書くと11100011，ホストマスク00001111とANDをとると00000011＝3が答えだ。ビット演算をしっかり練習しておけ！"
   },
   {
-    "id": "R5-KOU-25",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_25",
+    "year": 2023,
+    "session": "後期",
     "no": 25,
     "block": "B",
     "required": false,
@@ -575,9 +575,9 @@
     "explanation_ken": "機械学習の3種類は頻出だ。正解ラベルあり→教師あり，ラベルなしでデータの構造を探す→教師なし，報酬で行動を最適化する→強化学習。(ア)教師あり，(イ)教師なし，(ウ)強化，答えは3番だ。"
   },
   {
-    "id": "R5-KOU-26",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_26",
+    "year": 2023,
+    "session": "後期",
     "no": 26,
     "block": "B",
     "required": false,
@@ -598,9 +598,9 @@
     "explanation_ken": "揮発性＝電源切ったらデータが消えるやつだ。DRAMはコンデンサで電荷を蓄えるメモリで，電源なくなったら終わり。EEPROMもROMもSSDも不揮発性だ。答えは1番のDRAMだ。"
   },
   {
-    "id": "R5-KOU-27",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_27",
+    "year": 2023,
+    "session": "後期",
     "no": 27,
     "block": "B",
     "required": false,
@@ -621,9 +621,9 @@
     "explanation_ken": "HDMIはデジタル専用インタフェースだ。VGAはアナログRGBで，全く別物だ。互換性なんかない。「VGAと上位互換」は完全に嘘だ。答えは2番だ。"
   },
   {
-    "id": "R5-KOU-28",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_28",
+    "year": 2023,
+    "session": "後期",
     "no": 28,
     "block": "B",
     "required": false,
@@ -644,9 +644,9 @@
     "explanation_ken": "「無害に見せかけて侵入」──これはトロイの木馬の特徴だ。古代ギリシャのトロイア戦争のあの木馬が由来だ。ランサムは身代金，スパイは情報窃取，バックドアは裏口開放だ。答えは3番だ。"
   },
   {
-    "id": "R5-KOU-29",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_29",
+    "year": 2023,
+    "session": "後期",
     "no": 29,
     "block": "B",
     "required": false,
@@ -667,9 +667,9 @@
     "explanation_ken": "OFDMがマルチパスに強いのは本当だが，「降雨減衰を抑える」は嘘だ。降雨減衰は主に衛星放送の問題で，地上波デジタルでOFDMを使う理由はビルの反射波（マルチパス）対策だ。答えは1番だ。"
   },
   {
-    "id": "R5-KOU-30",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_30",
+    "year": 2023,
+    "session": "後期",
     "no": 30,
     "block": "B",
     "required": false,
@@ -690,9 +690,9 @@
     "explanation_ken": "電磁誘導で起電力が出るのはダイナミックマイクだ。コイルと磁石を使って誘導起電力を発生させる。コンデンサマイクは静電容量の変化を使う，全然別の原理だ。(2)が誤り，答えは2番だ。"
   },
   {
-    "id": "R5-KOU-31",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_31",
+    "year": 2023,
+    "session": "後期",
     "no": 31,
     "block": "B",
     "required": false,
@@ -713,9 +713,9 @@
     "explanation_ken": "「ガス放電で自ら発光」はプラズマディスプレイ（PDP）だ。液晶ディスプレイはバックライトが必要で，液晶自体は光らない。光を通すか遮るかを制御するシャッターの役割だ。答えは4番だ。"
   },
   {
-    "id": "R5-KOU-32",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_32",
+    "year": 2023,
+    "session": "後期",
     "no": 32,
     "block": "B",
     "required": false,
@@ -736,9 +736,9 @@
     "explanation_ken": "超音波を打って反射が戻ってくるまでの時間を測る──これが原理だ。でも音速は温度で変わるから，温度計と組み合わせて補正しないと正確な距離が出ない。(ア)時間，(イ)温度，答えは1番だ。"
   },
   {
-    "id": "R5-KOU-33",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_33",
+    "year": 2023,
+    "session": "後期",
     "no": 33,
     "block": "C",
     "required": false,
@@ -759,9 +759,9 @@
     "explanation_ken": "特定か一般かの違いは「下請に出す金額」で決まる。4,500万円（建築工事業は7,000万円）以上を下請に出すなら特定建設業が必要だ。「発注者から受注できる金額」ではない，(3)が誤りで答えは3番だ。"
   },
   {
-    "id": "R5-KOU-34",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_34",
+    "year": 2023,
+    "session": "後期",
     "no": 34,
     "block": "C",
     "required": false,
@@ -782,9 +782,9 @@
     "explanation_ken": "見積書は契約成立「前」に出すものだ。契約した後に見積書を渡しても意味がない。(4)の「成立後に」というのが完全に誤りだ，答えは4番だ。"
   },
   {
-    "id": "R5-KOU-35",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_35",
+    "year": 2023,
+    "session": "後期",
     "no": 35,
     "block": "C",
     "required": false,
@@ -805,9 +805,9 @@
     "explanation_ken": "主任技術者の仕事は施工計画・工程管理・品質管理・安全管理だ。下請業者の雇用管理を指導するのは主任技術者の職務ではない。雇用のことは各社が責任を持って管理する。(3)が誤り，答えは3番だ。"
   },
   {
-    "id": "R5-KOU-36",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_36",
+    "year": 2023,
+    "session": "後期",
     "no": 36,
     "block": "C",
     "required": false,
@@ -828,9 +828,9 @@
     "explanation_ken": "就業規則に必ず書かなきゃいけないのは，労働時間・賃金・退職の3本柱だ。服務規律は「定めがあれば書く」相対的必要記載事項だ。義務じゃない。答えは1番だ。"
   },
   {
-    "id": "R5-KOU-37",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_37",
+    "year": 2023,
+    "session": "後期",
     "no": 37,
     "block": "C",
     "required": false,
@@ -851,9 +851,9 @@
     "explanation_ken": "会社都合で休業させたら，平均賃金の60%以上を払わなければならない。これは労基法26条の規定だ。「標準報酬月額」は社会保険の話，ここは「平均賃金」だ。(ア)平均賃金，(イ)60，答えは2番だ。"
   },
   {
-    "id": "R5-KOU-38",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_38",
+    "year": 2023,
+    "session": "後期",
     "no": 38,
     "block": "C",
     "required": false,
@@ -874,9 +874,9 @@
     "explanation_ken": "地山の掘削で作業主任者が必要なのは掘削面の高さが2m以上からだ。1.5mなら選任不要だ。これが誤り。鉄塔・足場・コンクリート解体の5mは全部必要なので正しい。答えは1番だ。"
   },
   {
-    "id": "R5-KOU-39",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_39",
+    "year": 2023,
+    "session": "後期",
     "no": 39,
     "block": "C",
     "required": false,
@@ -897,9 +897,9 @@
     "explanation_ken": "雇い入れ時の安全衛生教育は作業の安全・健康に関する内容だ。点検，整理整頓，事故対応，これらは全部安全教育の内容だ。「退職に関すること」は安全教育とは全く関係ない，労務管理の話だ。答えは2番だ。"
   },
   {
-    "id": "R5-KOU-40",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_40",
+    "year": 2023,
+    "session": "後期",
     "no": 40,
     "block": "C",
     "required": false,
@@ -920,9 +920,9 @@
     "explanation_ken": "2級河川は都道府県知事が指定する。市町村長が指定・管理するのは「準用河川」だ。1級・2級・準用の3段階を整理して覚えておけ。(4)が誤りで答えは4番だ。"
   },
   {
-    "id": "R5-KOU-41",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_41",
+    "year": 2023,
+    "session": "後期",
     "no": 41,
     "block": "C",
     "required": false,
@@ -943,9 +943,9 @@
     "explanation_ken": "通信の秘密は退職後も守らなきゃいけない。「職を退くまでの間」という時間制限は設けていない，永続する義務だ。仕事辞めたら漏らしていいわけがない。(4)が誤りで答えは4番だ。"
   },
   {
-    "id": "R5-KOU-42",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_42",
+    "year": 2023,
+    "session": "後期",
     "no": 42,
     "block": "C",
     "required": false,
@@ -966,9 +966,9 @@
     "explanation_ken": "電柱の足場金具は地面から1.8m未満に付けてはいけない。子供やいたずらによじ登られないための安全規定だ。この数字は現場でも重要，1.8mをしっかり覚えておけ。答えは2番だ。"
   },
   {
-    "id": "R5-KOU-43",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_43",
+    "year": 2023,
+    "session": "後期",
     "no": 43,
     "block": "C",
     "required": false,
@@ -989,9 +989,9 @@
     "explanation_ken": "無線局の免許申請書に添付する書類には，目的・通信相手と通信事項・開設理由が必要だ。無線従事者の氏名は申請段階では記載事項に含まれない。(4)が誤りで答えは4番だ。"
   },
   {
-    "id": "R5-KOU-44",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_44",
+    "year": 2023,
+    "session": "後期",
     "no": 44,
     "block": "C",
     "required": false,
@@ -1012,9 +1012,9 @@
     "explanation_ken": "建設現場で工作物を解体したときに出る廃棄物は，木くず・繊維くず・紙くず・コンクリートがれき，全部産業廃棄物だ。一般廃棄物じゃない，家庭ごみと混同するな。(3)の木くずは産業廃棄物で正しい，答えは3番だ。"
   },
   {
-    "id": "R5-KOU-45",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_45",
+    "year": 2023,
+    "session": "後期",
     "no": 45,
     "block": "D",
     "required": true,
@@ -1035,9 +1035,9 @@
     "explanation_ken": "材料の仕入れ方法は受注者が自分で決める話だ，監督員にお伺いを立てる必要はない。設計図書に問題がある場合（現場と合わない，誤り，脱漏，不明確）は必ず監督員に通知して確認を取れ。答えは4番だ。"
   },
   {
-    "id": "R5-KOU-46",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_46",
+    "year": 2023,
+    "session": "後期",
     "no": 46,
     "block": "E",
     "required": false,
@@ -1058,9 +1058,9 @@
     "explanation_ken": "金属線び工事は乾燥した点検できる隠蔽場所に施設できる。「できない」は誤りだ。できないのは湿気の多い場所等だ。工事種別と施設可能場所の組み合わせは試験で必ず出る，しっかり覚えておけ。答えは2番だ。"
   },
   {
-    "id": "R5-KOU-47",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_47",
+    "year": 2023,
+    "session": "後期",
     "no": 47,
     "block": "E",
     "required": false,
@@ -1081,9 +1081,9 @@
     "explanation_ken": "直流電動機は固定した磁束を使う，回転磁界は交流誘導モータの話だ。電流と磁束で電磁力（フレミング左手の法則）が生まれてトルクになる。「すべり」も誘導モータの用語だ。(ア)磁束，(イ)電磁力，答えは3番だ。"
   },
   {
-    "id": "R5-KOU-48",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_48",
+    "year": 2023,
+    "session": "後期",
     "no": 48,
     "block": "E",
     "required": false,
@@ -1104,9 +1104,9 @@
     "explanation_ken": "AC400Vはれっきとした高電圧だ。C種接地工事は乾燥場所でも省略できない。D種なら条件によって省略できる場合があるが，C種は絶対にやれ。(3)の「施設しなくてもよい」が誤りで答えは3番だ。"
   },
   {
-    "id": "R5-KOU-49",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_49",
+    "year": 2023,
+    "session": "後期",
     "no": 49,
     "block": "E",
     "required": false,
@@ -1127,9 +1127,9 @@
     "explanation_ken": "第1種機械換気は給気も排気も両方機械でやる，だから室内圧力を自在に調整できる。自然換気は送風機なし，第2種は給気のみ（正圧），第3種は排気のみ（負圧）。(2)が正しい，答えは2番だ。"
   },
   {
-    "id": "R5-KOU-50",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_50",
+    "year": 2023,
+    "session": "後期",
     "no": 50,
     "block": "E",
     "required": false,
@@ -1150,9 +1150,9 @@
     "explanation_ken": "1号消火栓は2人以上必要だ。一人がホースを持って火元に向かい，もう一人がバルブを操作する，2人でチームを組んで使うものだ。1人で使えるのは2号消火栓だ。(4)が誤りで答えは4番だ。"
   },
   {
-    "id": "R5-KOU-51",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_51",
+    "year": 2023,
+    "session": "後期",
     "no": 51,
     "block": "E",
     "required": false,
@@ -1173,9 +1173,9 @@
     "explanation_ken": "上下に振動板をたたきつけて締め固める，ハンドガイド式の小型機械──これがランマーだ。狭い場所でもスイスイ使えて現場では大活躍だ。ローラー系は転圧（転がす）で締め固める，機械のイメージを頭に入れておけ。答えは1番だ。"
   },
   {
-    "id": "R5-KOU-52",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_52",
+    "year": 2023,
+    "session": "後期",
     "no": 52,
     "block": "E",
     "required": false,
@@ -1196,9 +1196,9 @@
     "explanation_ken": "コンクリートの運搬時間の起点は「練混ぜ開始」だ。工場出荷じゃない。水と混ぜた瞬間から水和反応が始まるから，そこから1.5時間以内に現場に届けなければならない。(ア)練混ぜを開始，(イ)1.5，答えは3番だ。"
   },
   {
-    "id": "R5-KOU-53",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_53",
+    "year": 2023,
+    "session": "後期",
     "no": 53,
     "block": "F",
     "required": true,
@@ -1219,9 +1219,9 @@
     "explanation_ken": "UTPケーブルの曲げ半径は外径の4倍以上（延線時は8倍以上）が必要だ。「外径と同じ」つまり1倍では曲げすぎで，内部の対撚りが崩れてしまう。伝送特性が劣化する原因になる。答えは4番だ。"
   },
   {
-    "id": "R5-KOU-54",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_54",
+    "year": 2023,
+    "session": "後期",
     "no": 54,
     "block": "F",
     "required": true,
@@ -1242,9 +1242,9 @@
     "explanation_ken": "通信ケーブルと電力ケーブルを一緒に束ねるのは厳禁だ。電力ケーブルの電磁誘導でデータ通信が乱れる。現場では必ず分離して布設しろ。(3)が誤りで答えは3番だ。"
   },
   {
-    "id": "R5-KOU-55",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_55",
+    "year": 2023,
+    "session": "後期",
     "no": 55,
     "block": "F",
     "required": true,
@@ -1265,9 +1265,9 @@
     "explanation_ken": "資材計画は材料・部材の調達と管理の話だ。機械の機種や台数を決めるのは「機械計画」だ。資材と機械をごっちゃにするな。(4)が誤りで答えは4番だ。"
   },
   {
-    "id": "R5-KOU-56",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_56",
+    "year": 2023,
+    "session": "後期",
     "no": 56,
     "block": "F",
     "required": true,
@@ -1288,9 +1288,9 @@
     "explanation_ken": "機械等設置届は所轄労基署長に出す，これは正しい。特殊車両は警察じゃなく道路管理者，無線局は総務大臣（総通局），消防設備は消防署長だ。全部提出先が違う，現場でも必要な知識だ。答えは1番だ。"
   },
   {
-    "id": "R5-KOU-57",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_57",
+    "year": 2023,
+    "session": "後期",
     "no": 57,
     "block": "F",
     "required": true,
@@ -1311,9 +1311,9 @@
     "explanation_ken": "グラフ式工程表は縦軸が出来高比率，横軸が日数で各工種の工程を斜線で表す，これが正しい。バーチャートと違いS字カーブで全体進捗が見える。グラフ式，バーチャート，ガントチャートの違いを整理しておけ。答えは4番だ。"
   },
   {
-    "id": "R5-KOU-58",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_58",
+    "year": 2023,
+    "session": "後期",
     "no": 58,
     "block": "F",
     "required": true,
@@ -1334,9 +1334,9 @@
     "explanation_ken": "工程管理は速度だけを追うものじゃない。品質も安全も全部含めてバランスよく管理するのが本物の工程管理だ。安全を無視したら事故になる，品質を無視したら手直しになる。(3)は完全に誤り，答えは3番だ。"
   },
   {
-    "id": "R5-KOU-59",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_59",
+    "year": 2023,
+    "session": "後期",
     "no": 59,
     "block": "F",
     "required": true,
@@ -1357,9 +1357,9 @@
     "explanation_ken": "送信機とアンテナの間に測定装置を入れてそのまま電波を通しながら測る──これが通過形電力測定法だ。終端形はダミーロードに接続して電波を出さずに測る方法だ。図を見て構成をイメージしろ。答えは3番だ。"
   },
   {
-    "id": "R5-KOU-60",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_60",
+    "year": 2023,
+    "session": "後期",
     "no": 60,
     "block": "F",
     "required": true,
@@ -1380,9 +1380,9 @@
     "explanation_ken": "負の相関はxが増えるとyが減る関係だ。散布図では点が右下がりに並ぶ。正の相関は右上がり，無相関はバラバラ。品質管理のQC7つ道具の一つ，散布図の読み方は基本中の基本だ。答えは1番だ。"
   },
   {
-    "id": "R5-KOU-61",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_61",
+    "year": 2023,
+    "session": "後期",
     "no": 61,
     "block": "F",
     "required": true,
@@ -1403,9 +1403,9 @@
     "explanation_ken": "いくら熟練の職人でも感電のおそれがある場合は絶縁保護具を着けなければならない。「熟練者だから不要」は完全に誤りだ。安全は経験に関係なく守るものだ，これが法律の要求だ。答えは2番だ。"
   },
   {
-    "id": "R5-KOU-62",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_62",
+    "year": 2023,
+    "session": "後期",
     "no": 62,
     "block": "G",
     "required": true,
@@ -1426,9 +1426,9 @@
     "explanation_ken": "②の浸水検知センサは光成端箱の部品じゃない。④はBOX型が最大容量というのが誤り，自立型（ラック型）が最大だ。①と③は正しい記述だ。答えは①③の組み合わせ，1番だ。"
   },
   {
-    "id": "R5-KOU-63",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_63",
+    "year": 2023,
+    "session": "後期",
     "no": 63,
     "block": "G",
     "required": true,
@@ -1449,9 +1449,9 @@
     "explanation_ken": "事前調査で必要なのは，まず図面・仕様書・契約書を読み込んで工事量を把握すること①，そして機材を運ぶルートや道路状況を調べること④だ。利益計算②は原価管理，仮設備計画③は計画立案の話で事前調査ではない。答えは①④の2番だ。"
   },
   {
-    "id": "R5-KOU-64",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_64",
+    "year": 2023,
+    "session": "後期",
     "no": 64,
     "block": "G",
     "required": true,
@@ -1472,9 +1472,9 @@
     "explanation_ken": "①は「常に一致する」なんてありえない，それじゃ管理の必要がない。③のヒステリシス曲線は磁気の話で工程管理には出てこない，有名なのはバナナ曲線だ。②と④は正しい。答えは②④の4番だ。"
   },
   {
-    "id": "R5-KOU-65",
-    "year": "R5",
-    "session": "kouki",
+    "id": "r5_kouki_65",
+    "year": 2023,
+    "session": "後期",
     "no": 65,
     "block": "G",
     "required": true,

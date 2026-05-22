@@ -2,7 +2,7 @@
   {
     "id": "r2_zenki_1",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 1,
     "block": "A",
     "required": false,
@@ -25,7 +25,7 @@
   {
     "id": "r2_zenki_2",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 2,
     "block": "A",
     "required": false,
@@ -48,7 +48,7 @@
   {
     "id": "r2_zenki_3",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 3,
     "block": "A",
     "required": false,
@@ -71,7 +71,7 @@
   {
     "id": "r2_zenki_4",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 4,
     "block": "A",
     "required": false,
@@ -94,7 +94,7 @@
   {
     "id": "r2_zenki_5",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 5,
     "block": "A",
     "required": false,
@@ -117,7 +117,7 @@
   {
     "id": "r2_zenki_6",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 6,
     "block": "A",
     "required": false,
@@ -140,7 +140,7 @@
   {
     "id": "r2_zenki_7",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 7,
     "block": "A",
     "required": false,
@@ -163,7 +163,7 @@
   {
     "id": "r2_zenki_8",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 8,
     "block": "A",
     "required": false,
@@ -186,7 +186,7 @@
   {
     "id": "r2_zenki_9",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 9,
     "block": "A",
     "required": false,
@@ -209,7 +209,7 @@
   {
     "id": "r2_zenki_10",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 10,
     "block": "A",
     "required": false,
@@ -232,7 +232,7 @@
   {
     "id": "r2_zenki_11",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 11,
     "block": "A",
     "required": false,
@@ -255,7 +255,7 @@
   {
     "id": "r2_zenki_12",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 12,
     "block": "A",
     "required": false,
@@ -278,7 +278,7 @@
   {
     "id": "r2_zenki_13",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 13,
     "block": "B",
     "required": false,
@@ -301,7 +301,7 @@
   {
     "id": "r2_zenki_14",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 14,
     "block": "B",
     "required": false,
@@ -324,7 +324,7 @@
   {
     "id": "r2_zenki_15",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 15,
     "block": "B",
     "required": false,
@@ -347,7 +347,7 @@
   {
     "id": "r2_zenki_16",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 16,
     "block": "B",
     "required": false,
@@ -370,7 +370,7 @@
   {
     "id": "r2_zenki_17",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 17,
     "block": "B",
     "required": false,
@@ -393,7 +393,7 @@
   {
     "id": "r2_zenki_18",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 18,
     "block": "B",
     "required": false,
@@ -416,7 +416,7 @@
   {
     "id": "r2_zenki_19",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 19,
     "block": "B",
     "required": false,
@@ -439,7 +439,7 @@
   {
     "id": "r2_zenki_20",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 20,
     "block": "B",
     "required": false,
@@ -462,7 +462,7 @@
   {
     "id": "r2_zenki_21",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 21,
     "block": "B",
     "required": false,
@@ -485,7 +485,7 @@
   {
     "id": "r2_zenki_22",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 22,
     "block": "B",
     "required": false,
@@ -508,7 +508,7 @@
   {
     "id": "r2_zenki_23",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 23,
     "block": "B",
     "required": false,
@@ -531,7 +531,7 @@
   {
     "id": "r2_zenki_24",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 24,
     "block": "B",
     "required": false,
@@ -554,7 +554,7 @@
   {
     "id": "r2_zenki_25",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 25,
     "block": "B",
     "required": false,
@@ -577,7 +577,7 @@
   {
     "id": "r2_zenki_26",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 26,
     "block": "B",
     "required": false,
@@ -600,7 +600,7 @@
   {
     "id": "r2_zenki_27",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 27,
     "block": "B",
     "required": false,
@@ -623,7 +623,7 @@
   {
     "id": "r2_zenki_28",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 28,
     "block": "B",
     "required": false,
@@ -646,7 +646,7 @@
   {
     "id": "r2_zenki_29",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 29,
     "block": "B",
     "required": false,
@@ -669,7 +669,7 @@
   {
     "id": "r2_zenki_30",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 30,
     "block": "B",
     "required": false,
@@ -692,7 +692,7 @@
   {
     "id": "r2_zenki_31",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 31,
     "block": "B",
     "required": false,
@@ -715,7 +715,7 @@
   {
     "id": "r2_zenki_32",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 32,
     "block": "B",
     "required": false,
@@ -738,7 +738,7 @@
   {
     "id": "r2_zenki_33",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 33,
     "block": "C",
     "required": false,
@@ -761,7 +761,7 @@
   {
     "id": "r2_zenki_34",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 34,
     "block": "C",
     "required": false,
@@ -784,7 +784,7 @@
   {
     "id": "r2_zenki_35",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 35,
     "block": "C",
     "required": false,
@@ -807,7 +807,7 @@
   {
     "id": "r2_zenki_36",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 36,
     "block": "C",
     "required": false,
@@ -830,7 +830,7 @@
   {
     "id": "r2_zenki_37",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 37,
     "block": "C",
     "required": false,
@@ -853,7 +853,7 @@
   {
     "id": "r2_zenki_38",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 38,
     "block": "C",
     "required": false,
@@ -876,7 +876,7 @@
   {
     "id": "r2_zenki_39",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 39,
     "block": "C",
     "required": false,
@@ -899,7 +899,7 @@
   {
     "id": "r2_zenki_40",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 40,
     "block": "C",
     "required": false,
@@ -922,7 +922,7 @@
   {
     "id": "r2_zenki_41",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 41,
     "block": "C",
     "required": false,
@@ -945,7 +945,7 @@
   {
     "id": "r2_zenki_42",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 42,
     "block": "C",
     "required": false,
@@ -968,7 +968,7 @@
   {
     "id": "r2_zenki_43",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 43,
     "block": "C",
     "required": false,
@@ -991,7 +991,7 @@
   {
     "id": "r2_zenki_44",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 44,
     "block": "C",
     "required": false,
@@ -1014,7 +1014,7 @@
   {
     "id": "r2_zenki_45",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 45,
     "block": "D",
     "required": true,
@@ -1037,7 +1037,7 @@
   {
     "id": "r2_zenki_46",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 46,
     "block": "E",
     "required": false,
@@ -1060,7 +1060,7 @@
   {
     "id": "r2_zenki_47",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 47,
     "block": "E",
     "required": false,
@@ -1083,7 +1083,7 @@
   {
     "id": "r2_zenki_48",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 48,
     "block": "E",
     "required": false,
@@ -1106,7 +1106,7 @@
   {
     "id": "r2_zenki_49",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 49,
     "block": "E",
     "required": false,
@@ -1129,7 +1129,7 @@
   {
     "id": "r2_zenki_50",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 50,
     "block": "E",
     "required": false,
@@ -1152,7 +1152,7 @@
   {
     "id": "r2_zenki_51",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 51,
     "block": "E",
     "required": false,
@@ -1175,7 +1175,7 @@
   {
     "id": "r2_zenki_52",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 52,
     "block": "E",
     "required": false,
@@ -1198,7 +1198,7 @@
   {
     "id": "r2_zenki_53",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 53,
     "block": "F",
     "required": true,
@@ -1221,7 +1221,7 @@
   {
     "id": "r2_zenki_54",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 54,
     "block": "F",
     "required": true,
@@ -1244,7 +1244,7 @@
   {
     "id": "r2_zenki_55",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 55,
     "block": "F",
     "required": true,
@@ -1267,7 +1267,7 @@
   {
     "id": "r2_zenki_56",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 56,
     "block": "F",
     "required": true,
@@ -1290,7 +1290,7 @@
   {
     "id": "r2_zenki_57",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 57,
     "block": "F",
     "required": true,
@@ -1313,7 +1313,7 @@
   {
     "id": "r2_zenki_58",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 58,
     "block": "F",
     "required": true,
@@ -1336,7 +1336,7 @@
   {
     "id": "r2_zenki_59",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 59,
     "block": "F",
     "required": true,
@@ -1359,7 +1359,7 @@
   {
     "id": "r2_zenki_60",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 60,
     "block": "F",
     "required": true,
@@ -1382,7 +1382,7 @@
   {
     "id": "r2_zenki_61",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 61,
     "block": "F",
     "required": true,
@@ -1405,7 +1405,7 @@
   {
     "id": "r2_zenki_62",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 62,
     "block": "G",
     "required": true,
@@ -1428,7 +1428,7 @@
   {
     "id": "r2_zenki_63",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 63,
     "block": "G",
     "required": true,
@@ -1451,7 +1451,7 @@
   {
     "id": "r2_zenki_64",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 64,
     "block": "G",
     "required": true,
@@ -1474,7 +1474,7 @@
   {
     "id": "r2_zenki_65",
     "year": 2020,
-    "session": "後期",
+    "session": "前期",
     "no": 65,
     "block": "G",
     "required": true,
