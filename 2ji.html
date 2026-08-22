@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>あなたの番号は、そこにありましたか。— 1級建築施工管理技士 第二次検定</title>
+<meta name="description" content="1級建築施工管理技士 第二次検定。合格まで7年かかった現場所長が、逆算工程表と経験記述のネタ出しシートをお渡しします。" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== Design System : Blueprint （単一ファイル化のためインライン） ===== */
+:root{
+  --color-bg:#0C1826;
+  --color-surface:#132538;
+  --color-surface-2:#0A1421;
+  --color-text:#E9EFF4;
+  --color-muted:#8FB0CB;
+  --color-neutral-300:#B7C9D8;
+  --color-neutral-600:#4A6884;
+  --color-line:#27405C;
+  --color-accent:#FF6A13;
+  --color-accent-200:#FFB27A;
+  --color-accent-2:#FFC83D;
+
+  --font-body:"Noto Serif JP",serif;
+  --font-mono:"JetBrains Mono",monospace;
+
+  --space-2:8px;  --space-3:12px; --space-4:16px;
+  --space-6:24px; --space-8:32px;
+
+  --edge:clamp(20px,6vw,88px);
+  --gap:clamp(44px,7vw,96px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--color-bg);
+  color:var(--color-text);
+  font-family:var(--font-body);
+  line-height:2;
+  letter-spacing:.04em;
+  -webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;
+  overflow-x:hidden;
+}
+/* 設計図面の方眼グリッド */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(143,176,203,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(143,176,203,.05) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 var(--edge);position:relative;z-index:1}
+section{padding:var(--gap) 0}
+strong{font-weight:700;color:#fff}
+
+.kicker{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--color-muted);margin:0 0 var(--space-4)}
+h2{font-size:clamp(22px,4.4vw,32px);line-height:1.75;margin:0 0 var(--space-6);font-weight:700}
+h3{font-size:clamp(18px,3.4vw,25px);line-height:1.7;font-weight:700}
+p{font-size:clamp(15px,2.6vw,17px);line-height:2;max-width:64ch;margin:0 0 1.5em}
+p:last-child{margin-bottom:0}
+.lead{font-size:clamp(16px,3vw,19px)}
+.rule{height:0;border:0;border-top:1px solid var(--color-line);margin:0}
+
+/* hero：ファーストビュー完結型 */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(64px,10vh,96px) 0 clamp(40px,7vh,64px)}
+.hero .date{font-family:var(--font-mono);font-weight:700;font-size:clamp(96px,29vw,260px);
+  line-height:.82;letter-spacing:-.03em;margin:0;color:var(--color-text)}
+.hero .date span{color:var(--color-accent)}
+.hero h1{font-size:clamp(28px,7.4vw,60px);line-height:1.45;margin:clamp(18px,3vh,28px) 0 0;
+  max-width:16ch;font-weight:700}
+.hero .sub{color:var(--color-neutral-300);margin-top:clamp(16px,2.6vh,24px);
+  font-size:clamp(15px,3vw,18px);line-height:1.95;max-width:34ch}
+.hero .sub b{color:#fff;font-weight:700}
+/* ヒーロー内カウントダウン帯 */
+.hero-count{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  margin-top:clamp(22px,3.4vh,34px);padding-top:clamp(16px,2.4vh,22px);
+  border-top:2px solid var(--color-accent)}
+.hero-count .hc-l{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--color-muted);width:100%}
+.hero-count .hc-n{font-family:var(--font-mono);font-weight:700;color:var(--color-accent);
+  font-size:clamp(46px,12vw,84px);line-height:1;letter-spacing:-.02em}
+.hero-count .hc-u{font-size:clamp(15px,3vw,20px);color:var(--color-text)}
+.hero .sig{margin-top:clamp(20px,3vh,30px);font-size:13px;line-height:1.9;
+  color:var(--color-muted);max-width:40ch}
+.hero .sig b{color:var(--color-text);font-weight:700}
+
+/* two choices */
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2.5vw,24px)}
+.choice{background:var(--color-surface);border:1px solid var(--color-line);
+  padding:clamp(18px,3.5vw,30px);display:flex;flex-direction:column;gap:var(--space-3)}
+.choice .tagline{font-family:var(--font-mono);font-size:12px;letter-spacing:.2em;color:var(--color-muted)}
+.choice h3{margin:0;line-height:1.6}
+.choice p{font-size:clamp(13px,2.4vw,15px);line-height:1.9;margin:0;color:var(--color-neutral-300)}
+.choice-a{border-top:2px solid var(--color-accent-2);background:var(--color-surface)}
+.choice-b{background:var(--color-surface-2)}
+
+/* numbered list */
+.stack{display:grid;gap:clamp(28px,5vw,52px)}
+.item{display:grid;grid-template-columns:74px 1fr;gap:clamp(14px,3vw,28px);align-items:start}
+.item .no{font-family:var(--font-mono);font-weight:500;font-size:clamp(28px,6vw,44px);
+  line-height:1;color:var(--color-accent)}
+.item h3{margin:0 0 var(--space-2)}
+.item p{margin:0;color:var(--color-neutral-300)}
+
+/* pull statement */
+.pull{border-left:2px solid var(--color-accent);padding-left:clamp(18px,4vw,36px);margin:var(--space-8) 0}
+.pull p{font-size:clamp(18px,4vw,30px);line-height:1.85;max-width:26ch;margin:0;font-weight:700;color:#fff}
+.pull.calm{border-left-color:var(--color-muted)}
+
+/* panel */
+.panel{background:var(--color-surface);border:1px solid var(--color-line);
+  padding:clamp(22px,4vw,34px);margin:var(--space-8) 0}
+.panel.warn{border-left:3px solid var(--color-accent)}
+.panel.quiet{background:transparent;border:1px dashed var(--color-line)}
+.panel h3{margin:0 0 var(--space-4)}
+
+/* marks list */
+ul.marks{list-style:none;margin:var(--space-6) 0}
+ul.marks li{padding:14px 0 14px 26px;border-bottom:1px solid var(--color-line);
+  position:relative;font-size:15px;line-height:1.95}
+ul.marks li::before{content:"";position:absolute;left:2px;top:24px;
+  width:7px;height:7px;background:var(--color-accent)}
+ul.marks li:last-child{border-bottom:none}
+
+/* translation table */
+.tt{width:100%;border-collapse:collapse;margin:var(--space-6) 0}
+.tt th{text-align:left;font-family:var(--font-mono);font-size:11px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--color-muted);
+  padding:0 0 var(--space-3);border-bottom:1px solid var(--color-line)}
+.tt th+th,.tt td+td{padding-left:clamp(14px,4vw,44px)}
+.tt td{padding:var(--space-4) 0;border-bottom:1px solid rgba(39,64,92,.6);
+  font-size:clamp(14px,2.6vw,17px);line-height:1.8;vertical-align:top}
+.tt td+td{color:var(--color-accent-200)}
+
+/* questions */
+.qs{display:grid;gap:clamp(20px,4vw,36px);grid-template-columns:1fr 1fr}
+.q{border-top:1px solid var(--color-line);padding-top:var(--space-4)}
+.q .qlabel{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--color-muted);margin:0}
+.q p.qt{margin:var(--space-2) 0 0;font-size:clamp(15px,2.8vw,19px);line-height:1.9;color:#fff}
+.q p.qs-note{margin:var(--space-2) 0 0;font-size:13px;color:var(--color-muted)}
+
+/* skip link */
+.skip{font-size:13px;color:var(--color-muted);border:1px dashed var(--color-line);
+  padding:14px 16px;margin-bottom:var(--space-8);line-height:1.9;max-width:none}
+.skip a{color:var(--color-accent-2);text-decoration:underline;text-underline-offset:3px}
+
+/* gantt */
+.gantt-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:var(--space-3)}
+.gantt{min-width:760px;position:relative}
+.grow{display:grid;grid-template-columns:196px repeat(8,1fr) 72px;align-items:center}
+.ghead{border-bottom:1px solid var(--color-line);padding-bottom:var(--space-2)}
+.ghead div{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;
+  color:var(--color-muted);text-align:center}
+.ghead div:first-child{text-align:left;letter-spacing:.16em;text-transform:uppercase}
+.ghead .ms{color:var(--color-accent);white-space:nowrap;font-weight:500}
+.grow.task{min-height:44px;border-bottom:1px solid rgba(39,64,92,.55)}
+.grow.task .tname{font-size:14px;line-height:1.5;padding-right:var(--space-3)}
+.bar{grid-row:1;height:16px;margin:0 2px}
+.bar-c{background:var(--color-accent)}
+.bar-o{border:1px solid var(--color-neutral-600);background:rgba(19,37,56,.9)}
+.gantt .msline{position:absolute;top:0;bottom:0;right:72px;width:2px;
+  background:var(--color-accent-2);pointer-events:none}
+.glegend{display:flex;gap:var(--space-6);flex-wrap:wrap;margin-top:var(--space-4);
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--color-muted)}
+.glegend span{display:flex;align-items:center;gap:8px}
+.glegend i{width:26px;height:10px;display:block}
+.scroll-hint{font-size:11px;color:var(--color-muted);text-align:center;margin-top:var(--space-3)}
+@media(min-width:800px){.scroll-hint{display:none}}
+
+/* future */
+.future{display:grid;gap:clamp(16px,3vw,24px)}
+.future p{margin:0;max-width:64ch}
+
+/* cta */
+.cta{padding:calc(var(--gap) * 1.1) 0 calc(var(--gap) * 1.2);border-top:1px solid var(--color-line)}
+.cta h2{max-width:24ch}
+.gift{border:1px solid var(--color-line);background:var(--color-surface);
+  padding:clamp(20px,3.5vw,28px);margin:var(--space-6) 0}
+.gift .gl{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;
+  color:var(--color-accent);margin:0 0 var(--space-2)}
+.gift h3{font-size:clamp(16px,3vw,20px);margin:0 0 var(--space-2)}
+.gift p{font-size:14px;color:var(--color-neutral-300);margin:0;line-height:1.9}
+.btn{display:inline-block;background:var(--color-accent);color:#0C1826;text-decoration:none;
+  font-weight:700;font-size:16px;letter-spacing:.08em;padding:20px 44px;
+  margin-top:var(--space-8);border:none;transition:transform .18s ease,filter .18s ease}
+.btn:hover{filter:brightness(1.12);transform:translateY(-2px)}
+.btn:focus-visible{outline:3px solid var(--color-accent-2);outline-offset:4px}
+.fine{font-size:12.5px;letter-spacing:.04em;color:var(--color-muted);
+  margin-top:var(--space-6);line-height:2;max-width:52ch}
+footer{border-top:1px solid var(--color-line);padding:var(--space-8) 0;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--color-muted)}
+
+@media (max-width:720px){
+  .choices,.qs,.future{grid-template-columns:1fr}
+  .item{grid-template-columns:52px 1fr}
+  .tt th:first-child,.tt td:first-child{width:44%}
+  .btn{display:block;text-align:center;padding:20px}
+}
+/* reveal */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.rv.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+  .btn{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 01 HERO -->
+  <section class="hero">
+    <p class="kicker">1級建築施工管理技士 — 第二次検定</p>
+    <p class="date">8<span>/</span>25</p>
+    <h1>あなたの番号は、そこにありましたか。</h1>
+    <p class="sub">一次試験合格、おめでとうございます。<br><b>——ですが、本当の試験は、ここからです。</b></p>
+
+    <div class="hero-count">
+      <span class="hc-l">10.18 第二次検定まで</span>
+      <span class="hc-n" id="cd">54</span>
+      <span class="hc-u">日</span>
+    </div>
+
+    <p class="sig"><b>セコカン金太朗</b>と申します。<br>1級建築施工管理技士。合格まで、<b>7年</b>かかりました。</p>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 02 A/B -->
+  <section class="rv">
+    <p class="kicker">10月18日、17時</p>
+    <h2>二次試験本番日に、あなたは二つのうちどちらかにいますか。</h2>
+    <div class="choices">
+      <div class="choice choice-a">
+        <p class="tagline">A</p>
+        <h3>書くべきことを、書き終えて出てくる</h3>
+        <p>設問の順に手が動いた。骨子は八月に決め、他人に三度読まれ、直してある。会場で考えたのは配分だけ。答案は、当日ではなく八週間で決まっていた。</p>
+        <p>スマホを開いて、家族に一言だけ送る。「終わった」。</p>
+      </div>
+      <div class="choice choice-b">
+        <p class="tagline">B</p>
+        <h3>答案の記憶を、なぞりながら帰る</h3>
+        <p>経験記述の欄に、空白が残った。何を書いたか、もう思い出せない。電車の中で、天井を見ている。「また来年か」——その言葉が、頭の中で何度も再生される。</p>
+        <p>そして、去年もこの電車に乗っていたことを思い出す。</p>
+      </div>
+    </div>
+    <div class="pull"><p>合格と不合格を分けるのは、10月18日ではありません。今日からの時間の使い方です。</p></div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 03 欲しかったもの／2年で消える -->
+  <section class="rv">
+    <p class="kicker">Expiry</p>
+    <h2>あなたが欲しかったのは、画面に並んだ数字ではないはずです。</h2>
+    <p>朝礼で、何も言っていないのに話が通る感覚。新しい名刺を、指でなぞったときの手触り。「まだ持ってないの」と、二度と言われない立場。そして——<strong>家に帰って、「取れたよ」と言えること。</strong></p>
+    <div class="pull"><p>そして、一次試験の合格は2年で消えます。</p></div>
+    <p>第一次検定の合格は、翌年度までしか第二次検定の受検資格になりません。<strong>この番号が使えるのは、今年と来年の二回だけです。</strong>そのうえ、残された日数はあなたのために空いていません。来週も現場は動きます。工程は押します。<strong>本当に使えるのは、その半分もありません。</strong></p>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 04 分岐＋リベンジ層 -->
+  <section class="rv">
+    <p class="kicker">Segment</p>
+    <h2>やることは、やってきたはずです。</h2>
+    <p>このページを読んでいる方は、たぶん二通りに分かれます。今日、初めて「第二次検定」という壁の前に立った人。そして、この壁の前に立つのが、これで<strong>3度目、4度目</strong>という人。</p>
+    <p>——後者の方へ。</p>
+    <p>有料講座に通いました。会社が講師を呼んでくれた年もありました。テキストは3冊買いました。過去問は10年分回しました。</p>
+    <div class="pull"><p>それでも、落ちました。</p></div>
+    <p><strong>あなたに足りなかったのは、勉強量ではありません。</strong>今年こそ、去年と同じ勉強をしないでください。同じことをして違う結果を期待するほど、残酷なことはありません。</p>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 04 正直に言う3つ -->
+  <section class="rv">
+    <p class="kicker">正直に言う</p>
+    <h2>先に、三つ申し上げます。</h2>
+    <div class="stack">
+      <div class="item"><span class="no">01</span><div><h3>私は7年かかりました</h3><p>一度で通った人の話ではありません。落ちた年の答案も、何が足りなかったのかを後から知った経験も、全部こちら側にあります。</p></div></div>
+      <div class="item"><span class="no">02</span><div><h3>資格学校の講師ではありません</h3><p>教えることを職業にしてきた人間ではなく、現場に立ちながら、同じ検定を7年受け続けた側の人間です。お話しできるのは模範解答の解説ではなく、<strong>どこで詰まり、何をどう変えたら通ったのか</strong>、その道筋のほうです。</p></div></div>
+      <div class="item"><span class="no">03</span><div><h3>このページの最後にあるのは、案内だけです</h3><p>教材も講座も、ここでは並べません。読み終えたあとで、受け取るかどうかを決めていただくだけです。</p></div></div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 05 あの日の記憶 -->
+  <section class="rv" id="memory">
+    <p class="skip">※ ここから先は、<strong>不合格を経験した方に向けた話</strong>が続きます。今年はじめて第二次検定に挑む方は、<a href="#pillars">次の見出しまで飛ばしてください</a>。</p>
+
+    <p class="kicker">あの日の記憶</p>
+    <h2>覚えていますか。</h2>
+
+    <p>合格発表の朝。<br>スクロールする指。自分の番号があるはずの場所。</p>
+    <div class="pull"><p>無かった。</p></div>
+    <p>一度、閉じて、もう一度開きましたよね。見間違いかもしれないと思って。<br>——無かった。</p>
+
+    <p>それから、いちばんきつかったのは、<strong>落ちたことそのものじゃなかったはずです。</strong></p>
+
+    <ul class="marks">
+      <li>会社に報告したときの、あの一瞬の間。</li>
+      <li>「まあ、来年があるよ」と言ってくれた上司の、優しい顔。</li>
+      <li>講座代を出してくれた会社に、申し訳ないと思ったこと。</li>
+      <li>家族に「どうだった？」と聞かれて、一瞬、なんて答えるか迷ったこと。</li>
+      <li>現場に出て、いつも通り朝礼をやったこと。誰も何も聞いてこなかったこと。</li>
+    </ul>
+
+    <div class="panel warn">
+      <h3>そのうえで、はっきり言わせてください。</h3>
+      <p><strong>あなたは、サボっていません。</strong></p>
+      <p>講座に通った。テキストも買った。過去問も回した。徹夜もした。会社を休んだ年もあったかもしれない。<strong>やることは、やっていたんです。</strong></p>
+      <p>落ちた理由は、努力の量ではありません。<strong>やる順番と、書く中身が、ズレていただけです。</strong></p>
+      <p style="margin:0">私は7年かかりました。<strong>6回、あの朝を経験しています。</strong><br>だから、これだけは言い切れます。</p>
+    </div>
+
+    <div class="pull"><p>あなたのせいじゃない。</p></div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 06 告白：7年かけないと分からなかった -->
+  <section class="rv" id="pillars">
+    <p class="kicker">告白</p>
+    <h2>7年かけないと、分からなかった。</h2>
+    <p>現場歴18年。数千人規模の現場を任されたこともあります。<strong>現場は、回せました。</strong></p>
+    <p>なのに、資格だけが取れなかった。理由は、今ならはっきり分かります。<strong>計画通りに、学習を続けられなかった。</strong>それだけです。</p>
+    <p>4月には「今年こそ」と思っている。6月には教材が机の上で止まっている。9月になって焦り出す。——毎年、同じでした。</p>
+    <p>誰も、私に「先週どこまで進んだ？」とは聞きませんでした。<br><strong>私には、隣で工程の遅れや間違いを指摘してくれる人がいなかった。</strong></p>
+    <p>最後の年は、試験1週間前から会社を休み、徹夜で机に向かいました。それでも範囲は終わりませんでした。</p>
+    <p>それでも通ったのは、<strong>7年落ち続けてきたからこそ、分かったことがあったからです。</strong>落ちるたびに、何が足りなかったのかが一つずつ見えていた。その蓄積があったから、最後の年に拾えました。</p>
+    <p><strong>ですが、7年かけないと分からないことを、対策とは呼べません。</strong></p>
+    <div class="pull"><p>だから私は、7年かけずに済む方法を作ることにしました。</p></div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 07 四本の柱 -->
+  <section class="rv">
+    <p class="kicker">では、何が分かったのか</p>
+    <h2>四本の柱</h2>
+    <div class="stack">
+      <div class="item"><span class="no">01</span><div><h3>出題範囲は、思っているより狭い</h3><p>過去問を8年分並べ、重複を全部まとめてみたことがあります。膨大に見えていた範囲が、驚くほど薄い束になりました。範囲が広いのではありません。<strong>同じところが、何度も出ているだけです。</strong>それを知らずに、広く浅く回してしまう。私がそうでした。</p></div></div>
+      <div class="item"><span class="no">02</span><div><h3>確実に取れるところを、先に固める</h3><p>法規は暗記でしか取れません。逆に言えば、暗記すれば必ず取れる。ところが多くの人は、不確実な経験記述に時間を吸われ、確実な得点を落とします。<strong>先に固めるべきは、揺れないほうです。</strong>——工程を組むときと、同じ考え方です。</p></div></div>
+      <div class="item"><span class="no">03</span><div><h3>自分の文章は、自分では読めない</h3><p>書いた本人には、何が抜けているか見えません。頭の中にある前提を、紙に書いたつもりになっているからです。他人の答案を読んで、私は初めて理解しました。<strong>「何を言いたいか伝わらない文章」が、どういうものなのか。</strong></p></div></div>
+      <div class="item"><span class="no">04</span><div><h3>当日に考えるから、書けない</h3><p>試験会場で記憶を掘り起こそうとしても、手は動きません。施工管理技士の立ち位置——施主でも、建築士でも、下請でもない、その真ん中に立つ者としての視点から、<strong>品質・合理化・環境</strong>の三本を事前に用意しておく。当日やるのは、組み合わせだけです。<strong>現場と同じで、先に部材を作っておくということです。</strong></p></div></div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 08 採点者は誰か／落ちる答案の共通点 -->
+  <section class="rv">
+    <p class="kicker">問い</p>
+    <h2>答案を採点しているのは、誰ですか。</h2>
+    <p>現場を知っている人が読みます。だから、盛った話は見抜かれ、逆に、本当にやったことでも現場の言葉のままでは評価の欄に載りません。読む相手は、あなたの工事を見ていません。<strong>読めるのは紙に書かれた言葉だけです。</strong></p>
+    <div class="pull calm"><p>採点者は、現場ではなく対策案を見ている。</p></div>
+    <p>そして、落ちる答案には共通点が1つあります。「課題→対策→結果」が書けていないことではありません。<strong>むしろ、そこは全員が書けています。</strong></p>
+    <div class="pull"><p>落ちる答案に無いのは——「なぜ、その対策を選んだのか」です。</p></div>
+    <p>対策が3つあった中で、なぜそれにしたのか。<strong>その判断こそが、施工管理技士の仕事だからです。</strong></p>
+    <div class="panel warn">
+      <p style="margin:0">今から、去年の自分の答案を思い出してください。<br>
+      <strong>「なぜそれを選んだか」、書いてありましたか。</strong><br><br>
+      ——もし書いていなかったなら、それが今年の伸びしろです。</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 09 翻訳表 -->
+  <section class="rv">
+    <p class="kicker">翻訳</p>
+    <h2>現場の行動を、業界の言葉に置き換える。</h2>
+    <table class="tt">
+      <thead><tr><th>現場で言っていること</th><th>答案に書く言葉</th></tr></thead>
+      <tbody>
+        <tr><td>職人に朝いちで声をかけて段取りを確認した</td><td>作業所長による作業前打合せの実施と、作業手順の周知徹底</td></tr>
+        <tr><td>雨が続きそうだから先に上を塞いだ</td><td>気象情報に基づく工程の組替えと、養生による品質確保</td></tr>
+        <tr><td>重機と人の動線が重なるので時間をずらした</td><td>重機と作業員の輻輳を避けるための作業時間帯の分離</td></tr>
+        <tr><td>寸法を測って写真を撮って残した</td><td>出来形の実測記録と写真管理による品質記録の保存</td></tr>
+        <tr><td>手すりが緩んでいたのでその場で締めた</td><td>日常点検による不具合の早期発見と、是正措置の即時実施</td></tr>
+      </tbody>
+    </table>
+    <p>同じ現場の、同じ行動です。変わったのは<strong>「何の文脈に置いたか」</strong>だけ。<br>ここが、有料講座に通っても埋まらなかった差の正体です。</p>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 10 四つの問い -->
+  <section class="rv">
+    <p class="kicker">四つの問い</p>
+    <h2>3分だけ、手を止めて考えてください。</h2>
+    <div class="qs">
+      <div class="q"><p class="qlabel">目的</p><p class="qt">なぜ、この資格を取るのですか。</p><p class="qs-note">会社に言われたから、でも構いません。ただし、本音を。</p></div>
+      <div class="q"><p class="qlabel">ビジョン</p><p class="qt">取ったあと、どんな現場に立っていたいですか。</p></div>
+      <div class="q"><p class="qlabel">目標</p><p class="qt">10月18日、経験記述で何点取れば受かりますか。</p><p class="qs-note">——答えられますか？</p></div>
+      <div class="q"><p class="qlabel">手段</p><p class="qt">そのために、今週の何時間を使いますか。</p></div>
+    </div>
+    <div class="panel warn">
+      <p style="margin:0">「目標」と「手段」が答えられなかった方へ。<br><br>
+      <strong>それが、落ちる理由です。</strong><br>
+      現場で、完成日と工程を決めずに着工することは、ありませんよね。</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 11 隣の席 -->
+  <section class="rv">
+    <p class="kicker">隣の席</p>
+    <h2>差がつくのは、能力ではありません。</h2>
+    <p>同じ年に入って、同じ工事をやってきた隣の席の人が、先に1級を持ちました。任される現場の規模が変わり、名前の載る書類が変わりました。仕事の中身より先に、扱いが変わりました。</p>
+    <p>一度でいいので、求人サイトを開いてみてください。「1級建築施工管理技士」で検索するだけです。応募条件の一行目に、その資格名が入っているものと、入っていないものがあります。</p>
+    <p>あなたの経験は、その求人に十分足りています。<strong>足りないのは、その一行だけです。</strong></p>
+    <div class="pull"><p>あなたは今、応募すらできない側にいます。</p></div>
+
+    <p>来年1月。あなたは、去年と同じ給与明細を開いています。資格手当の行は、まだありません。</p>
+    <p>子どもが、何か言ってきます。塾に行きたい。部活の遠征費がいる。あなたは、計算します。<strong>去年も、同じ計算をしました。</strong></p>
+    <p>出せないわけじゃない。何とかなる。ただ、「何とかする」ために、また何かを削る。<strong>あなたが削るものは、たいてい、あなたの分です。</strong></p>
+
+    <div class="panel warn">
+      <h3>ただし、誤解しないでください。</h3>
+      <p>あなたの実力は、あなたが思うより高い。現場では通用します。職人は、あなたの言うことを聞きます。でも、<strong>現場の外に出た瞬間、あなたの実力は誰にも見えません。</strong></p>
+      <p style="margin:0">それは、<strong>あなたが劣っているからではありません。</strong><br>証明書を、まだ持っていないだけです。</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 12 合格後 -->
+  <section class="rv">
+    <p class="kicker">合格後</p>
+    <h2>受かった先の話をします。</h2>
+    <div class="future">
+      <p>朝礼で図面を配る手が、少し変わります。技術者として名前が載り、判断を任される範囲が広がります。今まで「これ、やっといて」で来ていた話が、<strong>「これ、どう思う？」</strong>で来るようになります。</p>
+      <p>会社が新しい現場を取ったとき、あなたの名前が真っ先に候補に挙がります。若手が、分からないことをあなたに聞きに来るようになります。</p>
+      <p>そして、この試験のことを二度と考えなくてよくなります。秋が来るたびに落ち着かなくなる日々が終わり、<strong>来年の10月は、ただの10月になります。</strong></p>
+    </div>
+    <div class="pull"><p>資格とは、選択肢を選ぶ立場になることです。</p></div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 追加D 腕っぷしは点か面か -->
+  <section class="rv">
+    <p class="kicker">Range</p>
+    <h2>あなたの「腕っぷし」は、どこまで届いていますか。</h2>
+    <p>躯体の段取りなら、誰にも負けない。<br>——では、仕上げ工程の品質管理は？<br>——では、施工の合理化を問われたら？<br>——では、建設副産物への対策は？</p>
+    <p>急に、言葉が出てこなくなりませんか。</p>
+    <div class="pull calm"><p>それは、経験が足りないからではありません。腕っぷしが効く範囲が、まだ「点」だからです。</p></div>
+    <p>第二次検定は、その点を狙い撃ちにはしてくれません。出題を選べない以上、<strong>点を面にした人から受かります。</strong></p>
+    <div class="panel quiet">
+      <p style="margin:0">経験記述とは、要するにこう聞かれているだけです。<br><br>
+      <strong>「その現場で、どんな課題があり、どう手順を組み、どう実行し、どうなったか」</strong><br><br>
+      それ、毎日やっていることですよね。<br>
+      <strong>書けないのではありません。「書き方」を知らないだけです。</strong></p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 13 GANTT -->
+  <section class="rv">
+    <p class="kicker">逆算工程表 — 8/25 着手、10/18 竣工</p>
+    <h2>八週間の工程表</h2>
+    <p>工程管理は、私の本職です。建物は「完成日から逆算」して建てます。試験も、同じです。オレンジの三本がクリティカルパス。ここが遅れると、後ろの全部が遅れます。</p>
+    <div class="gantt-scroll">
+      <div class="gantt">
+        <div class="grow ghead">
+          <div>Task</div>
+          <div>8/25</div><div>9/1</div><div>9/8</div><div>9/15</div><div>9/22</div><div>9/29</div><div>10/6</div><div>10/13</div>
+          <div class="ms">▼10/18</div>
+        </div>
+        <div class="grow task"><div class="tname">経験記述 ネタ出し</div><div class="bar bar-c" style="grid-column:2 / 4"></div></div>
+        <div class="grow task"><div class="tname">骨子作成</div><div class="bar bar-c" style="grid-column:3 / 5"></div></div>
+        <div class="grow task"><div class="tname">添削 ①②③</div><div class="bar bar-c" style="grid-column:4 / 6"></div><div class="bar bar-c" style="grid-column:6 / 8"></div><div class="bar bar-c" style="grid-column:8 / 9"></div></div>
+        <div class="grow task"><div class="tname">記述・間違い探し</div><div class="bar bar-o" style="grid-column:3 / 10"></div></div>
+        <div class="grow task"><div class="tname">法規</div><div class="bar bar-o" style="grid-column:4 / 9"></div></div>
+        <div class="grow task"><div class="tname">暗記精度</div><div class="bar bar-o" style="grid-column:6 / 10"></div></div>
+        <div class="grow task"><div class="tname">模擬本番</div><div class="bar bar-o" style="grid-column:8 / 9"></div></div>
+        <div class="grow task"><div class="tname">最終確認</div><div class="bar bar-o" style="grid-column:9 / 10"></div></div>
+        <div class="msline" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="glegend">
+      <span><i class="bar-c"></i>クリティカルパス</span>
+      <span><i class="bar-o"></i>並行作業</span>
+      <span style="color:var(--color-accent-2)"><i style="background:var(--color-accent-2);width:2px;height:14px"></i>10/18 第二次検定</span>
+    </div>
+    <p class="scroll-hint">← 横にスクロールできます →</p>
+    <div class="pull"><p>クリティカルパスは「経験記述のネタ出し」。ネタ出しの猶予は、9月5日までです。</p></div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 追加E 計画が守れない -->
+  <section class="rv">
+    <p class="kicker">Time</p>
+    <h2>計画が守れないのは、あなたのせいではありません。</h2>
+    <p>現場が押している。21時に帰ってくる。子どもの寝顔を見て、風呂に入って、気づいたら23時半。明日も6時起き。</p>
+    <p>——この状況で「毎日2時間勉強しましょう」と言う人は、<strong>現場を知らない人です。</strong></p>
+    <p>私も同じでした。だから私は、試験1週間前に会社を休んで、徹夜しました。それで受かりました。<br><strong>でも、あれは対策ではありません。賭けです。</strong></p>
+    <div class="panel warn">
+      <h3>「毎日1時間やりましょう」とは言いません。</h3>
+      <p>あなたの持ち時間は、あなたにしか分かりません。平日30分の人もいる。日曜に3時間まとめて取る人もいる。今週は現場が山場で、ゼロの週もある。</p>
+      <p><strong>それでいいんです。</strong></p>
+      <p style="margin:0">決めるのは総量ではなく、<strong>順番</strong>です。<br>工期が伸びないなら、工程を組み替えるしかない。</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 14 週に一度 -->
+  <section class="rv">
+    <p class="kicker">週に一度</p>
+    <h2>答案を読み合う場があります。</h2>
+    <p>週に一度、書いた答案を持ち寄って読み合います。</p>
+    <p>自分の文章は、自分では読めません。私がそれに気づいたのは、7年目でした。隣の人の答案を読んだとき、初めて分かったんです。<strong>「伝わらない文章」が、どういうものなのか。</strong></p>
+    <div class="pull calm"><p>その人は、あなたと同じ日に受験する相手です。同時に、あなたの答案を最初に読む人でもあります。</p></div>
+    <p>私も同席して、7年かけて分かったことをお伝えします。</p>
+    <div class="panel quiet">
+      <p style="margin:0">※ 詳細はLINEで聞いてください。<strong>こちらからの案内は送りません。</strong></p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 追加F なぜ金太朗なのか -->
+  <section class="rv">
+    <p class="kicker">Why Kintaro</p>
+    <h2>なぜ、金太朗なのか。</h2>
+    <p>金太郎——坂田金時は、山奥で熊と相撲を取っていた子供でした。</p>
+    <p>ただし、力任せではありません。<strong>相手を見て、組み手を決め、勝つ手順を知っていた。</strong></p>
+    <p>それが見出され、名を与えられ、頼光四天王の一人になった。</p>
+    <p>あなたも同じです。<strong>経験から手順を組み立て、人を動かし、現場を完成まで持っていける。</strong>それは、資格の有無に関係なく、すでにあなたが持っている力です。</p>
+    <div class="pull"><p>足りないのは、"格"だけ。</p></div>
+  </section>
+
+  <!-- 15 CTA -->
+  <section class="cta rv">
+    <p class="kicker">案内はここだけです</p>
+    <h2>最後まで読んでいただいて、ありがとうございました。</h2>
+    <p>冒頭で書いた通り、<strong>このページの最後にあるのは、案内だけです。</strong>ただ、ひとつだけ渡したいものがあります。</p>
+
+    <div class="gift">
+      <p class="gl">GIFT 01 — 今すぐ</p>
+      <h3>経験記述で落ちる答案の共通点</h3>
+      <p>「なぜ、その対策を選んだのか」——採点者が本当に見ている一点を、1枚にまとめました。</p>
+    </div>
+    <div class="gift">
+      <p class="gl">GIFT 02 — 9月1日にお届け</p>
+      <h3>第二次検定 逆算工程表 ＋ 経験記述ネタ出しシート</h3>
+      <p>試験日から逆算した週別の工程表と、あなたの現場から題材を掘り出すためのワークシートです。私が7年かけて遠回りした分を、そのまま入れました。</p>
+    </div>
+
+    <p>使ってもらえたら、それでいいです。<strong>合わなければ、ブロックしてください。それで構いません。</strong></p>
+
+    <!-- LINE公式アカウント @643ybhob 友だち追加 -->
+    <a class="btn" href="https://line.me/R/ti/p/@643ybhob" target="_blank" rel="noopener">LINEで受け取る（無料）</a>
+
+    <p class="fine">
+      ※ 配布は<strong style="color:var(--color-accent-2)">9月5日</strong>まで。工程上、それ以降にお渡ししても間に合わないためです。<br><br>
+      ※ 登録は無料。解除は一操作で完了します。
+    </p>
+
+    <div class="pull" style="margin-top:56px"><p>10月18日。あなたが、合格できると自信をもって試験会場を出ていることを願っています。</p></div>
+  </section>
+
+  <footer>セコカン金太朗塾 — 1級建築施工管理技士 第二次検定 — 10月18日</footer>
+</div>
+
+<script>
+/* 10/18までの残日数を自動計算 */
+(function(){
+  var el = document.getElementById('cd');
+  if(!el) return;
+  var now = new Date();
+  var y = now.getFullYear();
+  var exam = new Date(y, 9, 18);
+  if(now > exam){ exam = new Date(y + 1, 9, 18); }
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var d = Math.ceil((exam - today) / 86400000);
+  el.textContent = d > 0 ? d : 0;
+})();
+
+/* スクロールリビール */
+(function(){
+  var els = document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    els.forEach(function(e){ e.classList.add('on'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(en){
+    en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { threshold:.12 });
+  els.forEach(function(e){ io.observe(e); });
+})();
+</script>
+</body>
+</html>
