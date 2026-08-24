@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7回落ちた現場監督が、逆転合格できた理由 | セコカン金太朗塾</title>
+<meta name="description" content="7年間不合格だった現場監督が開発した、18年分の過去問AIアプリ。週1GMT伴走で最短合格を実現する1級建築施工管理技士対策講座。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C4912A;--gold-l:#F0C96B;--gold-pale:#FBF0D8;
+  --dk:#1A1208;--dk2:#2D2010;--dk3:#3D2810;
+  --tx:#F5EDD8;--mt:#BBA97A;
+  --off:#FAF7F2;--ltbg:#F5EFE4;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;font-size:16px;line-height:1.8;color:#2C1F0A;background:#fff;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+header{background:var(--dk);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.logo{font-family:'Noto Serif JP',serif;font-size:13px;font-weight:700;color:var(--gold-l);letter-spacing:.04em}
+.hcta{background:var(--gold);color:var(--dk);font-size:12px;font-weight:700;padding:8px 14px;border-radius:3px;text-decoration:none;white-space:nowrap}
+.hero{background:var(--dk);min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 20px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url('images/hero_bg.jpg') center/cover no-repeat;opacity:.5;z-index:0}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(26,18,8,.75) 0%,rgba(26,18,8,.88) 60%,rgba(26,18,8,.97) 100%);z-index:0}
+.hero>*{position:relative;z-index:1}
+.badge{display:inline-block;background:var(--gold);color:var(--dk);font-size:11px;font-weight:700;letter-spacing:.12em;padding:5px 14px;border-radius:2px;margin-bottom:24px}
+.hero h1{font-family:'Noto Serif JP',serif;font-size:clamp(24px,6vw,52px);font-weight:900;line-height:1.4;color:var(--tx);margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--gold-l)}
+.hero-sub{font-size:clamp(13px,3.5vw,17px);color:var(--mt);margin-bottom:40px;padding:0 4px}
+.nums{display:flex;gap:clamp(16px,6vw,56px);justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.num .n{font-family:'Noto Serif JP',serif;font-size:clamp(36px,8vw,64px);font-weight:900;color:var(--gold-l);line-height:1}
+.num .u{font-size:14px;color:var(--gold)}
+.num .l{font-size:11px;color:var(--mt);margin-top:4px;letter-spacing:.06em}
+.btn{display:inline-block;background:var(--gold);color:var(--dk);font-family:'Noto Serif JP',serif;font-size:clamp(15px,4vw,18px);font-weight:700;padding:16px 32px;border-radius:3px;text-decoration:none;letter-spacing:.04em;width:100%;max-width:380px;text-align:center}
+.btn-note{font-size:11px;color:var(--mt);margin-top:10px}
+section{padding:60px 20px}
+.inner{max-width:780px;margin:0 auto}
+.slabel{font-size:10px;letter-spacing:.22em;color:var(--gold);margin-bottom:12px;text-transform:uppercase}
+.stitle{font-family:'Noto Serif JP',serif;font-size:clamp(20px,5vw,34px);font-weight:900;line-height:1.45;margin-bottom:28px}
+.stitle em{font-style:normal;color:var(--gold)}
+.pain{background:var(--off)}
+.ptxt{font-size:15px;line-height:2;color:#3A2A10}
+.ptxt p+p{margin-top:18px}
+.qbox{border-left:4px solid var(--gold);background:var(--gold-pale);padding:18px 20px;margin:28px 0;border-radius:0 8px 8px 0}
+.qbox p{font-family:'Noto Serif JP',serif;font-size:14px;line-height:1.9;color:#2C1F0A;font-style:italic}
+.story{background:var(--dk2)}
+.story .stitle{color:var(--tx)}
+.tl{border-left:2px solid var(--gold);padding-left:24px;margin-top:28px}
+.tli{position:relative;margin-bottom:32px}
+.tli::before{content:'';position:absolute;left:-32px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:3px solid var(--dk2)}
+.tly{font-size:10px;color:var(--gold);letter-spacing:.1em;margin-bottom:4px}
+.tlt{font-size:14px;color:var(--mt);line-height:1.85}
+.tlt strong{color:var(--gold-l);font-weight:700}
+.tlt em{font-style:normal;color:#fff}
+.bt{background:var(--dk3)}
+.bt .stitle{color:var(--tx)}
+.btcard{background:rgba(196,145,42,.1);border:1px solid rgba(196,145,42,.3);border-radius:10px;padding:24px 20px;margin-top:28px}
+.btcard p{font-size:14px;color:var(--mt);line-height:1.9}
+.btcard p+p{margin-top:14px}
+.bthigh{font-family:'Noto Serif JP',serif;font-size:clamp(16px,4vw,22px);font-weight:700;color:var(--gold-l);text-align:center;margin:28px 0;line-height:1.65;padding:0 4px}
+.target{background:var(--ltbg)}
+.cklist{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.cklist li{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #E8D9BB;border-radius:8px;padding:14px 16px;font-size:14px;color:#2C1F0A;line-height:1.7}
+.cklist li::before{content:'▶';color:var(--gold);flex-shrink:0;margin-top:2px;font-size:12px}
+.features{background:#fff}
+.fgrid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:24px}
+@media(min-width:560px){.fgrid{grid-template-columns:1fr 1fr}}
+.fcard{background:var(--ltbg);border:1px solid #E8D9BB;border-radius:10px;padding:20px 18px}
+.fcard .icon{font-size:26px;margin-bottom:12px}
+.fcard h3{font-family:'Noto Serif JP',serif;font-size:15px;font-weight:700;color:#8B5E1A;margin-bottom:8px}
+.fcard p{font-size:13px;color:#5A4020;line-height:1.75}
+.reason{background:var(--dk)}
+.reason .stitle{color:var(--tx)}
+.rgrid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:24px}
+@media(min-width:560px){.rgrid{grid-template-columns:1fr 1fr 1fr}}
+.rcard{background:rgba(196,145,42,.08);border:1px solid rgba(196,145,42,.2);border-radius:10px;padding:20px 18px}
+.rnum{font-family:'Noto Serif JP',serif;font-size:36px;font-weight:900;color:rgba(196,145,42,.22);line-height:1;margin-bottom:6px}
+.rcard h3{font-size:14px;font-weight:700;color:var(--gold-l);margin-bottom:8px}
+.rcard p{font-size:13px;color:var(--mt);line-height:1.75}
+.voice{background:var(--off)}
+.vlist{display:flex;flex-direction:column;gap:16px;margin-top:24px}
+.vcard{background:#fff;border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 20px}
+.vcard p{font-size:14px;line-height:1.85;color:#2C1F0A}
+
+/* ▼ リードマグネット（ショーケン版）セクション */
+.gift{background:var(--dk2)}
+.gift-box{
+  background:rgba(196,145,42,.08);
+  border:1px solid rgba(196,145,42,.35);
+  border-radius:14px;
+  padding:28px 24px;
+  margin-top:28px;
+  text-align:center;
+}
+.gift-box .gift-label{
+  display:inline-block;
+  background:var(--gold);color:var(--dk);
+  font-size:11px;font-weight:700;
+  padding:4px 14px;border-radius:2px;
+  letter-spacing:.08em;margin-bottom:16px;
+}
+.gift-box h3{
+  font-family:'Noto Serif JP',serif;
+  font-size:clamp(17px,4vw,24px);
+  font-weight:900;color:var(--gold-l);
+  line-height:1.5;margin-bottom:14px;
+}
+.gift-box p{
+  font-size:14px;color:var(--mt);
+  line-height:1.95;margin-bottom:24px;
+  max-width:560px;margin-left:auto;margin-right:auto;
+}
+.gift-voices{
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:28px;text-align:left;
+}
+.gift-voice{
+  background:rgba(255,255,255,0.05);
+  border-left:3px solid var(--gold);
+  padding:12px 16px;border-radius:0 8px 8px 0;
+}
+.gift-voice p{
+  font-size:13px;color:var(--mt);
+  line-height:1.8;margin-bottom:0;
+}
+
+.urgency{background:var(--dk2)}
+.urgency .stitle{color:var(--tx)}
+.ubox{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);border-radius:10px;padding:24px 20px;margin-top:24px}
+.ubox p{font-size:14px;color:#F5EDD8;line-height:1.9}
+.ubox p+p{margin-top:12px}
+.ubox strong{color:#F0A080}
+.ustats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:24px}
+@media(max-width:400px){.ustats{grid-template-columns:1fr;gap:8px}}
+.ustat{background:rgba(196,145,42,.1);border:1px solid rgba(196,145,42,.2);border-radius:8px;padding:12px 8px;text-align:center}
+.ustat .sn{font-family:'Noto Serif JP',serif;font-size:clamp(20px,5vw,30px);font-weight:900;color:var(--gold-l);line-height:1}
+.ustat .su{font-size:10px;color:var(--gold);margin-top:4px;line-height:1.4}
+.ustat .sl{font-size:9px;color:var(--mt);margin-top:3px}
+.flow{background:#fff}
+.fsteps{display:flex;flex-direction:column;gap:0;margin-top:24px}
+.fstep{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid #E8D9BB}
+.fstep:last-child{border-bottom:none}
+.fno{width:40px;height:40px;border-radius:50%;background:var(--gold);color:var(--dk);font-family:'Noto Serif JP',serif;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fstep h3{font-size:15px;font-weight:700;color:#2C1F0A;margin-bottom:4px}
+.fstep p{font-size:13px;color:#5A4020;line-height:1.75}
+.ctabot{background:var(--dk);text-align:center;padding:80px 20px}
+.ctabot .stitle{color:var(--tx);margin-bottom:14px}
+.ctabot .desc{color:var(--mt);font-size:14px;max-width:480px;margin:0 auto 40px;line-height:1.9}
+.divider{width:40px;height:2px;background:var(--gold);margin:0 auto 28px}
+footer{background:#0D0A04;text-align:center;padding:24px 20px;font-size:11px;color:var(--mt);letter-spacing:.06em}
+footer a{color:var(--mt);text-decoration:none}
+footer p+p{margin-top:8px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero>*{animation:fadeUp .8s ease both}
+.hero>*:nth-child(1){animation-delay:.1s}
+.hero>*:nth-child(2){animation-delay:.25s}
+.hero>*:nth-child(3){animation-delay:.4s}
+.hero>*:nth-child(4){animation-delay:.55s}
+.hero>*:nth-child(5){animation-delay:.7s}
+.hero>*:nth-child(6){animation-delay:.85s}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">セコカン金太朗塾</div>
+  <a href="#cta" class="hcta">無料で始める</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">1級建築施工管理技士 1次試験対策</div>
+  <h1>7回落ちた現場監督が、<br>なぜ<em>逆転合格</em>できたのか。<br>その秘密を、全部渡します。</h1>
+  <p class="hero-sub">ただでさえ終わらない業務に試験勉強が上乗せされる時代に、<br>人間の気力だけで勝てるわけがない。</p>
+  <div class="nums">
+    <div class="num"><div class="n">18<span class="u">年分</span></div><div class="l">出題傾向データ蓄積</div></div>
+    <div class="num"><div class="n">7<span class="u">回</span></div><div class="l">挫折からの逆転合格</div></div>
+    <div class="num"><div class="n">6<span class="u">月</span></div><div class="l">1次試験まで残りわずか</div></div>
+  </div>
+  <a href="https://lin.ee/Rcdv0HZ" class="btn">今すぐ無料コミュニティに参加する</a>
+  <p class="btn-note">LINE登録だけ・クレジットカード不要</p>
+</section>
+
+<!-- PAIN -->
+<section class="pain">
+  <div class="inner">
+    <div class="slabel">your story</div>
+    <h2 class="stitle">あなたも、こんな夜を<em>過ごしていませんか。</em></h2>
+    <div class="ptxt">
+      <p>家族との食事と風呂をなんとか済ませ、重い体でテキストを開いた数分後には、もう意識が飛んでいる毎日。同じ図面を見ているのに、権限という「蚊帳の外」に置かれた惨めさ。</p>
+      <p>後輩が先に合格し、出世していくのを眺めながら、妻には「また受けるの？」と呆れられ、子供の前で小さくなった夜。</p>
+    </div>
+    <div class="qbox">
+      <p>「休日に必死で勉強したのに、全く点数に繋がらない。的外れな勉強で時間をドブに捨てたくない。『やったつもり』で試験に挑み、本番で頭が真っ白になる絶望を二度と味わいたくない。」</p>
+    </div>
+    <div class="ptxt">
+      <p>その気持ち、私が一番わかっています。なぜなら私自身が、<strong>7年間そこにいたから。</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story">
+  <div class="inner">
+    <div class="slabel">my story</div>
+    <h2 class="stitle" style="color:var(--tx)">7年間の<em style="color:var(--gold-l)">検証</em>が、<br>このプログラムになった。</h2>
+    <div style="margin:0 0 28px;border-radius:10px;overflow:hidden">
+      <img src="images/story_img.jpg" alt="難関突破・合格の瞬間" style="width:100%;border-radius:10px;opacity:.92">
+    </div>
+    <div class="tl">
+      <div class="tli">
+        <div class="tly">苦闘の時代</div>
+        <div class="tlt"><strong>大して勉強もせず、意味も理解しないまま受験。</strong>１次は習慣化さえできれば合格できるレベルだと気づかず、何度も落ちた。会社からは「受験代出してるんだから今年こそは」と半ば諦めた目で見られ、自分自身が一番惨めだった。</div>
+      </div>
+      <div class="tli">
+        <div class="tly">転機の瞬間</div>
+        <div class="tlt">7年目の夏、遠方まで足を運んだ受験対策講習の休憩中、隣の受験生と答案を見せ合った。相手の答案を見た瞬間、愕然とした。<strong>「採点者が求めているのは現場の経験談ではなく、管理者としての判断プロセスだった。」</strong></div>
+      </div>
+      <div class="tli">
+        <div class="tly">合格・そして塾の設立</div>
+        <div class="tlt">8年目、合格通知が届いた翌朝。台所に立つ妻に「受かったよ」と伝えた瞬間、<em>あの呆れ顔が7年ぶりに笑顔に変わった。</em>その視点を基に18年分の過去問をAIで徹底分析。<strong>同じ苦しみを持つ現場の仲間に渡したくて、この塾を作った。</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE TRUTH -->
+<section class="bt">
+  <div class="inner">
+    <div class="slabel">the truth</div>
+    <h2 class="stitle" style="color:var(--tx)">あなたが受からないのは、<br><em style="color:var(--gold-l)">あなたのせいではない。</em></h2>
+    <div class="btcard">
+      <p>大手資格学校が教えてくれない「7年落ち続けた人間だからこそ分かる、合格を阻む壁とその崩し方」があります。</p>
+      <p>大手予備校は、一発で合格した人間が教えます。私は、7回落ち続けた人間が教えます。あなたの「なぜ受からないのか」という痛みを、本当の意味で知っているのはどちらですか。</p>
+    </div>
+    <p class="bthigh">「本気で合格させることに、私は全力を尽くします。<br>それが7年間失敗し続けた私の、受講者への誓いです。」</p>
+  </div>
+</section>
+
+<!-- TARGET -->
+<section class="target">
+  <div class="inner">
+    <div class="slabel">for you</div>
+    <h2 class="stitle">7年前の私も、<em>そうでした。</em></h2>
+    <ul class="cklist">
+      <li>何度受けても合格できず、もう諦めかけている</li>
+      <li>現場が忙しくて、まとまった勉強時間がとれない</li>
+      <li>休日に必死で勉強したのに、点数に繋がらない</li>
+      <li>後輩が先に受かっていく屈辱を味わっている</li>
+      <li>会社から「今年こそ取れ」とプレッシャーをかけられている</li>
+      <li>通勤や隙間時間だけで合格ラインを突破したい</li>
+    </ul>
+  </div>
+</section>
+
+<!-- FEATURES（3Mメソッド）-->
+<section class="features">
+  <div class="inner">
+    <div class="slabel">3M method</div>
+    <h2 class="stitle">ムリ・ムラ・ムダの<em>徹底排除</em></h2>
+    <div class="fgrid">
+      <div class="fcard">
+        <div class="icon">🎯</div>
+        <h3>ムリをなくす：AI解説アプリ</h3>
+        <p>18年分の出題傾向を分析。あなたが間違えた問題だけを繰り返す弱点特化トレーニング。通勤・現場の待ち時間・隙間時間だけで合格ラインへ。</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">📅</div>
+        <h3>ムラをなくす：週1回GMT</h3>
+        <p>毎週1回の進捗確認・宿題の答え合わせ・学習習慣形成。一人で悩まず、伴走者と一緒に進むから挫折しない。</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">📊</div>
+        <h3>ムダをなくす：出題傾向の絞り込み</h3>
+        <p>過去問から年度ごとの出題テーマを抽出・サンプル化。試験に出る問題だけに絞り込むから、手戻り学習ゼロ。</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">🏗</div>
+        <h3>現役現場所長本人が教える</h3>
+        <p>現役現場所長として第一線で働く本人が、机上の空論ではなく実務目線で解説。「管理者としての判断プロセス」を体得できる唯一の講座。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REASON -->
+<section class="reason">
+  <div class="inner">
+    <div class="slabel">why us</div>
+    <h2 class="stitle" style="color:var(--tx)">独学でも、大手予備校の詰め込みでもない。<br><em style="color:var(--gold-l)">試験日から逆算する、という発想</em></h2>
+    <div class="rgrid">
+      <div class="rcard">
+        <div class="rnum">01</div>
+        <h3>7年分の「失敗パターン」を知っている</h3>
+        <p>一発合格のエリートには見えない「なぜ落ちるのか」の本質を、身をもって検証した人間が教える。</p>
+      </div>
+      <div class="rcard">
+        <div class="rnum">02</div>
+        <h3>模倣不可能な18年分のデータ</h3>
+        <p>H20〜最新年度まで、18年分の出題傾向を一つずつ拾って積み上げてきたデータです。同じ理由で落ちる人を、もう出したくなかった。</p>
+      </div>
+      <div class="rcard">
+        <div class="rnum">03</div>
+        <h3>挫折させない仕組みがある</h3>
+        <p>週1回のGMTで、進み具合をその都度すり合わせる。ひとりで抱え込んで止まる、という一番よくあるつまずき方を先に潰しておく。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOICE -->
+<section class="voice">
+  <div class="inner">
+    <div class="slabel">for you</div>
+    <h2 class="stitle">こんな方に、<em>届けたい。</em></h2>
+    <div class="vlist">
+      <div class="vcard">
+        <p>何度受けても合格できず、「自分には無理なのかもしれない」と諦めかけている方。その気持ち、7年間そこにいた私が一番わかります。</p>
+      </div>
+      <div class="vcard">
+        <p>休日に必死で勉強したのに点数に繋がらない方。それは努力が足りないのではなく、勉強の方向性が間違っているだけです。</p>
+      </div>
+      <div class="vcard">
+        <p>現場が忙しくてまとまった勉強時間が取れない方。スキマ時間だけで合格ラインを突破する仕組みを、一緒に作りましょう。</p>
+      </div>
+      <div class="vcard">
+        <p>後輩が先に受かっていく屈辱を味わっている方。会社から「今年こそ」とプレッシャーをかけられている方。その重荷を、一緒に下ろしましょう。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ▼ リードマグネット：ショーケン版（体験への誘い）-->
+<section class="gift">
+  <div class="inner">
+    <div class="slabel">free gift</div>
+    <h2 class="stitle" style="color:var(--tx)">まず、<em style="color:var(--gold-l)">これだけ受け取ってください。</em></h2>
+    <div class="gift-box">
+      <div class="gift-label">🎁 LINE登録者限定・無料プレゼント</div>
+      <h3>「使ったその日から、<br>勉強のやり方が変わった」</h3>
+      <p>
+        何かを説明するより、まず使ってみてください。<br>
+        登録するだけで、あなたの手元に届きます。<br>
+        費用は一切かかりません。
+      </p>
+      <div class="gift-voices">
+        <div class="gift-voice">
+          <p>「こんなに整理されているとは思わなかった。通勤電車だけで続けられています。」</p>
+        </div>
+        <div class="gift-voice">
+          <p>「自分の弱点がはっきり見えた。今まで何を勉強していたんだろうと思った。」</p>
+        </div>
+        <div class="gift-voice">
+          <p>「無料でここまでくれるなら、本気で取り組もうと思えた。」</p>
+        </div>
+      </div>
+      <a href="https://lin.ee/Rcdv0HZ" class="btn" style="max-width:340px;margin:0 auto;">LINEで無料受け取りはこちら</a>
+      <p style="font-size:11px;color:var(--mt);margin-top:12px;">登録60秒・クレジットカード不要・いつでも退会OK</p>
+    </div>
+  </div>
+</section>
+
+<!-- URGENCY -->
+<section class="urgency">
+  <div class="inner">
+    <div class="slabel">warning</div>
+    <h2 class="stitle" style="color:var(--tx)">なぜ、<em style="color:#F0A080">今すぐ</em>資格を取らなければ危険なのか。</h2>
+    <div style="border-radius:10px;overflow:hidden;margin-bottom:24px">
+      <img src="images/urgency_img.jpg" alt="合格への道・いままでの自分" style="width:100%;border-radius:10px;opacity:.95">
+    </div>
+    <div class="ubox">
+      <p><strong>2030年ごろ（あと3〜4年後）から、資格なし＝リストラ対象の時代がやってくる。</strong></p>
+      <p>現場のDX化についていけず、AIの指示通りに動くだけの「肉体労働者」に成り下がりたくない。AIがいかに進化しても、<strong>法的責任を負う「監理技術者」の配置義務は変わらない。</strong>資格を持った瞬間、あなたは「AIを武器にする側」になれる。</p>
+    </div>
+    <div class="ustats">
+      <div class="ustat">
+        <div class="sn">6.88<span style="font-size:12px">倍</span></div>
+        <div class="su">施工管理職<br>有効求人倍率</div>
+        <div class="sl">超売り手市場が継続</div>
+      </div>
+      <div class="ustat">
+        <div class="sn">+100<span style="font-size:12px">万</span></div>
+        <div class="su">1級取得で<br>年収アップ</div>
+        <div class="sl">転職市場での価値</div>
+      </div>
+      <div class="ustat">
+        <div class="sn">14.8<span style="font-size:12px">%</span></div>
+        <div class="su">ストレート<br>合格率</div>
+        <div class="sl">難関を突破せよ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOW -->
+<section class="flow" id="cta">
+  <div class="inner">
+    <div class="slabel">how to start</div>
+    <h2 class="stitle">参加までの<em>3ステップ</em></h2>
+    <div class="fsteps">
+      <div class="fstep">
+        <div class="fno">1</div>
+        <div>
+          <h3>LINEを友だち追加して、一言送る</h3>
+          <p>下のボタンからLINE公式アカウントを友だち追加後、<strong>「建築1級」と一言送ってください。</strong>無料コミュニティ（BAND）への招待URLをお送りします。</p>
+        </div>
+      </div>
+      <div class="fstep">
+        <div class="fno">2</div>
+        <div>
+          <h3>BANDで限定動画を視聴する</h3>
+          <p>コミュニティ内の動画「合格の真髄」を視聴。1次試験の出題傾向と無料PDFをプレゼント。動画内でシークレットパスワードを公開します。</p>
+        </div>
+      </div>
+      <div class="fstep">
+        <div class="fno">3</div>
+        <div>
+          <h3>合格工程作成会に申し込む（無料）</h3>
+          <p>シークレットパスワードを使って申込みフォームへエントリー。「合格工程作成会（無料）」で、あなた専用の合格プランをお伝えします。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BOTTOM -->
+<section class="ctabot">
+  <div class="inner">
+    <div class="slabel">start now</div>
+    <div class="divider"></div>
+    <h2 class="stitle" style="color:var(--tx)">1次試験まで、<em style="color:var(--gold-l)">時間がありません。</em></h2>
+    <p class="desc">まずは無料コミュニティに参加してください。それだけでいい。「合格できるかも」という感覚を、まず体験してほしい。</p>
+    <a href="https://lin.ee/Rcdv0HZ" class="btn">LINEで無料登録する →</a>
+    <p class="btn-note" style="color:var(--mt);margin-top:12px">登録60秒・クレジットカード不要・いつでも退会OK<br>本気で人生を変えたい方だけ、お待ちしています。</p>
+  </div>
+</section>
+
+<footer>
+  <p>
+    <a href="/tokushoho.html">特定商取引法に基づく表記</a> |
+    <a href="/privacy.html">プライバシーポリシー</a> |
+    <a href="/riyokiyaku.html">利用規約</a>
+  </p>
+  <p>&copy; 2026 セコカン金太朗塾 All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
